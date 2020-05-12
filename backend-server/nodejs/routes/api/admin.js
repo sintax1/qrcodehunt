@@ -1,5 +1,5 @@
-import { AdminUser} from '../../models/User';
-import { UserSession } from '../../models/UserSession';
+AdminUser = require('../../models/User');
+UserSession = require('../../models/UserSession');
 
 exports.signin = (req, res, next) => {
   const { body } = req;

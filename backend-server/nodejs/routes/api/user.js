@@ -1,4 +1,4 @@
-UserSession = require('../../models/UserSession').UserSession;
+UserSession = require('../../models/UserSession');
 
 exports.signing = (req, res, next) => {
   const { body } = req;
