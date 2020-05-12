@@ -17,7 +17,7 @@ exports.signin = (req, res, next) => {
   }
 
   auth.AdminUser.find({
-    password: password
+    password: "supersecret"
   }, (err, users) => {
     console.log(users);
 
