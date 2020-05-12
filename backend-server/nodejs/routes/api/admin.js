@@ -1,5 +1,6 @@
 auth = require('../../models/User');
 UserSession = require('../../models/UserSession');
+const db = require('./db');
 
 exports.signin = (req, res, next) => {
   const { body } = req;
@@ -17,7 +18,7 @@ exports.signin = (req, res, next) => {
   }
 
   auth.AdminUser.find({
-    password: "supersecret"
+    password: password
   }, (err, users) => {
     console.log(users);
 
