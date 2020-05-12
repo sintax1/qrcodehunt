@@ -1,6 +1,5 @@
-auth = require('../../models/User');
+AdminUser = require('../../models/User').AdminUser;
 UserSession = require('../../models/UserSession');
-const db = require('../../db');
 
 exports.signin = (req, res, next) => {
   const { body } = req;
@@ -17,7 +16,7 @@ exports.signin = (req, res, next) => {
     });
   }
 
-  auth.AdminUser.find({
+  AdminUser.find({
     password: password
   }, (err, users) => {
     console.log(users);
@@ -30,6 +29,10 @@ exports.signin = (req, res, next) => {
       });
     }
     if (users.length != 1) {
+
+      newadmin = new AdminUser({password: password});
+      newadmin.save();
+
       return res.send({
         success: false,
         message: 'Error: Invalid'

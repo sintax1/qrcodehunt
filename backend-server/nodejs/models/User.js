@@ -25,5 +25,5 @@ AdminUserSchema.methods.validPassword = function(password) {
 };
 */
 
-exports.User = mongoose.model('User', UserSchema)
-exports.AdminUser = mongoose.model('AdminUser', AdminUserSchema)
+exports.User = mongoose.model('User', UserSchema);
+exports.AdminUser = mongoose.model('AdminUser', AdminUserSchema);
