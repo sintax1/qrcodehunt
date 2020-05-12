@@ -57,9 +57,9 @@ module.exports = (app) => {
         });
       });
 
-      /*
+    /*
      * User SignIn
-     */
+    */
     app.post('/api/signin', (req, res, next) => {
         
         const { body } = req;

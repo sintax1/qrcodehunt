@@ -4,10 +4,7 @@ const bodyParser = require('body-parser')
 const db = require('./db')
 
 const app = Express()
-//app.use(bodyParser.json())
-
-
-  
+app.use(bodyParser.json())
 
 const Storage = multer.diskStorage({
   destination(req, file, callback) {
@@ -38,7 +35,10 @@ app.post('/api/upload', upload.array('photo', 3), (req, res) => {
     res.status(200).json({
       message: 'success!',
     });
-  });
+});
+
+// Add login routes
+require('./routes/api/login')(app);
 
 app.use(function (err, req, res, next) {
     console.log('This is the invalid field ->', err.field)
