@@ -9,6 +9,7 @@ import {
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { styles } from '../styles';
+import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
 
 class Login extends Component {
     render() {
@@ -64,10 +65,13 @@ export class DefaultScreen extends Component {
             .then(json => {
                 console.log('json', json);
                 if (json.success) {
+                    setStorageValue('token', json.token);
+
                     this.setState({
                         SignInError: json.message,
                         isLoading: false,
-                        SignInUsername: ''
+                        SignInUsername: '',
+                        token: json.token
                     });
                 } else {
                     this.setState({
@@ -77,12 +81,21 @@ export class DefaultScreen extends Component {
                 }
         });
     }
-    
 
     componentDidMount() {
         this.setState({
           isLoading: false
         });
+
+        getStorageValue('token')
+            .then(token => {
+                if (token) {
+                    console.log('token: ' + JSON.stringify(token));
+                    this.setState({
+                        token: token
+                    });
+                }
+            })
     }
 
     render() {
@@ -142,6 +155,10 @@ export class DefaultScreen extends Component {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Hints />
           </View>
+          <Button
+            title="Clear Token"
+            onPress={() => clearStorageValue('token')}
+          />
         </View>
       );
     }
