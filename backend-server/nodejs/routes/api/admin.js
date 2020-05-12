@@ -1,4 +1,4 @@
-AdminUser = require('../../models/User').AdminUser;
+auth = require('../../models/User');
 UserSession = require('../../models/UserSession');
 
 exports.signin = (req, res, next) => {
@@ -7,7 +7,7 @@ exports.signin = (req, res, next) => {
     password
   } = body;
 
-  console.log('password:' + password);
+  console.log('password: ' + password);
 
   if (!password) {
     return res.send({
@@ -16,7 +16,7 @@ exports.signin = (req, res, next) => {
     });
   }
 
-  AdminUser.find({
+  auth.AdminUser.find({
     password: password
   }, (err, users) => {
     console.log(users);
