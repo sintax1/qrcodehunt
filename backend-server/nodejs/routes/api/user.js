@@ -36,11 +36,9 @@ exports.signin = (req, res, next) => {
     }
   });
 
-  console.log("Creating user session");
+  const userSession = new UserSession({ username: username});
 
-  UserSession.create({ username: username}, (err, doc) => {
-    console.log('save results err:' + err);
-    console.log('save results doc:' + doc);
+  userSession.save((err, doc) => {
     if (err) {
       console.error(err);
       return res.send({
@@ -48,12 +46,11 @@ exports.signin = (req, res, next) => {
         message: 'Error: server error'
       });
     }
-    console.log('success');
+
     return res.send({
       success: true,
       message: 'Valid sign in',
       token: doc._id
     });
   });
-
 };
