@@ -38,11 +38,7 @@ exports.signin = (req, res, next) => {
 
   console.log("Creating user session");
 
-  const userSession = new UserSession({ username: username});
-  console.log('Saving session:' + userSession);
-  //userSession.username = username;
-  userSession.markModified('username');
-  userSession.save((err, doc) => {
+  UserSession.create({ username: username}, (err, doc) => {
     console.log('save results err:' + err);
     console.log('save results doc:' + doc);
     if (err) {
