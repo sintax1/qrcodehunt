@@ -31,23 +31,23 @@ exports.signin = (req, res, next) => {
         message: 'Error: Choose a different name.'
       });
     }
+  });
 
-    const userSession = new UserSession();
-    userSession.userId = user._id;
-    userSession.username = user.username;
-    userSession.save((err, doc) => {
-      if (err) {
-        console.log(err);
-        return res.send({
-          success: false,
-          message: 'Error: server error'
-        });
-      }
+  const userSession = new UserSession();
+  userSession.userId = user._id;
+  userSession.username = user.username;
+  userSession.save((err, doc) => {
+    if (err) {
+      console.log(err);
       return res.send({
-        success: true,
-        message: 'Valid sign in',
-        token: doc._id
+        success: false,
+        message: 'Error: server error'
       });
+    }
+    return res.send({
+      success: true,
+      message: 'Valid sign in',
+      token: doc._id
     });
   });
 };
