@@ -1,4 +1,4 @@
-import { UserSession } from '../../models/UserSession';
+UserSession = require('../../models/UserSession').UserSession;
 
 exports.signing = (req, res, next) => {
   const { body } = req;
