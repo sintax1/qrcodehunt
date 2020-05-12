@@ -8,6 +8,8 @@ exports.signin = (req, res, next) => {
     password
   } = body;
 
+  console.log('password:' + password);
+
   if (!password) {
     return res.send({
       success: false,
