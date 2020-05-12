@@ -17,11 +17,14 @@ const Storage = multer.diskStorage({
 
 const upload = multer({ storage: Storage })
 
-/*
-app.post('*', function(req, res, next){
-    console.log(req);
-});
-*/
+const user = require('./routes/api/user');
+const admin = require('./routes/api/admin');
+
+// User Routes
+app.post('/api/signin', user.signin);
+
+// Admin Routes
+app.post('/api/admin/signin', admin.signin);
 
 app.get('/', (req, res) => {
   console.log('GET /')
@@ -36,9 +39,6 @@ app.post('/api/upload', upload.array('photo', 3), (req, res) => {
       message: 'success!',
     });
 });
-
-// Add login routes
-require('./routes/api/login')(app);
 
 app.use(function (err, req, res, next) {
     console.log('This is the invalid field ->', err.field)
