@@ -22,7 +22,7 @@ class Screen extends Component {
     return (
       <NavigationContainer>
         <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen name="Home" component={DefaultScreen} />
+          <Drawer.Screen name="Scavenger Hunt" component={DefaultScreen} />
           <Drawer.Screen name="Setup" component={SetupScreen} />
         </Drawer.Navigator>
       </NavigationContainer>

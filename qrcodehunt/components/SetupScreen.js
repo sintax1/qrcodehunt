@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { styles } from '../styles';
 import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
+import { subscribeToTest } from '../api';
 
 const createFormData = (photo, body) => {
     const data = [];
@@ -35,6 +36,7 @@ const createFormData = (photo, body) => {
 export class SetupScreen extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
           isLoading: true,
           isAdmin: false,
@@ -43,6 +45,10 @@ export class SetupScreen extends Component {
           SignInPassword: '',
           photo: null,
         };
+
+        subscribeToTest((err, data) => this.setState({ 
+            SignInError: data 
+        }));
       }
 
       componentDidMount() {

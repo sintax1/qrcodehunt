@@ -10,6 +10,8 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { styles } from '../styles';
 import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
+import { subscribeToTest } from '../api';
+
 
 class Login extends Component {
     render() {
@@ -34,16 +36,20 @@ class Hints extends Component {
 export class DefaultScreen extends Component {
     constructor(props) {
       super(props);
+
       this.state = {
         isLoading: true,
         token: '',
         SignInError: '',
         SignInUsername: ''
       };
+
+      subscribeToTest((err, data) => this.setState({ 
+        SignInError: data 
+    }));
     }
 
     SignIn() {
-        // Grab state
         const {
             SignInUsername,
         } = this.state;

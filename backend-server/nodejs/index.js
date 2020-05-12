@@ -55,4 +55,8 @@ io.on('connection', (socket) => {
   console.log('websocket connection');
 });
 
+io.on('test', (data) => {
+  console.log('test: ' + data);
+});
+
 

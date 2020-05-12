@@ -27,6 +27,7 @@
     "react-native-safe-area-context": "^1.0.0",
     "react-native-screens": "^2.7.0",
     "rn-fetch-blob": "^0.12.0",
+    "socket.io-client": "^2.3.0",
     "typescript": "^3.8.3"
   },
   "devDependencies": {
