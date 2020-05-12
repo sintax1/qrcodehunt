@@ -7,8 +7,6 @@ exports.signin = (req, res, next) => {
     password
   } = body;
 
-  console.log('password: ' + password);
-
   if (!password) {
     return res.send({
       success: false,
@@ -19,7 +17,6 @@ exports.signin = (req, res, next) => {
   AdminUser.find({
     password: password
   }, (err, users) => {
-    console.log(users);
 
     if (err) {
       console.log('err 2:', err);
@@ -29,10 +26,6 @@ exports.signin = (req, res, next) => {
       });
     }
     if (users.length != 1) {
-
-      newadmin = new AdminUser({password: password});
-      newadmin.save();
-
       return res.send({
         success: false,
         message: 'Error: Invalid'

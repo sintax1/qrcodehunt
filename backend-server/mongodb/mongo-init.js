@@ -11,7 +11,7 @@ db.createUser(
     }
 );
 
-db.AdminUser.insert(
+db.adminusers.insert(
     {
         password: 'supersecret' // supersecret
     }
