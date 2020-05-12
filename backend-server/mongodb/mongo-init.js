@@ -13,6 +13,6 @@ db.createUser(
 
 db.AdminUser.insert(
     {
-        password: '$2y$08$WnXCLJqwcYdVoanXFH3UReCPvLnBdD6q.idKuFp6rIh9vquLVFWCm' // supersecret
+        password: 'supersecret' // supersecret
     }
 );

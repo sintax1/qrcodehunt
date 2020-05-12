@@ -15,10 +15,8 @@ exports.signin = (req, res, next) => {
     });
   }
 
-  const passwordhash = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-
   AdminUser.find({
-    password: passwordhash
+    password: password
   }, (err, users) => {
     if (err) {
       console.log('err 2:', err);
