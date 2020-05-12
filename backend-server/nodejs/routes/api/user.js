@@ -20,12 +20,13 @@ exports.signin = (req, res, next) => {
       isDeleted: false
   }, (err, users) => {
     if (err) {
-      console.log('err 2:', err);
+      console.error('err:', err);
       return res.send({
         success: false,
         message: 'Error: server error'
       });
     } else if (users.length > 0) {
+      console.error('err: duplicate name');
       return res.send({
         success: false,
         message: 'Error: Choose a different name.'
@@ -37,12 +38,13 @@ exports.signin = (req, res, next) => {
   userSession.username = username;
   userSession.save((err, doc) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       return res.send({
         success: false,
         message: 'Error: server error'
       });
     }
+    console.log('success');
     return res.send({
       success: true,
       message: 'Valid sign in',
