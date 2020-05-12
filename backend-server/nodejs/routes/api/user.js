@@ -42,6 +42,8 @@ exports.signin = (req, res, next) => {
   console.log('Saving session:' + userSession);
   //userSession.username = username;
   userSession.save((err, doc) => {
+    console.log('save results err:' + err);
+    console.log('save results doc:' + doc);
     if (err) {
       console.error(err);
       return res.send({
