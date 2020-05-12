@@ -34,8 +34,7 @@ exports.signin = (req, res, next) => {
   });
 
   const userSession = new UserSession();
-  userSession.userId = user._id;
-  userSession.username = user.username;
+  userSession.username = username;
   userSession.save((err, doc) => {
     if (err) {
       console.log(err);
