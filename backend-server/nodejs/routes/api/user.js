@@ -15,8 +15,6 @@ exports.signin = (req, res, next) => {
     });
   }
 
-  console.log("Checking if user already signed in");
-
   UserSession.find({
       username: username,
       isDeleted: false

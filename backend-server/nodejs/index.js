@@ -1,9 +1,11 @@
-const Express = require('express')
+const app = require('express')();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const db = require('./db')
 
-const app = Express()
+//const app = Express()
 app.use(bodyParser.json())
 
 const Storage = multer.diskStorage({
@@ -45,6 +47,11 @@ app.use(function (err, req, res, next) {
     next(err)
 })
 
-app.listen(3000, '0.0.0.0', () => {
+// Websocket
+io.on('connection', (socket) => {
+  console.log('websocket connection');
+});
+
+server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
 })
