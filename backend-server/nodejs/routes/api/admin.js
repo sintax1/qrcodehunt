@@ -1,5 +1,6 @@
 AdminUser = require('../../models/User').AdminUser;
 UserSession = require('../../models/UserSession').UserSession;
+const bcrypt = require('bcrypt');
 
 exports.signin = (req, res, next) => {
   const { body } = req;
@@ -14,8 +15,10 @@ exports.signin = (req, res, next) => {
     });
   }
 
+  const passwordhash = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+
   AdminUser.find({
-    password: password
+    password: passwordhash
   }, (err, users) => {
     if (err) {
       console.log('err 2:', err);
