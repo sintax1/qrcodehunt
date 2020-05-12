@@ -19,6 +19,10 @@ const UserSessionSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false
+  },
+  huntId: {
+    type: String,
+    default: ''
   }
 });
 module.exports = mongoose.model('UserSession', UserSessionSchema);

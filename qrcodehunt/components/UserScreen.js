@@ -88,14 +88,14 @@ export class DefaultScreen extends Component {
         });
 
         getStorageValue('token')
-            .then(token => {
-                if (token) {
-                    console.log('token: ' + JSON.stringify(token));
-                    this.setState({
-                        token: token
-                    });
-                }
-            })
+        .then(token => {
+            if (token) {
+                console.log('token: ' + JSON.stringify(token));
+                this.setState({
+                    token: token
+                });
+            }
+        })
     }
 
     render() {
@@ -120,7 +120,7 @@ export class DefaultScreen extends Component {
                 <Text>{SignInError}</Text>
             ) : (null)
             }
-            <Text>Sign In</Text>
+            <Text>Enter your name</Text>
             <TextInput
                 style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                 onChangeText={(text) => { this.setState({ SignInUsername: text})}}

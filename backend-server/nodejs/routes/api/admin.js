@@ -47,7 +47,8 @@ exports.signin = (req, res, next) => {
       return res.send({
         success: true,
         message: 'Valid sign in',
-        token: doc._id
+        token: doc._id,
+        isAdmin: true
       });
     });
   });

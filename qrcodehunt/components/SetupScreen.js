@@ -31,10 +31,88 @@ const createFormData = (photo, body) => {
   };
   
 export class SetupScreen extends Component {
-    state = {
-      photo: null,
-    }
-    
+    constructor(props) {
+        super(props);
+        this.state = {
+          isLoading: true,
+          isAdmin: false,
+          token: '',
+          SignInError: '',
+          SignInPassword: '',
+          photo: null,
+        };
+      }
+
+      componentDidMount() {
+        this.setState({
+          isLoading: false
+        });
+
+        getStorageValue('token')
+        .then(token => {
+            if (token) {
+                console.log('token: ' + JSON.stringify(token));
+                this.setState({
+                    token: token
+                });
+            }
+        });
+
+        getStorageValue('isAdmin')
+        .then(isAdmin => {
+            if (isAdmin) {
+                console.log('isAdmin: ' + JSON.stringify(isAdmin));
+                this.setState({
+                    isAdmin: isAdmin
+                });
+            }
+        })
+      }
+
+      SignIn() {
+        const {
+            SignInPassword,
+        } = this.state;
+
+        this.setState({
+          isLoading: true,
+        });
+
+        // Post request to backend
+        fetch('http://192.168.7.253:3000/api/admin/signin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: SignInPassword
+            }),
+        })
+        .then(res => res.json())
+        .then(json => {
+            console.log('json', json);
+            if (json.success) {
+                setStorageValue('token', json.token);
+                setStorageValue('isAdmin', json.isAdmin);
+
+                this.setState({
+                    SignInError: json.message,
+                    isLoading: false,
+                    SignInPassword: '',
+                    token: json.token,
+                    isAdmin: json.isAdmin
+                });
+            } else {
+                this.setState({
+                    SignInError: json.message,
+                    isLoading: false,
+                    token: null,
+                    isAdmin: false
+                });
+            }
+        });
+      }
+
     handleUploadPhoto = () => {
       RNFetchBlob.fetch('POST', 'http://192.168.7.253:3000/api/upload', {
       //RNFetchBlob.fetch('POST', 'http://192.168.7.62:3000/api/upload', {
@@ -76,7 +154,43 @@ export class SetupScreen extends Component {
     };
   
     render() {
-      const { photo } = this.state
+      const {
+        isLoading,
+        token,
+        photo,
+        isAdmin,
+        SignInError,
+        SignInPassword
+      } = this.state;
+
+      // Loading Screen 
+      if (isLoading) {
+        return (<><Text>Loading...</Text></>);
+      }
+
+      // Login Screen
+      if (!token || !isAdmin) {
+        return (
+          <>
+            {
+            (SignInError) ? (
+                <Text>{SignInError}</Text>
+            ) : (null)
+            }
+            <Text>Enter your name</Text>
+            <TextInput
+                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                onChangeText={(text) => { this.setState({ SignInPassword: text})}}
+                value={SignInPassword}
+            />
+            <Button
+                title="Sign In"
+                onPress={() => this.SignIn()}
+            />
+         </>
+        );
+      }
+
       return (
         <View style={{
           flex: 1,
