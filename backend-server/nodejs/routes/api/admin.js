@@ -20,6 +20,8 @@ exports.signin = (req, res, next) => {
   AdminUser.find({
     password: password
   }, (err, users) => {
+    console.log(users);
+    
     if (err) {
       console.log('err 2:', err);
       return res.send({
