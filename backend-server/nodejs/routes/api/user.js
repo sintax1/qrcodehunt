@@ -38,10 +38,10 @@ exports.signin = (req, res, next) => {
 
   console.log("Creating user session");
 
-  var userSession = new UserSession({ username: username});
+  const userSession = new UserSession({ username: username});
   console.log('Saving session:' + userSession);
   //userSession.username = username;
-  userSession.save((err, doc) => {
+  x = userSession.save((err, doc) => {
     console.log('save results err:' + err);
     console.log('save results doc:' + doc);
     if (err) {
@@ -58,4 +58,6 @@ exports.signin = (req, res, next) => {
       token: doc._id
     });
   });
+
+  console.log('done: ' + x);
 };
