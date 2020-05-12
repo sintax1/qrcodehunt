@@ -22,13 +22,13 @@ exports.signin = (req, res, next) => {
       isDeleted: false
   }, (err, users) => {
     if (err) {
-      console.error('err:', err);
+      console.log('err:', err);
       return res.send({
         success: false,
         message: 'Error: server error'
       });
     } else if (users.length > 0) {
-      console.error('err: duplicate name');
+      console.log('err: duplicate name');
       return res.send({
         success: false,
         message: 'Error: Choose a different name.'
@@ -40,7 +40,7 @@ exports.signin = (req, res, next) => {
 
   userSession.save((err, doc) => {
     if (err) {
-      console.error(err);
+      console.log(err);
       return res.send({
         success: false,
         message: 'Error: server error'
