@@ -1,6 +1,6 @@
 const app = require('express')();
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+var io = require('./routes/sockets/sockets').listen(app)
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const db = require('./db')
@@ -49,18 +49,3 @@ app.use(function (err, req, res, next) {
     console.log('This is the invalid field ->', err.field)
     next(err)
 })
-
-// Websocket
-io.on('connection', (socket) => {
-  console.log('websocket connection');
-  socket.emit('test', 'test');
-
-  socket.on('test', (data) => {
-    console.log('test: ' + data);
-  });
-
-});
-
-
-
-
