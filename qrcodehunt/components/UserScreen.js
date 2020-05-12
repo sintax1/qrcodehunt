@@ -62,19 +62,19 @@ export class DefaultScreen extends Component {
             }),
         }).then(res => res.json())
             .then(json => {
-            console.log('json', json);
-            if (json.success) {
-                this.setState({
-                    SignInError: json.message,
-                    isLoading: false,
-                    SignInUsername: ''
-                });
-            } else {
-                this.setState({
-                    SignInError: json.message,
-                    isLoading: false,
-                });
-            }
+                console.log('json', json);
+                if (json.success) {
+                    this.setState({
+                        SignInError: json.message,
+                        isLoading: false,
+                        SignInUsername: ''
+                    });
+                } else {
+                    this.setState({
+                        SignInError: json.message,
+                        isLoading: false,
+                    });
+                }
         });
     }
     
@@ -104,7 +104,7 @@ export class DefaultScreen extends Component {
           <>
             {
             (SignInError) ? (
-                <p>{SignInError}</p>
+                <Text>{SignInError}</Text>
             ) : (null)
             }
             <Text>Sign In</Text>
