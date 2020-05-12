@@ -52,7 +52,7 @@ export class DefaultScreen extends Component {
         });
 
         // Post request to backend
-        fetch('http://192.168.7.254:3000/api/upload', {
+        fetch('http://192.168.7.253:3000/api/signin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

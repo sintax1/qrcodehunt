@@ -36,8 +36,8 @@ export class SetupScreen extends Component {
     }
     
     handleUploadPhoto = () => {
-      //RNFetchBlob.fetch('POST', 'http://192.168.7.253:3000/api/upload', {
-      RNFetchBlob.fetch('POST', 'http://192.168.7.62:3000/api/upload', {
+      RNFetchBlob.fetch('POST', 'http://192.168.7.253:3000/api/upload', {
+      //RNFetchBlob.fetch('POST', 'http://192.168.7.62:3000/api/upload', {
         'Content-Type': 'multipart/form-data',
         },
         createFormData(this.state.photo, { userId: '123' })
