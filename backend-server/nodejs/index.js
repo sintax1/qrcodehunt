@@ -1,7 +1,7 @@
 const Express = require('express')
 const multer = require('multer')
 const bodyParser = require('body-parser')
-//const db = require('./db')
+const db = require('./db')
 
 const app = Express()
 app.use(bodyParser.json())
