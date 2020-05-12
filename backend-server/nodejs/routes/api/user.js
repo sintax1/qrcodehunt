@@ -41,7 +41,7 @@ exports.signin = (req, res, next) => {
   const userSession = new UserSession({ username: username});
   console.log('Saving session:' + userSession);
   //userSession.username = username;
-  x = userSession.save((err, doc) => {
+  await userSession.save((err, doc) => {
     console.log('save results err:' + err);
     console.log('save results doc:' + doc);
     if (err) {
@@ -59,5 +59,4 @@ exports.signin = (req, res, next) => {
     });
   });
 
-  console.log('done: ' + x);
 };
