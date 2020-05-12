@@ -1,6 +1,6 @@
 UserSession = require('../../models/UserSession');
 
-exports.signing = (req, res, next) => {
+exports.signin = (req, res, next) => {
   const { body } = req;
   const {
     username
