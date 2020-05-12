@@ -53,6 +53,7 @@ app.use(function (err, req, res, next) {
 // Websocket
 io.on('connection', (socket) => {
   console.log('websocket connection');
+  io.emit('test', 'test');
 });
 
 io.on('test', (data) => {
