@@ -1,6 +1,6 @@
 const app = require('express')();
 const server = require('http').Server(app);
-var io = require('./routes/sockets/sockets').listen(app)
+var io = require('./routes/sockets/sockets').listen(server)
 const multer = require('multer')
 const bodyParser = require('body-parser')
 const db = require('./db')
