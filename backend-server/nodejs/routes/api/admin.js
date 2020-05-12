@@ -1,6 +1,5 @@
 AdminUser = require('../../models/User').AdminUser;
-UserSession = require('../../models/UserSession').UserSession;
-const bcrypt = require('bcrypt');
+UserSession = require('../../models/UserSession');
 
 exports.signin = (req, res, next) => {
   const { body } = req;
@@ -21,7 +20,7 @@ exports.signin = (req, res, next) => {
     password: password
   }, (err, users) => {
     console.log(users);
-    
+
     if (err) {
       console.log('err 2:', err);
       return res.send({
