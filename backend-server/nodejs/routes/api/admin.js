@@ -1,5 +1,5 @@
-AdminUser = require('../../models/User');
-UserSession = require('../../models/UserSession');
+AdminUser = require('../../models/User').AdminUser;
+UserSession = require('../../models/UserSession').UserSession;
 
 exports.signin = (req, res, next) => {
   const { body } = req;

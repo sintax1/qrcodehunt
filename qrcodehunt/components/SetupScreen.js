@@ -7,9 +7,11 @@ import {
     Text,
     TouchableOpacity,
     Image,
-    View
+    View,
+    TextInput
 } from 'react-native';
 import { styles } from '../styles';
+import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
 
 const createFormData = (photo, body) => {
     const data = [];
@@ -47,6 +49,8 @@ export class SetupScreen extends Component {
         this.setState({
           isLoading: false
         });
+
+        clearStorageValue('token');
 
         getStorageValue('token')
         .then(token => {
@@ -177,7 +181,7 @@ export class SetupScreen extends Component {
                 <Text>{SignInError}</Text>
             ) : (null)
             }
-            <Text>Enter your name</Text>
+            <Text>Admin Password:</Text>
             <TextInput
                 style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                 onChangeText={(text) => { this.setState({ SignInPassword: text})}}
