@@ -23,7 +23,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/mongodb/data/db
+      - mongodb_data:/data/db
       - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     restart: always
     environment:
