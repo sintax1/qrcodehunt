@@ -9,6 +9,12 @@ const getPhotoByName = async (filename) => {
 
     console.log('docs: ' + JSON.stringify(docs));
 
+    docs.forEach(doc => {
+        let chunks = await collectionChunks.find({files_id : docs._id}).sort({n: 1}).toArray();
+
+        console.log(JSON.stringify(chunks));
+    });
+
     return [];
     
     
