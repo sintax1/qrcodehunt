@@ -4,7 +4,16 @@ const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
 
 const getPhotoByName = async (filename) => {
-    return collection.find({filename: filename}).toArray(function(err, docs) {
+    let images = [];
+    let docs = await collection.find({filename: filename}).toArray();
+
+    console.log('docs: ' + JSON.stringify(docs));
+
+    return [];
+    
+    
+    /*
+    function(err, docs) {
         if(err){
             console.log('err: ' + err);
             return null;
@@ -43,6 +52,7 @@ const getPhotoByName = async (filename) => {
             });
         }
     });
+    */
 };
 
 exports.getPhoto = async (req, res) => {
