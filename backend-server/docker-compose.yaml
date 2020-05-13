@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ./images:/home/node/app/images
+      - ./nodejs/images:/home/node/app/images
     expose:
       - "3000"
     ports:
