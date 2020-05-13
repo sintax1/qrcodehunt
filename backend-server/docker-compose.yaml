@@ -6,6 +6,8 @@ services:
     working_dir: /home/node/app
     environment:
       - NODE_ENV=production
+    volumes:
+      - ./images:/home/node/app/images
     expose:
       - "3000"
     ports:
