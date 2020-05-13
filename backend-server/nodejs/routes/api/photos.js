@@ -47,7 +47,7 @@ const getPhotoByName = async (filename) => {
     return photos;
 };
 
-exports.getPhoto = (req, res) => {
+exports.getPhoto = async (req, res) => {
     console.log(Object.keys(req.body));
     //let photoId = req.body.id;
 
