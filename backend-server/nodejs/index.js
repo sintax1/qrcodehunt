@@ -18,7 +18,7 @@ server.listen(3000, '0.0.0.0', () => {
 app.use(bodyParser.json())
 
 // Shared Routes
-app.get('/api/photos', photos.getPhotoByName)
+app.get('/api/photos', photos.getPhoto)
 
 // User Routes
 app.post('/api/signin', user.signin);
