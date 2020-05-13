@@ -8,6 +8,7 @@ const user = require('./routes/api/user');
 const admin = require('./routes/api/admin');
 const GridFsStorage = require("multer-gridfs-storage");
 
+const photos = require('./routes/api/photos');
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
@@ -15,6 +16,9 @@ server.listen(3000, '0.0.0.0', () => {
 
 //const app = Express()
 app.use(bodyParser.json())
+
+// Shared Routes
+app.get('/api/photos', photos.getPhotos)
 
 // User Routes
 app.post('/api/signin', user.signin);
@@ -63,6 +67,7 @@ app.post('/api/upload', upload.array('photo', 3), (req, res) => {
     console.log('body', req.body);
     res.status(200).json({
       message: 'success!',
+      photos: req.files
     });
 });
 
