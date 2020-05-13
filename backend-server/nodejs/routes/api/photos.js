@@ -3,7 +3,7 @@ const db = require('../../db');
 const collection = db.collection('photos.files');    
 const collectionChunks = db.collection('photos.chunks');
 
-const getPhotoByName = (filename) => {
+const getPhotoByName = async (filename) => {
     let photos = [];
 
     await collection.find({filename: filename}).toArray(function(err, docs) {
@@ -51,7 +51,7 @@ exports.getPhoto = (req, res) => {
     console.log(Object.keys(req.body));
     //let photoId = req.body.id;
 
-    let photo = getPhotoByName("1589395305372-qrhunt-photo-filename.jpg");
+    let photo = await getPhotoByName("1589395305372-qrhunt-photo-filename.jpg");
 
     console.log('photo: ' + photo)
 
