@@ -35,6 +35,8 @@ const getPhotoByName = (filename) => {
                     
                     fileData.push(chunks[i].data.toString('base64'));          
                 }
+
+                console.log(JSON.stringify(fileData));
                     
                 //Display the chunks using the data URI format          
                 let finalFile = 'data:' + docs[0].contentType + ';base64,' 
