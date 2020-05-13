@@ -3,17 +3,20 @@ const db = require('../../db');
 const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
 
+const getChunks = async (doc) => {
+    return await collectionChunks.find({files_id : docs._id}).sort({n: 1}).toArray();
+};
+
 const getPhotoByName = async (filename) => {
     let images = [];
     let docs = await collection.find({filename: filename}).toArray();
 
     console.log('docs: ' + JSON.stringify(docs));
 
-    docs.forEach(doc => {
-        let chunks = await collectionChunks.find({files_id : docs._id}).sort({n: 1}).toArray();
-
+    for (const doc in docs) {
+        let chunks = collectionChunks.find({files_id : doc._id}).sort({n: 1}).toArray();
         console.log(JSON.stringify(chunks));
-    });
+    }
 
     return [];
     
