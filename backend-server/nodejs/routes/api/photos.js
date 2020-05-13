@@ -4,7 +4,7 @@ const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
 
 const getPhotoByName = (filename) => {
-    collection.find({filename: fileName}).toArray(function(err, docs) {
+    collection.find({filename: filename}).toArray(function(err, docs) {
         if(err){
             console.log('err: ' + err);
             return null;
