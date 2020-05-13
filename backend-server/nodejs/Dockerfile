@@ -13,6 +13,9 @@ RUN npm install
 # Copy the current directory contents into the container
 COPY . /home/node/app/
 
+# Allow node to write to images folder
+RUN sudo chmod -R 777 /home/node/app/images
+
 # Make port 3000 available to the world outside this container
 EXPOSE 3000
 
