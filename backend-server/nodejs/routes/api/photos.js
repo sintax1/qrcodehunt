@@ -40,6 +40,7 @@ const getPhotoByName = async (filename) => {
                     
                 //Display the chunks using the data URI format          
                 let finalFile = 'data:' + docs[0].contentType + ';base64,' + fileData.join('');
+                console.log('Adding a photo');
                 photos.push(finalFile);
             });      
         }
