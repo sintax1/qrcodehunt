@@ -14,6 +14,7 @@ const getPhotoByName = (filename) => {
             console.log('err: No photos found');    
             return null;    
         } else {
+            console.log('Getting Chunks');   
             //Retrieving the chunks from the db          
             collectionChunks.find({files_id : docs[0]._id})
             .sort({n: 1}).toArray(function(err, chunks) {
