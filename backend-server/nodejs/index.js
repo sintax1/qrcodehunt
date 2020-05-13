@@ -6,6 +6,8 @@ const bodyParser = require('body-parser')
 const db = require('./db')
 const user = require('./routes/api/user');
 const admin = require('./routes/api/admin');
+const GridFsStorage = require("multer-gridfs-storage");
+
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
@@ -25,7 +27,7 @@ app.get('/', (req, res) => {
   res.status(200).send('You can post to /api/upload.')
 })
 
-const Storage = multer.diskStorage({
+const DiskStorage = multer.diskStorage({
   destination(req, file, callback) {
     callback(null, './images')
   },
@@ -34,7 +36,26 @@ const Storage = multer.diskStorage({
   },
 })
 
-const upload = multer({ storage: Storage })
+const DBStorage = new GridFsStorage({
+  url: "mongodb://admin:password@mongodb:27017/qrhunt",
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req, file) => {
+    const match = ["image/png", "image/jpeg"];
+
+    if (match.indexOf(file.mimetype) === -1) {
+      const filename = `${Date.now()}-qrhunt-${file.originalname}`;
+      return filename;
+    }
+
+    return {
+      bucketName: "photos",
+      filename: `${Date.now()}-qrhunt-${file.originalname}`
+    };
+  }
+});
+
+//const upload = multer({ storage: DiskStorage })
+const upload = multer({ storage: DBStorage })
 
 app.post('/api/upload', upload.array('photo', 3), (req, res) => {
     //console.log(JSON.stringify(req));

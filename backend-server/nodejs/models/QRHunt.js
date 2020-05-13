@@ -30,4 +30,4 @@ const QRHuntSchema = new Schema(
     { timestamps: true },
 )
 
-module.exports = mongoose.model('qrhunts', QRHuntSchema)
+module.exports = mongoose.model('qrhunt', QRHuntSchema)

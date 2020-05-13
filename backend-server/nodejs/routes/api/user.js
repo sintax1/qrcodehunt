@@ -31,24 +31,24 @@ exports.signin = (req, res, next) => {
         success: false,
         message: 'Error: Choose a different name.'
       });
-    }
-  });
+    } else {
+      const userSession = new UserSession({ username: username});
 
-  const userSession = new UserSession({ username: username});
+      userSession.save((err, doc) => {
+        if (err) {
+          console.log(err);
+          return res.send({
+            success: false,
+            message: 'Error: server error'
+          });
+        }
 
-  userSession.save((err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.send({
-        success: false,
-        message: 'Error: server error'
+        return res.send({
+          success: true,
+          message: 'Valid sign in',
+          token: doc._id
+        });
       });
     }
-
-    return res.send({
-      success: true,
-      message: 'Valid sign in',
-      token: doc._id
-    });
   });
 };
