@@ -6,7 +6,7 @@ const collectionChunks = db.collection('photos.chunks');
 const getPhotoByName = (filename) => {
     let finalFile = null;
 
-    collection.find({filename: filename}).toArray(function(err, docs) {
+    return collection.find({filename: filename}).toArray(function(err, docs) {
         if(err){
             console.log('err: ' + err);
             return null;
@@ -39,12 +39,11 @@ const getPhotoByName = (filename) => {
                 }
                     
                 //Display the chunks using the data URI format          
-                finalFile = 'data:' + docs[0].contentType + ';base64,' + fileData.join('');          
+                let finalFile = 'data:' + docs[0].contentType + ';base64,' + fileData.join('');
+                return finalFile;
             });      
         }
     });
-
-    return finalFile;
 };
 
 exports.getPhoto = (req, res) => {
