@@ -14,7 +14,7 @@ const getPhotoByName = async (filename) => {
     console.log('docs: ' + JSON.stringify(docs));
 
     for (const doc in docs) {
-        console.log('doc: ' + JSON.stringify(doc));
+        console.log('doc: ' + JSON.stringify(docs[doc]));
         let chunks = await collectionChunks.find({files_id : doc._id}).sort({n: 1}).toArray();
         console.log('chunks: ' + JSON.stringify(chunks));
     }
