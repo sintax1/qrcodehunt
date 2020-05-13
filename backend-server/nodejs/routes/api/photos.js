@@ -6,7 +6,7 @@ const collectionChunks = db.collection('photos.chunks');
 const getPhotoByName = async (filename) => {
     let photos = [];
 
-    await collection.find({filename: filename}).toArray(function(err, docs) {
+    await collection.find({filename: filename}).toArray(async function(err, docs) {
         if(err){
             console.log('err: ' + err);
             return null;
