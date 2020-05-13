@@ -45,7 +45,7 @@ const getPhotoByName = (filename) => {
 };
 
 exports.getPhotoByName = (req, res) => {
-    console.log(Onject.keys(req.body));
+    console.log(Object.keys(req.body));
     //let photoId = req.body.id;
 
     let photo = this.getPhotoByName("1589395305372-qrhunt-photo-filename.jpg");
