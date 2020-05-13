@@ -1,51 +1,48 @@
 const db = require('../../db');
 
-const collection = db.collection('photos.files');    
+const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
 
 const getPhotoByName = async (filename) => {
-    let photos = [];
-
-    await collection.find({filename: filename}).toArray(async function(err, docs) {
+    return collection.find({filename: filename}).toArray(function(err, docs) {
         if(err){
             console.log('err: ' + err);
             return null;
         }
 
-        if(!docs || docs.length === 0){    
-            console.log('err: No photos found');    
-            return null;    
+        if(!docs || docs.length === 0){
+            console.log('err: No photos found');
+            return null;
         } else {
             console.log('Getting Chunks for: ' + JSON.stringify(docs[0]));
-            //Retrieving the chunks from the db          
-            await collectionChunks.find({files_id : docs[0]._id})
+            //Retrieving the chunks from the db
+            return collectionChunks.find({files_id : docs[0]._id})
             .sort({n: 1}).toArray(function(err, chunks) {
                 if(err) {
                     console.log('err: ' + err);
                     return null;
                 }
-                if(!chunks || chunks.length === 0) {            
-                    //No data found            
+                if(!chunks || chunks.length === 0) {
+                    //No data found
                     console.log('err: No data found');
                     return null;
                 }
-                
-                let fileData = [];          
-                for(let i=0; i<chunks.length; i++) {            
-                    //This is in Binary JSON or BSON format, which is stored               
-                    //in fileData array in base64 endocoded string format               
-                    
-                    fileData.push(chunks[i].data.toString('base64'));          
+
+                let fileData = [];
+                for(let i=0; i<chunks.length; i++) {
+                    //This is in Binary JSON or BSON format, which is stored
+                    //in fileData array in base64 endocoded string format
+
+                    fileData.push(chunks[i].data.toString('base64'));
                 }
-                    
-                //Display the chunks using the data URI format          
+
+                //Display the chunks using the data URI format
                 let finalFile = 'data:' + docs[0].contentType + ';base64,' + fileData.join('');
                 console.log('Adding a photo');
-                photos.push(finalFile);
-            });      
+                return finalFile;
+            });
         }
     });
-    return photos;
 };
 
 exports.getPhoto = async (req, res) => {
