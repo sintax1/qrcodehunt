@@ -8,6 +8,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { styles } from '../styles';
+import Dialog from "react-native-dialog";
 
 function Hunt({ id, title, selectHunt }) {
   return (
@@ -20,6 +21,28 @@ function Hunt({ id, title, selectHunt }) {
 }
 
 export class HuntList extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            dialogVisible: false,
+            selectedHunt: {}
+        };
+    };
+
+    showDialog = () => {
+        this.setState({ dialogVisible: true });
+    };
+
+    handleOK = () => {
+        this.setState({ dialogVisible: false });
+        alert('selectedHunt: ' + this.state.selectedHunt);
+    };
+
+    handleDialogText = (text) => {
+        this.setState({ selectedHunt: { name: text } });
+    };
+
     render() {
       return (
         <>
@@ -27,15 +50,14 @@ export class HuntList extends Component {
           <SafeAreaView style={styles.hintcontainer}>
             <FlatList
                 data={this.props.hunts}
-                renderItem={({ item }) => <Hunt id={item.id} title={item.title} selectHunt={() => this.props.selectHunt(item.id)} />}
+                renderItem={({ item }) => <Hunt
+                    id={item.id}
+                    title={item.title}
+                    selectHunt={() => this.props.selectHunt(item.id)} />}
                 keyExtractor={item => item.id}
                 numColumns={4}
             />
           </SafeAreaView>
-          <Button
-                title="New Hunt"
-                onPress={() => this.props.newHunt()}
-          />
         </>
       )
     }

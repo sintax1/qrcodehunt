@@ -11,6 +11,8 @@ import { RNCamera } from 'react-native-camera';
 import { styles } from '../styles';
 import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
 import { subscribeToTest } from '../api';
+import { HuntList } from '../components/HuntList';
+import { GlobalContext } from '../context';
 
 
 class Login extends Component {
@@ -33,20 +35,27 @@ class Hints extends Component {
     }
 }
   
-export class DefaultScreen extends Component {
+class DefaultScreen extends Component {
     constructor(props) {
       super(props);
 
       this.state = {
         isLoading: true,
-        token: '',
         SignInError: '',
-        SignInUsername: ''
+        SignInUsername: '',
+        selectedHunt: null,
+        hunts: []
       };
 
       subscribeToTest((err, data) => this.setState({ 
         SignInError: data 
-    }));
+      }));
+    }
+  
+    componentWillUnmount() {
+      // Save context in storage
+      console.log('Saving context: ' + JSON.stringify(this.context));
+      setStorageValue('context', JSON.stringify(this.context));
     }
 
     SignIn() {
@@ -76,9 +85,10 @@ export class DefaultScreen extends Component {
                     this.setState({
                         SignInError: json.message,
                         isLoading: false,
-                        SignInUsername: '',
-                        token: json.token
+                        SignInUsername: ''
                     });
+
+                    this.context.token = token;
                 } else {
                     this.setState({
                         SignInError: json.message,
@@ -89,28 +99,58 @@ export class DefaultScreen extends Component {
     }
 
     componentDidMount() {
+      console.log('DefaultScreen mounted')
+
         this.setState({
           isLoading: false
+        });
+
+        // Restore context from storage
+        getStorageValue('context')
+        .then(context => {
+          if (context) {
+            this.context = JSON.parse(context);
+          }
+          console.log("Restored context: " + JSON.stringify(this.context));
+        })
+
+        // https://reactnavigation.org/docs/function-after-focusing-screen/#triggering-an-action-with-a-focus-event-listener
+        const unsubscribe = this.props.navigation.addListener('focus', () => {
+          console.log('DefaultScreen focused')
+        });
+
+        this.props.navigation.setOptions({
+            headerRight: () => (
+              <Button
+                onPress={() => this.props.navigation.navigate('Setup')}
+                title="Setup"
+                color="#0068ad"
+              />
+            )
         });
 
         getStorageValue('token')
         .then(token => {
             if (token) {
-                console.log('token: ' + JSON.stringify(token));
-                this.setState({
-                    token: token
-                });
+                this.context.token = token;
             }
         })
+    }
+
+    selectHunt = (id) => {
+        this.setState({ selectedHunt: id });
     }
 
     render() {
       const {
         isLoading,
-        token,
         SignInError,
-        SignInUsername
+        SignInUsername,
+        selectedHunt,
+        hunts
       } = this.state;
+
+      console.log('defaultscreen context: ' + JSON.stringify(this.context));
 
       // Loading Screen 
       if (isLoading) {
@@ -118,7 +158,7 @@ export class DefaultScreen extends Component {
       }
 
       // Login Screen
-      if (!token) {
+      if (!this.context.token) {
         return (
           <>
             {
@@ -138,6 +178,15 @@ export class DefaultScreen extends Component {
             />
          </>
         );
+      }
+
+      if (selectedHunt == null) {
+        return (
+          <>
+            <HuntList selectHunt={this.selectHunt} hunts={this.context.hunts} />
+            <Text>{this.context.token}</Text>  
+          </>
+        )
       }
     
       return (
@@ -169,3 +218,6 @@ export class DefaultScreen extends Component {
       );
     }
 };
+DefaultScreen.contextType = GlobalContext;
+
+export default DefaultScreen;

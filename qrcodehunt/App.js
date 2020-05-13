@@ -8,26 +8,51 @@
 
 import 'react-native-gesture-handler';
 import React, { Component } from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import 'react-native-gesture-handler';
+
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-//import mongoose from 'mongoose';
-import { DefaultScreen } from './components/UserScreen';
-import { SetupScreen } from './components/SetupScreen';
+import DefaultScreen from './screens/DefaultScreen';
+import { SetupScreen } from './screens/SetupScreen';
+import { GlobalContext, defaultContext } from './context';
 
-const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
-class Screen extends Component {
+class App extends Component {  
   render() {
     return (
+      <GlobalContext.Provider value={defaultContext}>
       <NavigationContainer>
-        <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen name="Scavenger Hunt" component={DefaultScreen} />
-          <Drawer.Screen name="Setup" component={SetupScreen} />
-        </Drawer.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: '#347deb'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center'
+            },
+          }}    
+        >
+          <Stack.Screen
+            name="Hunt"
+            component={DefaultScreen}
+            options={{
+              headerTitle: 'QR Hunt',
+            }}
+          />
+          <Stack.Screen
+            name="Setup"
+            component={SetupScreen}
+            options={{ headerTitle: 'Setup' }}
+          />
+        </Stack.Navigator>
       </NavigationContainer>
+      </GlobalContext.Provider>
     );
   };
 }
 
-export default Screen;
+export default App;
