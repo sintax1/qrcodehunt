@@ -22,6 +22,7 @@ app.get('/api/photo/:id', hunt.getPhoto);
 
 app.post('/api/hunt/:name', hunt.addHunt);
 app.get('/api/hunt/:id', hunt.getHunt);
+app.put('/api/hunt/:id', hunt.updateHunt);
 
 // User Routes
 app.post('/api/signin', user.signin);
@@ -29,10 +30,12 @@ app.post('/api/signin', user.signin);
 // Admin Routes
 app.post('/api/admin/signin', admin.signin);
 
+/*
 app.get('/', (req, res) => {
   console.log('GET /')
   res.status(200).send('You can post to /api/upload.')
 })
+*/
 
 const DiskStorage = multer.diskStorage({
   destination(req, file, callback) {

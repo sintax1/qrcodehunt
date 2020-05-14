@@ -101,7 +101,6 @@ exports.getHunt = async (req, res) => {
           hunt: doc
         });
     });
-
 };
 
 // POST api/hunt/:id
@@ -123,6 +122,30 @@ exports.addHunt = async (req, res) => {
           success: true,
           message: 'success',
           id: doc._id
+        });
+    });
+};
+
+// PUT api/hunt/:id
+exports.updateHunt = async (req, res) => {
+    let id = req.params.id;
+    let json = req.body;
+
+    QRHunt.findOneAndUpdate({_id: id}, json, (err, doc) => {
+        console.log('doc: ' + JSON.stringify(doc));
+
+        if (err) {
+          console.log(err);
+          return res.send({
+            success: false,
+            message: err
+          });
+        }
+
+        return res.send({
+          success: true,
+          message: 'success',
+          hunt: doc
         });
     });
 };
