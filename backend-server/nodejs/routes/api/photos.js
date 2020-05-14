@@ -38,7 +38,7 @@ exports.getPhoto = async (req, res) => {
     console.log(Object.keys(req.body));
     //let photoId = req.body.id;
 
-    let photos = await getPhotoByName(["1589395305372"]);
+    let photos = await getPhotoByName(["5ebc3f69a910680014b42775"]);
 
     console.log('photo: ' + photos)
 
