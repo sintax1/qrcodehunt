@@ -22,6 +22,8 @@ app.get('/api/photo/:id', hunt.getPhoto);
 
 app.post('/api/hunt/:name', hunt.addHunt);
 
+app.get('/api/hunt/:name', hunt.getHunt);
+
 // User Routes
 app.post('/api/signin', user.signin);
 
