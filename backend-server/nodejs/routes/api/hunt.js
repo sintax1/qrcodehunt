@@ -4,9 +4,7 @@ var ObjectId = require('mongoose').Types.ObjectId;
 const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
 
-const getChunks = async (doc) => {
-    return await collectionChunks.find({files_id : docs._id}).sort({n: 1}).toArray();
-};
+const QRHunt = require('../../models/QRHunt');
 
 const getPhotosByIds = async (photoIDs) => {
     let objIDs = photoIDs.map(function(id) { return ObjectId(id); });
@@ -42,11 +40,9 @@ const getPhotoById = async (photoID) => {
     return null
 };
 
-// api/photo/:id
+// GET api/photo/:id
 exports.getPhoto = async (req, res) => {
     let photoId = req.params.id;
-
-    console.log('photoId: ' + photoId);
 
     let photo = await getPhotoById(photoId);
 
@@ -65,7 +61,7 @@ exports.getPhoto = async (req, res) => {
     }
 };
 
-// api/hint/:id
+// GET api/hint/:id
 exports.getHint = async (req, res) => {
     let photoIds = req.params.id;
 
@@ -84,7 +80,7 @@ exports.getHint = async (req, res) => {
     }
 };
 
-// api/hunt/:id
+// GET api/hunt/:id
 exports.getHunt = async (req, res) => {
     let photoIds = req.params.id;
 
@@ -101,4 +97,27 @@ exports.getHunt = async (req, res) => {
             message: 'No Photo'
         });
     }
+};
+
+// POST api/hunt/:id
+exports.addHunt = async (req, res) => {
+    let name = req.params.name;
+
+    const hunt = new QRHunt({name: name});
+
+    hunt.save((err, doc) => {
+        if (err) {
+          console.log(err);
+          return res.send({
+            success: false,
+            message: err
+          });
+        }
+
+        return res.send({
+          success: true,
+          message: 'success',
+          id: doc._id
+        });
+    });
 };
