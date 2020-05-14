@@ -129,9 +129,9 @@ exports.addHunt = async (req, res) => {
 // PUT api/hunt/:id
 exports.updateHunt = async (req, res) => {
     let id = req.params.id;
-    let json = req.body;
+    let updates = JSON.stringify(req.body);
 
-    QRHunt.findOneAndUpdate({_id: id}, json, (err, doc) => {
+    QRHunt.findOneAndUpdate({_id: id}, updates, (err, doc) => {
         console.log('doc: ' + JSON.stringify(doc));
 
         if (err) {
