@@ -11,20 +11,19 @@ const getPhotoByName = async (filename) => {
     let images = [];
     let docs = await collection.find({filename: filename}).toArray();
 
-    console.log('docs: ' + JSON.stringify(docs));
+    //console.log('docs: ' + JSON.stringify(docs));
 
     for (let i=0; i<docs.length; i++) {
-        console.log('doc: ' + JSON.stringify(docs[i]));
+        //console.log('doc: ' + JSON.stringify(docs[i]));
         let chunks = await collectionChunks.find({files_id : docs[i]._id}).sort({n: 1}).toArray();
-        console.log('chunks: ' + JSON.stringify(chunks));
+        //console.log('chunks: ' + JSON.stringify(chunks));
 
         let fileData = [];
         for(let j=0; j<chunks.length; j++) {
-            //This is in Binary JSON or BSON format, which is stored
-            //in fileData array in base64 endocoded string format
-    
             fileData.push(chunks[j].data.toString('base64'));
         }
+
+        console.log('fileData: ' + JSON.stringify(fileData));
 
         images.push({
             id: docs[i]._id,
