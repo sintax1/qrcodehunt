@@ -4,7 +4,7 @@ var ObjectId = require('mongoose').Types.ObjectId;
 const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
 
-const { Hunt } = require('../../models/QRHunt');
+const { Hint } = require('../../models/QRHunt');
 
 const getPhotosByIds = async (photoIDs) => {
     let objIDs = photoIDs.map(function(id) { return ObjectId(id); });
@@ -78,11 +78,11 @@ exports.getHint = async (req, res) => {
     }
 };
 
-// GET api/hunt/:id
-exports.getHunt = async (req, res) => {
+// GET api/hint/:id
+exports.getHint = async (req, res) => {
     let id = req.params.id;
 
-    Hunt.findById(id, (err, doc) => {
+    Hint.findById(id, (err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -94,18 +94,19 @@ exports.getHunt = async (req, res) => {
         return res.send({
           success: true,
           message: 'success',
-          hunt: doc
+          hint: doc
         });
     });
 };
 
-// POST api/hunt
-exports.addHunt = async (req, res) => {
+// POST api/hint
+// TODO: Add photo upload/association
+exports.addHint = async (req, res) => {
     let name = req.body.name;
 
-    const hunt = new Hunt({name: name});
+    const hint = new Hint();
 
-    hunt.save((err, doc) => {
+    hint.save((err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -122,12 +123,12 @@ exports.addHunt = async (req, res) => {
     });
 };
 
-// PUT api/hunt/:id
-exports.updateHunt = async (req, res) => {
+// PUT api/hint/:id
+exports.updateHint = async (req, res) => {
     let id = req.params.id;
     let updates = req.body;
 
-    Hunt.findOneAndUpdate({_id: id}, updates, { new: true }, (err, doc) => {
+    Hint.findOneAndUpdate({_id: id}, updates, { new: true }, (err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -139,16 +140,16 @@ exports.updateHunt = async (req, res) => {
         return res.send({
           success: true,
           message: 'success',
-          hunt: doc
+          hint: doc
         });
     });
 };
 
-// DELETE api/hunt/:id
-exports.deleteHunt = async (req, res) => {
+// DELETE api/hint/:id
+exports.deleteHint = async (req, res) => {
     let id = req.params.id;
 
-    Hunt.deleteOne({_id: id}, (err) => {
+    Hint.deleteOne({_id: id}, (err) => {
         if (err) {
           console.log(err);
           return res.send({

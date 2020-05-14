@@ -9,6 +9,8 @@ const admin = require('./routes/api/admin');
 const GridFsStorage = require("multer-gridfs-storage");
 
 const hunt = require('./routes/api/hunt');
+const step = require('./routes/api/step');
+const hint = require('./routes/api/hint');
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
@@ -20,32 +22,29 @@ app.use(bodyParser.json())
 // Shared Routes
 app.get('/api/photo/:id', hunt.getPhoto);
 
-app.post('/api/hunt/:name', hunt.addHunt);
+// Hunt
+app.post('/api/hunt', hunt.addHunt);
 app.get('/api/hunt/:id', hunt.getHunt);
 app.put('/api/hunt/:id', hunt.updateHunt);
 app.delete('/api/hunt/:id', hunt.deleteHunt);
+
+// Step
+app.post('/api/step', step.addStep);
+app.get('/api/step/:id', step.getStep);
+app.put('/api/step/:id', step.updateStep);
+app.delete('/api/step/:id', step.deleteStep);
+
+// Hint
+app.post('/api/hint', hint.addHint);
+app.get('/api/hint/:id', hint.getHint);
+app.put('/api/hint/:id', hint.updateHint);
+app.delete('/api/hint/:id', hint.deleteHint);
 
 // User Routes
 app.post('/api/signin', user.signin);
 
 // Admin Routes
 app.post('/api/admin/signin', admin.signin);
-
-/*
-app.get('/', (req, res) => {
-  console.log('GET /')
-  res.status(200).send('You can post to /api/upload.')
-})
-*/
-
-const DiskStorage = multer.diskStorage({
-  destination(req, file, callback) {
-    callback(null, './images')
-  },
-  filename(req, file, callback) {
-    callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`)
-  },
-})
 
 const DBStorage = new GridFsStorage({
   url: "mongodb://admin:password@mongodb:27017/qrhunt",
@@ -65,7 +64,6 @@ const DBStorage = new GridFsStorage({
   }
 });
 
-//const upload = multer({ storage: DiskStorage })
 const upload = multer({ storage: DBStorage })
 
 app.post('/api/upload', upload.array('photo', 3), (req, res) => {
