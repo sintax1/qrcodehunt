@@ -82,21 +82,24 @@ exports.getHint = async (req, res) => {
 
 // GET api/hunt/:id
 exports.getHunt = async (req, res) => {
-    let photoIds = req.params.id;
+    let id = req.params.id;
 
-    let photos = await getPhotosById(photoIds);
-
-    if (photos) {
-        return res.send({
-            success: true,
-            photos: photos
-        });
-    } else {
-        return res.send({
+    QRHunt.findById(id, (err, doc) => {
+        if (err) {
+          console.log(err);
+          return res.send({
             success: false,
-            message: 'No Photo'
+            message: err
+          });
+        }
+
+        return res.send({
+          success: true,
+          message: 'success',
+          hunt: doc
         });
-    }
+    });
+
 };
 
 // POST api/hunt/:id
