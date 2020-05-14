@@ -133,7 +133,7 @@ exports.updateHunt = async (req, res) => {
 
     console.log(updates);
 
-    QRHunt.findOneAndUpdate({_id: id}, {updates}, { new: true }, (err, doc) => {
+    QRHunt.findOneAndUpdate({_id: id}, updates, { new: true }, (err, doc) => {
         console.log('doc: ' + JSON.stringify(doc));
 
         if (err) {
