@@ -35,7 +35,7 @@ const getPhotosByIds = async (photoIDs) => {
 };
 
 const getPhotoById = async (photoID) => {
-    let photos = getPhotosByIds([photoID]);
+    let photos = await getPhotosByIds([photoID]);
     if (photos) {
         return photos[0];
     }
@@ -45,6 +45,8 @@ const getPhotoById = async (photoID) => {
 // api/photo/:id
 exports.getPhoto = async (req, res) => {
     let photoId = req.params.id;
+
+    console.log('photoId: ' + photoId);
 
     let photo = await getPhotoById(photoId);
 

@@ -8,7 +8,7 @@ const user = require('./routes/api/user');
 const admin = require('./routes/api/admin');
 const GridFsStorage = require("multer-gridfs-storage");
 
-const photos = require('./routes/api/hunt');
+const hunt = require('./routes/api/hunt');
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
@@ -18,7 +18,7 @@ server.listen(3000, '0.0.0.0', () => {
 app.use(bodyParser.json())
 
 // Shared Routes
-app.get('/api/photo/:id', photos.getPhoto)
+app.get('/api/photo/:id', hunt.getPhoto)
 
 // User Routes
 app.post('/api/signin', user.signin);
