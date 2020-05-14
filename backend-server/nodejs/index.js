@@ -23,6 +23,7 @@ app.get('/api/photo/:id', hunt.getPhoto);
 app.post('/api/hunt/:name', hunt.addHunt);
 app.get('/api/hunt/:id', hunt.getHunt);
 app.put('/api/hunt/:id', hunt.updateHunt);
+app.delete('/api/hunt/:id', hunt.deleteHunt);
 
 // User Routes
 app.post('/api/signin', user.signin);

@@ -46,8 +46,6 @@ exports.getPhoto = async (req, res) => {
 
     let photo = await getPhotoById(photoId);
 
-    console.log('photo: ' + photo)
-
     if (photo) {
         return res.send({
             success: true,
@@ -85,8 +83,6 @@ exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
     QRHunt.findById(id, (err, doc) => {
-        console.log('doc: ' + JSON.stringify(doc));
-
         if (err) {
           console.log(err);
           return res.send({
@@ -131,11 +127,7 @@ exports.updateHunt = async (req, res) => {
     let id = req.params.id;
     let updates = req.body;
 
-    console.log(updates);
-
     QRHunt.findOneAndUpdate({_id: id}, updates, { new: true }, (err, doc) => {
-        console.log('doc: ' + JSON.stringify(doc));
-
         if (err) {
           console.log(err);
           return res.send({
@@ -148,6 +140,26 @@ exports.updateHunt = async (req, res) => {
           success: true,
           message: 'success',
           hunt: doc
+        });
+    });
+};
+
+// DELETE api/hunt/:id
+exports.deleteHunt = async (req, res) => {
+    let id = req.params.id;
+
+    QRHunt.deleteOne({_id: id}, (err) => {
+        if (err) {
+          console.log(err);
+          return res.send({
+            success: false,
+            message: err
+          });
+        }
+
+        return res.send({
+          success: true,
+          message: 'success',
         });
     });
 };
