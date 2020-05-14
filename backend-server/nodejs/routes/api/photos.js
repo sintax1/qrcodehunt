@@ -35,7 +35,7 @@ const getPhotoByName = async (photoIDs) => {
 };
 
 exports.getPhoto = async (req, res) => {
-    console.log(Object.keys(req.body));
+    console.log(Object.keys(req.params.id));
     //let photoId = req.body.id;
 
     let photos = await getPhotoByName(["5ebc3f69a910680014b42775"]);
