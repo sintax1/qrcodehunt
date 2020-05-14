@@ -8,7 +8,7 @@ const user = require('./routes/api/user');
 const admin = require('./routes/api/admin');
 const GridFsStorage = require("multer-gridfs-storage");
 
-const photos = require('./routes/api/photos');
+const photos = require('./routes/api/hunt');
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
