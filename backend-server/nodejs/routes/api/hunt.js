@@ -84,7 +84,9 @@ exports.getHint = async (req, res) => {
 exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
-    QRHunt.findOne({_id: id}, (err, doc) => {
+    QRHunt.findById(id, (err, doc) => {
+        console.log('doc: ' + JSON.stringify(doc));
+
         if (err) {
           console.log(err);
           return res.send({
