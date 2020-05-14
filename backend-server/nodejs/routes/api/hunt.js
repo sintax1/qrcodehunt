@@ -8,9 +8,9 @@ const getChunks = async (doc) => {
     return await collectionChunks.find({files_id : docs._id}).sort({n: 1}).toArray();
 };
 
-const getPhotoByName = async (photoIDs) => {
+const getPhotosByIds = async (photoIDs) => {
     let objIDs = photoIDs.map(function(id) { return ObjectId(id); });
-    let images = [];
+    let photos = [];
     let docs = await collection.find({_id: {$in: objIDs }}).toArray();
 
     //console.log('docs: ' + JSON.stringify(docs));
@@ -25,22 +25,68 @@ const getPhotoByName = async (photoIDs) => {
             fileData.push(chunks[j].data.toString('base64'));
         }
 
-        images.push({
+        photos.push({
             id: docs[i]._id,
             photo: 'data:' + docs[i].contentType + ';base64,' + fileData.join('')
         });
     }
 
-    return images;
+    return photos;
 };
 
+const getPhotoById = async (photoID) => {
+    let photos = getPhotosByIds([photoID]);
+    if (photos) {
+        return photos[0];
+    }
+    return null
+};
+
+// api/photo/:id
 exports.getPhoto = async (req, res) => {
-    console.log(Object.keys(req.params.id));
-    //let photoId = req.body.id;
+    let photoId = req.params.id;
 
-    let photos = await getPhotoByName(["5ebc3f69a910680014b42775"]);
+    let photo = await getPhotoById(photoId);
 
-    console.log('photo: ' + photos)
+    console.log('photo: ' + photo)
+
+    if (photo) {
+        return res.send({
+            success: true,
+            photo: photo
+        });
+    } else {
+        return res.send({
+            success: false,
+            message: 'No Photo'
+        });
+    }
+};
+
+// api/hint/:id
+exports.getHint = async (req, res) => {
+    let photoIds = req.params.id;
+
+    let photos = await getPhotosById(photoIds);
+
+    if (photos) {
+        return res.send({
+            success: true,
+            photos: photos
+        });
+    } else {
+        return res.send({
+            success: false,
+            message: 'No Photo'
+        });
+    }
+};
+
+// api/hunt/:id
+exports.getHunt = async (req, res) => {
+    let photoIds = req.params.id;
+
+    let photos = await getPhotosById(photoIds);
 
     if (photos) {
         return res.send({
