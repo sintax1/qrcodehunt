@@ -5,7 +5,7 @@ const { getPhotoById } = require('./photo')
 exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
-    Hunt.findById(id, (err, doc) => {
+    Hunt.findById(id, async (err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
