@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const HintSchema = new Schema({
     text: { type: String },
-    photoID: { type: Schema.Types.ObjectId }
+    photoID: { type: Schema.Types.ObjectId, ref: "photos.files" }
 });
 
 const StepSchema = new Schema({
