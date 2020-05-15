@@ -5,9 +5,7 @@ const { getPhoto } = require('./photo')
 exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
-    Hunt.findById(id)
-    .populate('steps.hints.photo')
-    .exec((err, doc) => {
+    Hunt.findById(id, (err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -15,6 +13,8 @@ exports.getHunt = async (req, res) => {
             message: err
           });
         }
+
+        await doc.populate('steps.hints.photo').execPopulate();
 
         console.log(JSON.stringify(doc));
 
