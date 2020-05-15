@@ -27,7 +27,7 @@ exports.getHunt = async (req, res) => {
               console.log('hint: ' + JSON.stringify(hint));
               if (doc.steps[si].hints[hi].photo) {
                 console.log('has photo: ' + hint[hi].photo)
-                doc.steps[si].hints[hi]['photoData'] = await getPhoto(hint.photo);
+                doc.steps[si].hints[hi]['photo'] = await getPhoto(hint.photo);
               }
             })
           });
