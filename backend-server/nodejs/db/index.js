@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const options = {
     useNewUrlParser: true,
     user: 'admin',
-    pass: 'password'
+    pass: 'password',
+    useFindAndModify: false // https://mongoosejs.com/docs/deprecations.html#findandmodify
 }
 
 mongoose
