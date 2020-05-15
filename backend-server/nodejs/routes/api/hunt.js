@@ -1,5 +1,5 @@
 const { Hunt } = require('../../models/QRHunt');
-const { getPhotoById } = require('./photo')
+const { getPhoto } = require('./photo')
 
 // GET api/hunt/:id
 exports.getHunt = async (req, res) => {
@@ -23,7 +23,7 @@ exports.getHunt = async (req, res) => {
         const populatePhotos = async () => {
           asyncForEach(doc.steps, async (step, si, steps) => {
             await asyncForEach(step.hints, async (hint, hi, hints) => {
-              doc.steps[si].hints[hi]['photo'] = await getPhotoById(hint.photo);
+              doc.steps[si].hints[hi]['photo'] = await getPhoto(hint.photo);
             })
           });
         }

@@ -57,7 +57,7 @@ const getPhotoById = async (photoID) => {
     return null
 };
 
-exports.getPhotoById = this.getPhotoById;
+exports.getPhoto = getPhotoById;
 exports.upload = multer({ storage: DBStorage });
 
 // GET api/photo/:id
