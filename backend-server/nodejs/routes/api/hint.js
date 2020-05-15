@@ -1,22 +1,12 @@
 const { Hint } = require('../../models/QRHunt');
 const { Hunt } = require('../../models/QRHunt');
+const { getPhotoById } = require('./photo')
 
 // GET api/hint/:id
 exports.getHint = async (req, res) => {
     let id = req.params.id;
 
-    Hint.findById(id)
-      .populate({
-        path: 'steps',
-        populate: {
-          path: 'hints',
-          model: 'Hint',
-          populate: {
-            path: 'photo'
-          }
-        }
-      })
-      .exec((err, doc) => {
+    Hint.findById(id, (err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -24,6 +14,12 @@ exports.getHint = async (req, res) => {
             message: err
           });
         }
+
+        doc.steps.forEach(step => {
+          step.hints.forEach(hint => {
+            hint['photo'] = await(getPhotoById);;
+          })
+        });
 
         return res.send({
           success: true,
@@ -67,7 +63,7 @@ exports.addHint = async (req, res) => {
   const filter = { _id: hunt.id };
   const query = {};
   query["steps." + (step-1) + ".hints." + (hint-1) + ".text"] = hintText;
-  query["steps." + (step-1) + ".hints." + (hint-1) + ".photo"] = req.file._id;
+  query["steps." + (step-1) + ".hints." + (hint-1) + ".photo"] = req.file.id;
   const update = { $set: query };
   const options = {new: true};
 
