@@ -3,6 +3,7 @@ const GridFsStorage = require("multer-gridfs-storage");
 const ObjectId = require('mongoose').Types.ObjectId;
 const collection = db.collection('photos.files');
 const collectionChunks = db.collection('photos.chunks');
+const multer = require('multer');
 
 const DBStorage = new GridFsStorage({
     url: "mongodb://admin:password@mongodb:27017/qrhunt",
