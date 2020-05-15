@@ -5,7 +5,12 @@ const { Hunt } = require('../../models/QRHunt');
 exports.getHint = async (req, res) => {
     let id = req.params.id;
 
-    Hint.findById(id, (err, doc) => {
+    Hint.findById(id)
+      .populate({
+        path: 'steps.hints.photo',
+        model: 'photos.files'
+      })
+      .exec((err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -13,12 +18,6 @@ exports.getHint = async (req, res) => {
             message: err
           });
         }
-
-        doc.steps.forEach(step => {
-          step.hints.forEach(hint => {
-            hint.populate('photo');
-          })
-        })
 
         return res.send({
           success: true,
