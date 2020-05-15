@@ -22,7 +22,9 @@ exports.getHunt = async (req, res) => {
 
         const populatePhotos = async () => {
           await asyncForEach(doc.steps, async (step, si, steps) => {
+            console.log('step: ' + JSON.stringify(step));
             await asyncForEach(step.hints, async (hint, hi, hints) => {
+              console.log('hint: ' + JSON.stringify(hint));
               if (hint.photo) {
                 console.log('has photo: ' + hint.photo)
                 doc.steps[si].hints[hi]['photo'] = await getPhoto(hint.photo);
