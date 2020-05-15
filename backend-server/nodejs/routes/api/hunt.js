@@ -5,13 +5,9 @@ const { getPhoto } = require('./photo')
 exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
-    async function asyncForEach(array, callback) {
-      for (let index = 0; index < array.length; index++) {
-        await callback(array[index], index, array);
-      }
-    }
-
-    Hunt.findById(id, (err, doc) => {
+    Hunt.findById(id)
+    .populate('steps.hints.photo')
+    .exec((err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -20,22 +16,7 @@ exports.getHunt = async (req, res) => {
           });
         }
 
-        const populatePhotos = async () => {
-          await asyncForEach(doc.steps, async (step, si) => {
-            console.log('step: ' + JSON.stringify(step));
-            await asyncForEach(step.hints, async (hint, hi) => {
-              console.log('hint: ' + JSON.stringify(hint));
-              if (doc.steps[si].hints[hi].photo) {
-                console.log('has photo: ' + hint[hi].photo)
-                let photoData = await getPhoto(hint.photo);
-                console.log(JSON.stringify(photoData));
-                doc.steps[si].hints[hi]['photo'] = photoData;
-              }
-            })
-          });
-        }
-
-        populatePhotos();
+        console.log(JSON.stringify(doc));
 
         return res.send({
           success: true,
