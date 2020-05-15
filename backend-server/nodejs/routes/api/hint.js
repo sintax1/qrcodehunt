@@ -10,9 +10,9 @@ exports.getHint = async (req, res) => {
         path: 'steps',
         populate: {
           path: 'hints',
+          model: 'Hint',
           populate: {
-            path: 'photo',
-            model: 'photos.files'
+            path: 'photo'
           }
         }
       })
