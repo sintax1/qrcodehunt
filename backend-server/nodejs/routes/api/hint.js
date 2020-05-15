@@ -1,4 +1,5 @@
 const { Hint } = require('../../models/QRHunt');
+const { Hunt } = require('../../models/QRHunt');
 
 // GET api/hint/:id
 exports.getHint = async (req, res) => {
@@ -45,10 +46,34 @@ exports.addHint = async (req, res) => {
   console.log('file', req.file);
   console.log('body', req.body);
 
-  res.status(200).json({
-    message: 'success!',
-    photo: req.file
-  });
+  const {
+    hunt,
+    step,
+    hint,
+    hintText
+  } = JSON.parse(req.body.data);
+
+  const query = "steps." + (step-1) + ".hints." + (hint-1) + ".text";
+
+  Hunt.findOneAndUpdate(
+    { _id: hunt.id },
+    { $set: { query: hintText } },
+  )
+  .exec((err, doc) => {
+    if (err) {
+      console.log(err);
+      return res.send({
+        success: false,
+        message: err
+      });
+    }
+
+    console.log('addHint success!');
+    return res.status(200).json({
+      message: 'success!',
+      photo: req.file
+    });
+  })
 };
 
 // PUT api/hint/:id

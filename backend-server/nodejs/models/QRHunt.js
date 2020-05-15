@@ -7,20 +7,16 @@ const HintSchema = new Schema({
 });
 
 const StepSchema = new Schema({
-    id: { type: Number, required: true },
-    easyHint: { type: Schema.Types.ObjectId, ref: 'Hint' },
-    easyTimer: { type: Number, default: 300 }, // minutes
-    mediumHint: { type: Schema.Types.ObjectId, ref: 'Hint' },
-    mediumTimer: { type: Number, default: 300 }, // minutes
-    hardHint: { type: Schema.Types.ObjectId, ref: 'Hint' },
-    hardTimer: { type: Number, default: 300 } // minutes
+    id: { type: Number, unique: true, required: true },
+    hints: [HintSchema]
 });
 
 const QRHuntSchema = new Schema(
     {
-        name: { type: String, required: true },
+        name: { type: String, unique: true, required: true },
         isRandom: { type: Boolean, default: false},
-        steps: [{ type: Schema.Types.ObjectId, ref: 'Step' }],
+        timer: { type: Number, default: 300 },
+        steps: [StepSchema],
         hintOrder: [{ type: String}],
         history: [{
             player: { type: String },
