@@ -1,6 +1,5 @@
 const { Hint } = require('../../models/QRHunt');
 
-
 // GET api/hint/:id
 exports.getHint = async (req, res) => {
     let id = req.params.id;

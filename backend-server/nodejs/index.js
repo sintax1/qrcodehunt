@@ -6,7 +6,6 @@ const bodyParser = require('body-parser')
 const db = require('./db')
 const user = require('./routes/api/user');
 const admin = require('./routes/api/admin');
-const GridFsStorage = require("multer-gridfs-storage");
 
 const hunt = require('./routes/api/hunt');
 const step = require('./routes/api/step');

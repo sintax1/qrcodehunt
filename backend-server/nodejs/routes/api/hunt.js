@@ -1,9 +1,3 @@
-const db = require('../../db');
-var ObjectId = require('mongoose').Types.ObjectId;
-
-const collection = db.collection('photos.files');
-const collectionChunks = db.collection('photos.chunks');
-
 const { Hunt } = require('../../models/QRHunt');
 
 // GET api/hint/:id
