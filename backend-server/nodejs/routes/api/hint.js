@@ -1,6 +1,5 @@
 const { Hint } = require('../../models/QRHunt');
 const { Hunt } = require('../../models/QRHunt');
-const { getPhotoById } = require('./photo')
 
 // GET api/hint/:id
 exports.getHint = async (req, res) => {
@@ -14,12 +13,6 @@ exports.getHint = async (req, res) => {
             message: err
           });
         }
-
-        doc.steps.forEach((step, si, steps) => {
-          step.hints.forEach((hint, hi, hints) => {
-            doc.steps[si].hints[hi]['photo'] = await(getPhotoById);
-          })
-        });
 
         return res.send({
           success: true,

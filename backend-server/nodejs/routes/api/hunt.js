@@ -5,7 +5,13 @@ const { getPhotoById } = require('./photo')
 exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
-    Hunt.findById(id, async (err, doc) => {
+    async function asyncForEach(array, callback) {
+      for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array);
+      }
+    }
+
+    Hunt.findById(id, (err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
@@ -14,11 +20,15 @@ exports.getHunt = async (req, res) => {
           });
         }
 
-        doc.steps.forEach((step, si, steps) => {
-          step.hints.forEach((hint, hi, hints) => {
-            doc.steps[si].hints[hi]['photo'] = await getPhotoById(hint.photo);
-          })
-        });
+        const populatePhotos = async () => {
+          asyncForEach(doc.steps, async (step, si, steps) => {
+            await asyncForEach(step.hints, async (hint, hi, hints) => {
+              doc.steps[si].hints[hi]['photo'] = await getPhotoById(hint.photo);
+            })
+          });
+        }
+
+        populatePhotos();
 
         return res.send({
           success: true,
