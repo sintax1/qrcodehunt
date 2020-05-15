@@ -7,8 +7,14 @@ exports.getHint = async (req, res) => {
 
     Hint.findById(id)
       .populate({
-        path: 'steps.hints.photo',
-        model: 'photos.files'
+        path: 'steps',
+        populate: {
+          path: 'hints',
+          populate: {
+            path: 'photo',
+            model: 'photos.files'
+          }
+        }
       })
       .exec((err, doc) => {
         if (err) {
