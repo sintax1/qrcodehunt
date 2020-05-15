@@ -44,6 +44,11 @@ exports.getAllHints = async (req, res) => {
 exports.addHint = async (req, res) => {
   console.log('file', req.file);
   console.log('body', req.body);
+
+  res.status(200).json({
+    message: 'success!',
+    photo: req.file
+  });
 };
 
 // PUT api/hint/:id

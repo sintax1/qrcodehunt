@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { EditHint } from '../components/EditHint';
 import { GlobalContext } from '../context';
-import { handleUploadPhoto } from '../components/Photo';
+import { handleSaveHint } from '../components/EditHint';
 import {
   Text,
   View,
@@ -34,7 +34,7 @@ Take a picture of the first hint to get started.`,
       });
     }
 
-    uploadPhoto() {
+    saveHint() {
       const {
         hunt,
         step,
@@ -42,7 +42,11 @@ Take a picture of the first hint to get started.`,
         hintText
       } = this.state;
 
-      handleUploadPhoto(this.state.photo, {
+      this.setState({
+        message: 'Saving Hint. Please wait...'
+      });
+
+      handleSaveHint(this.state.photo, {
         hunt,
         step,
         hint,
@@ -67,7 +71,7 @@ Take a picture of the first hint to get started.`,
         }
       })
       .catch((error) => {
-        console.log('promise error: ' + error);
+        console.log('promise error: ' + JSON.stringify(error));
         this.setState({
           message: 'Something went wrong. Try again.'
         });
@@ -75,7 +79,7 @@ Take a picture of the first hint to get started.`,
     }
 
     savePictureCallback = (data) => {
-     this.setState(data, this.uploadPhoto);
+     this.setState(data, this.saveHint);
     }
 
     handleDone = () => {

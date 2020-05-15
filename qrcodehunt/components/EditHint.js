@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ImagePicker from 'react-native-image-picker';
-
 import {
     Text,
     TouchableOpacity,
@@ -11,7 +10,54 @@ import {
     TextInput
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import RNFetchBlob from 'rn-fetch-blob';
 
+const createFormData = (photo, data) => {
+    const formdata = [];
+  
+    const b64data = RNFetchBlob.wrap(photo.uri);
+  
+    formdata.push({
+      name : 'photo',
+      filename : 'hint.jpg',
+      type:'image/jpeg',
+      data: b64data
+    });
+  
+    Object.keys(data).forEach(key => {
+        formdata.push({name: key, data: data[key]});
+    });
+  
+    return formdata;
+};
+
+exports.handleSaveHint = (photo, data) => {
+    return new Promise((resolve, reject) => {
+        console.log('handleSaveHint: ' + JSON.stringify(photo));
+
+        RNFetchBlob.fetch('POST', 'http://192.168.7.253:3000/api/hint', {
+        'Content-Type': 'multipart/form-data',
+        },
+        createFormData(photo, {
+            data: JSON.stringify(data)
+        })
+        )
+        .then(response => response.json())
+        .then(response => {
+            resolve({
+                success: true,
+                response: response
+            });
+        })
+        .catch(error => {
+            console.log('upload error', error);
+            reject({
+                success: false,
+                error: error
+            });
+        });
+    });
+};
 
 export class EditHint extends Component {
     constructor(props) {
