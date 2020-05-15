@@ -58,6 +58,22 @@ const getPhotoById = async (photoID) => {
 };
 
 exports.getPhoto = getPhotoById;
+exports.getPhotos = async (req, res) => {
+    let IDs = req.body;
+    let photos = await getPhotosByIds(IDs);
+
+    if (photos) {
+        return res.send({
+            success: true,
+            photos: photos
+        });
+    } else {
+        return res.send({
+            success: false,
+            message: 'No Photos'
+        });
+    }
+};
 exports.upload = multer({ storage: DBStorage });
 
 // GET api/photo/:id

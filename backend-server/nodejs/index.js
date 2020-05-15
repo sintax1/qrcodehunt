@@ -46,6 +46,7 @@ app.post('/api/admin/signin', admin.signin);
 
 // Photo
 app.get('/api/photo/:id', photo.getPhoto);
+app.get('/api/photos', photo.getPhotos);
 app.post('/api/photo/upload', photo.upload.single('photo'), (req, res) => {
     //console.log(JSON.stringify(req));
     console.log('file', req.file);
