@@ -7,7 +7,6 @@ const HintSchema = new Schema({
 });
 
 const StepSchema = new Schema({
-    id: { type: Number, unique: true, required: true },
     hints: [HintSchema]
 });
 

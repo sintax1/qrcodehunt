@@ -53,13 +53,13 @@ exports.addHint = async (req, res) => {
     hintText
   } = JSON.parse(req.body.data);
 
-  const query = "steps." + (step-1) + ".hints." + (hint-1) + ".text";
+  const filter = { _id: hunt.id };
+  const query = {};
+  query["steps." + (step-1) + ".hints." + (hint-1) + ".text"] = hintText;
+  const update = { $set: query };
+  const options = {new: true};
 
-  Hunt.findOneAndUpdate(
-    { _id: hunt.id },
-    { $set: { query: hintText } },
-  )
-  .exec((err, doc) => {
+  Hunt.findOneAndUpdate(filter, update, options, (err, doc) => {
     if (err) {
       console.log(err);
       return res.send({
@@ -68,7 +68,7 @@ exports.addHint = async (req, res) => {
       });
     }
 
-    console.log('addHint success!');
+    console.log('addHint success! ' + JSON.stringify(doc));
     return res.status(200).json({
       message: 'success!',
       photo: req.file
