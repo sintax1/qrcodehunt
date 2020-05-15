@@ -66,7 +66,7 @@ const DBStorage = new GridFsStorage({
 
 const upload = multer({ storage: DBStorage })
 
-app.post('/api/upload', upload.array('photo', 3), (req, res) => {
+app.post('/api/upload', upload.single('photo'), (req, res) => {
     //console.log(JSON.stringify(req));
     console.log('file', req.files);
     console.log('body', req.body);
