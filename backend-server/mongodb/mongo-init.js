@@ -13,6 +13,6 @@ db.createUser(
 
 db.adminusers.insert(
     {
-        password: 'supersecret' // supersecret
+        password: 'Supersecret' // supersecret
     }
 );
