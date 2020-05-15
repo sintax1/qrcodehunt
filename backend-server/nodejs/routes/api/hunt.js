@@ -5,7 +5,9 @@ exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
     Hunt.findById(id)
-    .populate('steps.hints.photo')
+    .populate({
+      path: 'steps.hints.photo'
+    })
     .exec((err, doc) => {
         if (err) {
           console.log(err);
