@@ -15,9 +15,9 @@ exports.getHint = async (req, res) => {
           });
         }
 
-        doc.steps.forEach(step => {
-          step.hints.forEach(hint => {
-            hint['photo'] = await(getPhotoById);;
+        doc.steps.forEach((step, si, steps) => {
+          step.hints.forEach((hint, hi, hints) => {
+            hints[hi]['photo'] = await(getPhotoById);
           })
         });
 
