@@ -22,8 +22,6 @@ const DBStorage = new GridFsStorage({
     }
   });
   
-export const upload = multer({ storage: DBStorage })
-
 const getPhotosByIds = async (photoIDs) => {
     let objIDs = photoIDs.map(function(id) { return ObjectId(id); });
     let photos = [];
@@ -57,6 +55,8 @@ const getPhotoById = async (photoID) => {
     }
     return null
 };
+
+exports.upload = multer({ storage: DBStorage });
 
 // GET api/photo/:id
 exports.getPhoto = async (req, res) => {
