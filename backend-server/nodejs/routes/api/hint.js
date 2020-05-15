@@ -56,6 +56,7 @@ exports.addHint = async (req, res) => {
   const filter = { _id: hunt.id };
   const query = {};
   query["steps." + (step-1) + ".hints." + (hint-1) + ".text"] = hintText;
+  query["steps." + (step-1) + ".hints." + (hint-1) + ".photoID"] = req.file.id;
   const update = { $set: query };
   const options = {new: true};
 
