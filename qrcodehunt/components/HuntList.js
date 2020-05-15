@@ -8,7 +8,6 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { styles } from '../styles';
-import Dialog from "react-native-dialog";
 
 function Hunt({ id, title, selectHunt }) {
   return (

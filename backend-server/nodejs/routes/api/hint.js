@@ -41,27 +41,9 @@ exports.getAllHints = async (req, res) => {
 };
 
 // POST api/hint
-// TODO: Add photo upload/association
 exports.addHint = async (req, res) => {
-    let name = req.body.name;
-
-    const hint = new Hint();
-
-    hint.save((err, doc) => {
-        if (err) {
-          console.log(err);
-          return res.send({
-            success: false,
-            message: err
-          });
-        }
-
-        return res.send({
-          success: true,
-          message: 'success',
-          id: doc._id
-        });
-    });
+  console.log('file', req.file);
+  console.log('body', req.body);
 };
 
 // PUT api/hint/:id

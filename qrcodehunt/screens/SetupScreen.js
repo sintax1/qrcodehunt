@@ -2,16 +2,17 @@ import React, { Component } from 'react';
 import {
     Button,
     Text,
-    TextInput
+    TouchableOpacity,
+    StyleSheet,
+    View
 } from 'react-native';
-
-import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
-import { subscribeToTest } from '../api';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { SetupStartScreen } from './SetupStartScreen';
-import { SetupMetadataScreen } from './SetupMetadataScreen';
+import { EditHuntScreen } from './EditHuntScreen';
+import { HuntSettingsScreen } from './HuntSettingsScreen';
 import { GlobalContext } from '../context';
+import CustomTextInput from '../components/TextInput';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,10 @@ export class SetupScreen extends Component {
         };
     }
 
+    logout() {
+        this.context.setToken(null);
+    }
+
     componentDidMount() {
         console.log('SetupScreen mounted')
 
@@ -40,16 +45,7 @@ export class SetupScreen extends Component {
           console.log('DefaultScreen focused')
         });
 
-        this.props.navigation.setOptions({
-            headerRight: () => (
-                <Button
-                onPress={() => this.props.navigation.navigate('Hunt')}
-                title="Hunt"
-                color="#0068ad"
-              />
-            )
-        });
-
+        /*
         getStorageValue('token')
         .then(token => {
             if (token) {
@@ -63,9 +59,10 @@ export class SetupScreen extends Component {
                 this.context.isAdmin = isAdmin;
             }
         })
+        */
     };
 
-    SignIn() {
+    SignIn = () => {
         const {
             SignInPassword,
         } = this.state;
@@ -88,11 +85,11 @@ export class SetupScreen extends Component {
         .then(json => {
             console.log('json', json);
             if (json.success) {
-                this.context.token = json.token;
-                this.context.isAdmin = json.isAdmin;
+                this.context.setToken(json.token);
+                this.context.setAdmin(json.isAdmin);
 
                 this.setState({
-                    SignInError: json.message,
+                    SignInError: '',
                     isLoading: false,
                     SignInPassword: ''
                 });
@@ -122,7 +119,23 @@ export class SetupScreen extends Component {
 
         let context = this.context;
 
-        console.log('context: ' + JSON.stringify(context));
+        console.log('SetupScreen context: ' + JSON.stringify(context));
+
+        if (this.context.token) {
+            this.props.navigation.setOptions({
+                headerRight: () => (
+                    <Button
+                        onPress={() => this.logout()}
+                        title="Logout"
+                        color="#0068ad"
+                    />
+                )
+            });
+        } else {
+            this.props.navigation.setOptions({
+                headerRight: () => (null)
+            });
+        }
 
         // Loading Screen 
         if (isLoading) {
@@ -132,33 +145,62 @@ export class SetupScreen extends Component {
         // Login Screen
         if (!this.context.token || !this.context.isAdmin) {
             return (
-            <>
+            <View style={{flex:1, backgroundColor:'#347deb'}}>
                 {
                 (SignInError) ? (
-                    <Text>{SignInError}</Text>
+                    <View style={{flex:1}}>
+                        <Text>{SignInError}</Text>
+                    </View>
                 ) : (null)
                 }
-                <Text>Admin Password:</Text>
-                <TextInput
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={(text) => { this.setState({ SignInPassword: text})}}
-                    value={SignInPassword}
-                />
-                <Button
-                    title="Sign In"
-                    onPress={() => this.SignIn()}
-                />
-            </>
+                <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={styles.message}>Enter the Admin Password</Text>
+                    <CustomTextInput
+                        onChangeText={(text) => { this.setState({ SignInPassword: text})}}
+                        value={SignInPassword}
+                        secureTextEntry={true}
+                        placeholder="Password"
+                        textAlign={'center'}
+                    />
+                </View>
+                <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
+                    {(SignInPassword) ? (
+                        <TouchableOpacity onPress={this.SignIn} style={styles.button}>
+                        <Text style={{ fontSize: 40 }}> SIGN IN </Text>
+                        </TouchableOpacity>
+                    ) : (null)}
+                </View>
+            </View>
             );
         }
 
         return (
             <Stack.Navigator>
                 <Stack.Screen name="Start" component={SetupStartScreen} />
-                <Stack.Screen name="MetaData" component={SetupMetadataScreen} />
+                <Stack.Screen name="Hunt Settings" component={HuntSettingsScreen} />
+                <Stack.Screen name="Edit Hunt" component={EditHuntScreen} />
             </Stack.Navigator>
         )
     }
 };
 
 SetupScreen.contextType = GlobalContext;
+
+const styles = StyleSheet.create({
+  message: {
+    height: 100,
+    paddingLeft: 6,
+    fontSize: 60,
+    textAlign: 'center',
+    color: 'white'
+  },
+  button: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    bottom: 50
+  }
+});

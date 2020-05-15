@@ -19,10 +19,32 @@ import { GlobalContext, defaultContext } from './context';
 
 const Stack = createStackNavigator();
 
-class App extends Component {  
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.setToken = (token) => {
+      this.setState({token: token});
+    };
+
+    this.setAdmin = (isAdmin) => {
+      this.setState({isAdmin: isAdmin});
+    };
+
+    // State also contains the updater function so it will
+    // be passed down into the context provider
+    this.state = {
+      token: defaultContext.token,
+      isAdmin: defaultContext.isAdmin,
+      hunts: defaultContext.hunts,
+      setToken: this.setToken,
+      setAdmin: this.setAdmin
+    };
+  }
+
   render() {
     return (
-      <GlobalContext.Provider value={defaultContext}>
+      <GlobalContext.Provider value={this.state}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{

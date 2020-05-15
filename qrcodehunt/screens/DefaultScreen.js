@@ -4,16 +4,16 @@ import {
     View,
     TextInput,
     Button,
-    Alert
+    Alert,
+    TouchableOpacity,
+    StyleSheet
   } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
-import { styles } from '../styles';
 import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
-import { subscribeToTest } from '../api';
 import { HuntList } from '../components/HuntList';
 import { GlobalContext } from '../context';
-
+import CustomTextInput from '../components/TextInput';
 
 class Login extends Component {
     render() {
@@ -43,28 +43,25 @@ class DefaultScreen extends Component {
         isLoading: true,
         SignInError: '',
         SignInUsername: '',
-        selectedHunt: null,
-        hunts: []
+        isFocused: false
       };
-
-      subscribeToTest((err, data) => this.setState({ 
-        SignInError: data 
-      }));
     }
   
+    /*
     componentWillUnmount() {
       // Save context in storage
       console.log('Saving context: ' + JSON.stringify(this.context));
       setStorageValue('context', JSON.stringify(this.context));
     }
+    */
 
-    SignIn() {
+    SignIn = () => {
         const {
             SignInUsername,
         } = this.state;
 
         this.setState({
-          isLoading: true,
+          isLoading: true
         });
 
         // Post request to backend
@@ -80,15 +77,14 @@ class DefaultScreen extends Component {
             .then(json => {
                 console.log('json', json);
                 if (json.success) {
-                    setStorageValue('token', json.token);
+                    //setStorageValue('token', json.token);
 
                     this.setState({
                         SignInError: json.message,
-                        isLoading: false,
-                        SignInUsername: ''
+                        isLoading: false
                     });
 
-                    this.context.token = token;
+                    this.context.setToken(json.token);
                 } else {
                     this.setState({
                         SignInError: json.message,
@@ -98,21 +94,25 @@ class DefaultScreen extends Component {
         });
     }
 
-    componentDidMount() {
+    restoreContext = () => {
+      // Restore context from storage
+      getStorageValue('context')
+      .then(context => {
+        if (context) {
+          this.context = JSON.parse(context);
+        }
+        console.log("Restored context: " + JSON.stringify(this.context));
+      })
+    }
+
+    componentDidMount = () => {
       console.log('DefaultScreen mounted')
 
         this.setState({
           isLoading: false
         });
 
-        // Restore context from storage
-        getStorageValue('context')
-        .then(context => {
-          if (context) {
-            this.context = JSON.parse(context);
-          }
-          console.log("Restored context: " + JSON.stringify(this.context));
-        })
+        //this.restoreContext();
 
         // https://reactnavigation.org/docs/function-after-focusing-screen/#triggering-an-action-with-a-focus-event-listener
         const unsubscribe = this.props.navigation.addListener('focus', () => {
@@ -129,12 +129,14 @@ class DefaultScreen extends Component {
             )
         });
 
+        /*
         getStorageValue('token')
         .then(token => {
             if (token) {
                 this.context.token = token;
             }
         })
+        */
     }
 
     selectHunt = (id) => {
@@ -146,9 +148,10 @@ class DefaultScreen extends Component {
         isLoading,
         SignInError,
         SignInUsername,
-        selectedHunt,
-        hunts
+        selectedHunt
       } = this.state;
+
+      //this.restoreContext();
 
       console.log('defaultscreen context: ' + JSON.stringify(this.context));
 
@@ -160,23 +163,32 @@ class DefaultScreen extends Component {
       // Login Screen
       if (!this.context.token) {
         return (
-          <>
+          <View style={{flex:1, backgroundColor:'#347deb'}}>
             {
             (SignInError) ? (
+              <View style={{flex:1}}>
                 <Text>{SignInError}</Text>
+              </View>
             ) : (null)
             }
-            <Text>Enter your name</Text>
-            <TextInput
-                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                onChangeText={(text) => { this.setState({ SignInUsername: text})}}
-                value={SignInUsername}
-            />
-            <Button
-                title="Play"
-                onPress={() => this.SignIn()}
-            />
-         </>
+            <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={styles.message}>Enter a name to get started!</Text>
+            </View>
+            <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+              <CustomTextInput
+                  placeholder="Your Name"
+                  onChangeText={(text) => {this.setState({ SignInUsername: text})}}
+                  textAlign={'center'}
+              />
+            </View>
+            <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
+              {(SignInUsername) ? (
+                <TouchableOpacity onPress={this.SignIn} style={styles.button}>
+                  <Text style={{ fontSize: 40 }}> PLAY! </Text>
+                </TouchableOpacity>
+              ) : (null)}
+              </View>
+         </View>
         );
       }
 
@@ -184,7 +196,11 @@ class DefaultScreen extends Component {
         return (
           <>
             <HuntList selectHunt={this.selectHunt} hunts={this.context.hunts} />
-            <Text>{this.context.token}</Text>  
+            <Text>{this.context.token}</Text>
+            <Button
+              title="Clear Context"
+              onPress={() => clearStorageValue('context')}
+            />
           </>
         )
       }
@@ -210,10 +226,6 @@ class DefaultScreen extends Component {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Hints />
           </View>
-          <Button
-            title="Clear Token"
-            onPress={() => clearStorageValue('token')}
-          />
         </View>
       );
     }
@@ -221,3 +233,22 @@ class DefaultScreen extends Component {
 DefaultScreen.contextType = GlobalContext;
 
 export default DefaultScreen;
+
+const styles = StyleSheet.create({
+  message: {
+    height: 100,
+    paddingLeft: 6,
+    fontSize: 60,
+    textAlign: 'center',
+    color: 'white'
+  },
+  button: {
+    flex: 0,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    bottom: 50
+  }
+});
