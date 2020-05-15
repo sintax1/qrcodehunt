@@ -11,6 +11,7 @@ const GridFsStorage = require("multer-gridfs-storage");
 const hunt = require('./routes/api/hunt');
 const step = require('./routes/api/step');
 const hint = require('./routes/api/hint');
+const photo = require('./routes/api/photo');
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
@@ -18,9 +19,6 @@ server.listen(3000, '0.0.0.0', () => {
 
 //const app = Express()
 app.use(bodyParser.json())
-
-// Shared Routes
-app.get('/api/photo/:id', hunt.getPhoto);
 
 // Hunt
 app.post('/api/hunt', hunt.addHunt);
@@ -43,33 +41,13 @@ app.get('/api/hints', hint.getAllHints);
 app.put('/api/hint/:id', hint.updateHint);
 app.delete('/api/hint/:id', hint.deleteHint);
 
-// User Routes
+// Auth
 app.post('/api/signin', user.signin);
-
-// Admin Routes
 app.post('/api/admin/signin', admin.signin);
 
-const DBStorage = new GridFsStorage({
-  url: "mongodb://admin:password@mongodb:27017/qrhunt",
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => {
-    const match = ["image/png", "image/jpeg"];
-
-    if (match.indexOf(file.mimetype) === -1) {
-      const filename = `${Date.now()}-qrhunt-${file.originalname}`;
-      return filename;
-    }
-
-    return {
-      bucketName: "photos",
-      filename: `${Date.now()}-qrhunt-${file.originalname}`
-    };
-  }
-});
-
-const upload = multer({ storage: DBStorage })
-
-app.post('/api/upload', upload.single('photo'), (req, res) => {
+// Photo
+app.get('/api/photo/:id', photo.getPhoto);
+app.post('/api/photo/upload', photo.upload.single('photo'), (req, res) => {
     //console.log(JSON.stringify(req));
     console.log('file', req.file);
     console.log('body', req.body);
