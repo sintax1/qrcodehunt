@@ -23,7 +23,8 @@ exports.getHunt = async (req, res) => {
         const populatePhotos = async () => {
           asyncForEach(doc.steps, async (step, si, steps) => {
             await asyncForEach(step.hints, async (hint, hi, hints) => {
-              doc.steps[si].hints[hi]['photo'] = await getPhoto(hint.photo);
+              if (hint.photo)
+                doc.steps[si].hints[hi]['photo'] = await getPhoto(hint.photo);
             })
           });
         }
