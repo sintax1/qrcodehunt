@@ -99,6 +99,25 @@ exports.getHint = async (req, res) => {
     });
 };
 
+// GET api/hints
+exports.getAllHints = async (req, res) => {
+  Hint.find({}, (err, docs) => {
+      if (err) {
+        console.log(err);
+        return res.send({
+          success: false,
+          message: err
+        });
+      }
+
+      return res.send({
+        success: true,
+        message: 'success',
+        hint: docs
+      });
+  });
+};
+
 // POST api/hint
 // TODO: Add photo upload/association
 exports.addHint = async (req, res) => {

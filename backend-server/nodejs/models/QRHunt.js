@@ -7,6 +7,7 @@ const HintSchema = new Schema({
 });
 
 const StepSchema = new Schema({
+    id: { type: Number, required: true },
     easyHint: { type: Schema.Types.ObjectId, ref: 'Hint' },
     easyTimer: { type: Number, default: 300 }, // minutes
     mediumHint: { type: Schema.Types.ObjectId, ref: 'Hint' },

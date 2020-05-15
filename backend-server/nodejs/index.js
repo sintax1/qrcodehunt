@@ -25,18 +25,21 @@ app.get('/api/photo/:id', hunt.getPhoto);
 // Hunt
 app.post('/api/hunt', hunt.addHunt);
 app.get('/api/hunt/:id', hunt.getHunt);
+app.get('/api/hunts', hunt.getAllHunts);
 app.put('/api/hunt/:id', hunt.updateHunt);
 app.delete('/api/hunt/:id', hunt.deleteHunt);
 
 // Step
 app.post('/api/step', step.addStep);
 app.get('/api/step/:id', step.getStep);
+app.get('/api/steps', step.getAllSteps);
 app.put('/api/step/:id', step.updateStep);
 app.delete('/api/step/:id', step.deleteStep);
 
 // Hint
 app.post('/api/hint', hint.addHint);
 app.get('/api/hint/:id', hint.getHint);
+app.get('/api/hints', hint.getAllHints);
 app.put('/api/hint/:id', hint.updateHint);
 app.delete('/api/hint/:id', hint.deleteHint);
 
