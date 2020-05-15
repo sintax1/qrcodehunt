@@ -1,29 +1,12 @@
 const { Hunt } = require('../../models/QRHunt');
 
-// GET api/hint/:id
-exports.getHint = async (req, res) => {
-    let photoIds = req.params.id;
-
-    let photos = await getPhotosById(photoIds);
-
-    if (photos) {
-        return res.send({
-            success: true,
-            photos: photos
-        });
-    } else {
-        return res.send({
-            success: false,
-            message: 'No Photo'
-        });
-    }
-};
-
 // GET api/hunt/:id
 exports.getHunt = async (req, res) => {
     let id = req.params.id;
 
-    Hunt.findById(id, (err, doc) => {
+    Hunt.findById(id)
+    .populate('steps.hints.photo')
+    .exec((err, doc) => {
         if (err) {
           console.log(err);
           return res.send({
