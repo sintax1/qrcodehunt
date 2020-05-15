@@ -14,6 +14,8 @@ exports.getHint = async (req, res) => {
           });
         }
 
+        doc.populate('photos.files')
+
         return res.send({
           success: true,
           message: 'success',
