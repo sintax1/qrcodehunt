@@ -31,7 +31,7 @@ exports.getHunt = async (req, res) => {
           });
         }
 
-        await populatePhotos();
+        populatePhotos();
 
         return res.send({
           success: true,
