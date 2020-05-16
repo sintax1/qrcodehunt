@@ -7,7 +7,8 @@ const HintSchema = new Schema({
 });
 
 const StepSchema = new Schema({
-    hints: [HintSchema]
+    hints: [HintSchema],
+    qrcode: { type: String }
 });
 
 const QRHuntSchema = new Schema(
