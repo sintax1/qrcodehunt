@@ -42,7 +42,7 @@ const getPhotosByIds = async (photoIDs) => {
 
         photos.push({
             id: docs[i]._id,
-            photo: 'data:' + docs[i].contentType + ';base64,' + fileData.join('')
+            uri: 'data:' + docs[i].contentType + ';base64,' + fileData.join('')
         });
     }
 
