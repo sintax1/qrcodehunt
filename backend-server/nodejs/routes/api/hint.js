@@ -43,9 +43,6 @@ exports.getAllHints = async (req, res) => {
 
 // POST api/hint
 exports.addHint = async (req, res) => {
-  console.log('file', req.file);
-  console.log('body', req.body);
-
   const {
     hunt,
     step,

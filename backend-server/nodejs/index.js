@@ -10,6 +10,7 @@ const hunt = require('./routes/api/hunt');
 const step = require('./routes/api/step');
 const hint = require('./routes/api/hint');
 const photo = require('./routes/api/photo');
+const qrcode = require('./routes/api/qrcode')
 
 server.listen(3000, '0.0.0.0', () => {
   console.log('App running on http://0.0.0.0:3000')
@@ -56,6 +57,9 @@ app.post('/api/photo/upload', photo.upload.single('photo'), (req, res) => {
       photo: req.file
     });
 });
+
+// QR Code
+app.post('/api/qrcode', qrcode.addQRCode);
 
 app.use(function (err, req, res, next) {
     console.log('This is the invalid field ->', err.field)
