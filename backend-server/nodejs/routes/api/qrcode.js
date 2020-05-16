@@ -8,7 +8,7 @@ exports.addQRCode = async (req, res) => {
       hunt,
       step,
       qrcode
-    } = JSON.parse(req.body);
+    } = req.body;
   
     const filter = { _id: hunt.id };
     const query = {};
