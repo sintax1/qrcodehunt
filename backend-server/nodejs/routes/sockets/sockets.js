@@ -117,6 +117,17 @@ module.exports.listen = function(server) {
         name: player.name,
         isReady: true
       }))
+
+      let pendingPlayers = RoomStates[rooms[0]].players.reduce(function(map, obj) {
+        map[obj.name] = { isReady: obj.isReady };
+        return map;
+      }, {});
+
+      console.log('pendingplayers: ' + JSON.stringify(pendingPlayers));
+
+      if (!pendingPlayers) {
+        console.log('Not waiting on any players. start the hunt.')
+      }
     });
 
     socket.on('startHunt', () => {
