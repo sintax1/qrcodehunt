@@ -3,26 +3,25 @@ var socketio = require('socket.io')
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
   let RoomStates = {};
-  const self = this;
 
   startHunt = (huntId) => {
     console.log('start hunt func');
 
     let count = 5;
     
-    setInterval(function() {
-      console.log(JSON.stringify(self));
+    setInterval(() => {
+      console.log(JSON.stringify(this));
 
-      self.RoomStates[self.huntID].status = 'Hunt starting in ' + count + '...';
+      this.RoomStates[this.huntID].status = 'Hunt starting in ' + count + '...';
       
-      self.io.in(self.huntId).emit('update', {
-        status: self.RoomStates[self.huntID].status
+      this.io.in(this.huntId).emit('update', {
+        status: this.RoomStates[this.huntID].status
       });
 
       count--;
       if (count === 0) {
-        self.RoomStates[self.huntID].status = 'Hunt in progress';
-        self.io.in(self.huntId).emit('update', {
+        this.RoomStates[this.huntID].status = 'Hunt in progress';
+        this.io.in(this.huntId).emit('update', {
           status: 'GO!!!'
         });
         return;
