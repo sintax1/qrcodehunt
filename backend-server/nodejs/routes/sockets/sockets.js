@@ -42,35 +42,40 @@ module.exports.listen = function(server) {
 
       // Check if the room already exists
       let room = io.sockets.adapter.rooms[huntID];
-      let isControl = false;
 
       if (room == undefined) {
-        // Room does not exist, this player gets to control when the hunt starts
-        isControl = true;
+        // Room does not exist
 
         // Populate the state data structure
         RoomStates[huntID] = {
-          controlPlayer: player.id,
-          status: 'Waiting for ' + player.name + ' to start the Hunt'
+          status: 'Waiting for all players to be ready',
+          players: [{
+            name: data.player.name,
+            isReady: false
+          }]
         };
-      } else if (player.id == RoomStates[huntID].controlPlayer) {
-        // The player that just joined is the control player
-        isControl = true;
       }
 
       // join the room
       socket.join(huntID);
 
-      if (isControl) {
-        socket.emit('update', {
-          isControl: isControl
-        })
-      }
-
       // Notify everyone in the room that a new player joined
-      io.sockets.in(huntID).emit('newPlayer', JSON.stringify({
-        name: player.name
+      // TODO: update this so everyone except the new player receives the message
+      //socket.to(huntID).emit('playerJoin', JSON.stringify({
+      io.in(huntID).emit('playerJoin', JSON.stringify({
+        name: player.name,
+        ready: false
       }));
+
+      // Send the playerlist to the new player
+      socket.emit('update', {
+        players: RoomStates[huntID].players.map((player) => {
+          return {
+            name: player.name,
+            isReady: player.isReady
+          }
+        })
+      })
 
       console.log('joinHunt: ' + JSON.stringify(data));
     });
@@ -85,6 +90,20 @@ module.exports.listen = function(server) {
       socket.emit('update', {
         status: RoomStates[rooms[0]].status
       })
+    });
+
+    // Player is Ready
+    socket.on('ready', () => {
+      // get the rooms that this player is in
+      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+
+      // Acknowledge player ready
+      socket.emit('update', {
+        isReady: true
+      })
+
+      // Notify the room that the player is ready
+      
     });
 
     socket.on('startHunt', () => {
