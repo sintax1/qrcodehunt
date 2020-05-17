@@ -8,7 +8,7 @@ module.exports.listen = function(server) {
     socket.emit('connected');
 
     socket.on('joinHunt', (data) => {
-      console.log('joinHunt: ' + data);
+      console.log('joinHunt: ' + JSON.stringify(data));
     });
   });
 
