@@ -4,6 +4,22 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   let RoomStates = {};
 
+  startHunt = (huntId) => {
+    let count = 5;
+
+    setInterval(function() {
+      io.sockets.in(huntId).emit(
+        'Hunt starting in ' + count + '...'
+      );
+      count--;
+      if (count === 0) {
+        io.sockets.in(huntId).emit(
+          'GO!!!'
+        );
+      }
+    }, 1000);
+  }
+
   io.on('connection', (socket) => {
     console.log('websocket connection');
     socket.emit('connected');
@@ -49,6 +65,7 @@ module.exports.listen = function(server) {
     });
 
     // Listen for general messages
+    
     socket.on('getStatus', () => {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
@@ -57,13 +74,18 @@ module.exports.listen = function(server) {
       socket.emit('update', {
         status: RoomStates[rooms[0]].status
       })
+    });
 
+    socket.on('startHunt', () => {
+      // get the rooms that this player is in
+      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+
+      // Start the countdown then start the hunt
+      this.startHunt(rooms[0]);
     })
-    
   });
 
-
-
+  
   return io;
 }
 
