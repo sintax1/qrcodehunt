@@ -10,10 +10,7 @@ module.exports.listen = function(server) {
     let count = 5;
     let roomID = huntId;
 
-    setInterval(function() {
-
-      console.log('RoomStates: ' + JSON.stringify(RoomStates));
-
+    let countdown = setInterval(function() {
       RoomStates[roomID].status = 'Hunt starting in ' + count + '...';
       
       io.in(roomID).emit('update', {
@@ -26,7 +23,7 @@ module.exports.listen = function(server) {
         io.in(roomID).emit('update', {
           status: 'GO!!!'
         });
-        return;
+        clearInterval(countdown);
       }
     }, 1000);
   }
