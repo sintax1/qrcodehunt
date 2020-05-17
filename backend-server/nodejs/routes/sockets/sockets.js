@@ -3,7 +3,7 @@ var socketio = require('socket.io')
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
   let RoomStates = {};
-  let self = this;
+  const self = this;
 
   startHunt = (huntId) => {
     console.log('start hunt func');
@@ -12,7 +12,7 @@ module.exports.listen = function(server) {
     
     setInterval(function() {
       console.log(JSON.stringify(self));
-      
+
       self.RoomStates[self.huntID].status = 'Hunt starting in ' + count + '...';
       
       self.io.in(self.huntId).emit('update', {
