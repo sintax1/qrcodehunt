@@ -10,16 +10,18 @@ module.exports.listen = function(server) {
     let count = 5;
 
     setInterval(function() {
-      console.log('Hunt starting in ' + count + '...');
-      io.in(huntId).emit(
-        'Hunt starting in ' + count + '...'
-      );
+      RoomStates[huntID].status = 'Hunt starting in ' + count + '...';
+      
+      io.in(huntId).emit('update', {
+        status: RoomStates[huntID].status
+      });
+
       count--;
       if (count === 0) {
-        console.log('Go!!!')
-        io.in(huntId).emit(
-          'GO!!!'
-        );
+        RoomStates[huntID].status = 'Hunt in progress';
+        io.in(huntId).emit('update', {
+          status: 'GO!!!'
+        });
         return;
       }
     }, 1000);
