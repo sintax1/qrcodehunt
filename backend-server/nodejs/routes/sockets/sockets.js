@@ -13,6 +13,9 @@ module.exports.listen = function(server) {
 
     setInterval(function() {
 
+      console.log('RoomStates: ' + JSON.stringify(RoomStates));
+      console.log('self.RoomStates: ' + JSON.stringify(self.RoomStates));
+
       self.RoomStates[self.huntID].status = 'Hunt starting in ' + count + '...';
       
       self.io.in(self.huntId).emit('update', {
