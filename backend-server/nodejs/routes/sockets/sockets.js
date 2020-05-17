@@ -49,14 +49,14 @@ module.exports.listen = function(server) {
     // Listen for general messages
     socket.on('getStatus', () => {
       // get the room that this player is in
-      console.log('socket rooms: ' + JSON.stringify(socket.rooms));
-      
-      let room = io.sockets.manager.roomClients[socket.id];
-      console.log('room: ' + JSON.stringify(room))
+      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+
+      console.log('socket rooms:' + JSON.stringify(rooms));
+
 
       // Send the status of the room
       socket.emit('update', {
-        status: RoomStates[room.id].status
+        status: RoomStates[rooms[0]].status
       })
 
     })
