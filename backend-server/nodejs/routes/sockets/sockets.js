@@ -9,7 +9,7 @@ module.exports.listen = function(server) {
 
     let count = 5;
 
-    setInterval(function() {
+    setInterval(function(huntID) {
       RoomStates[huntID].status = 'Hunt starting in ' + count + '...';
       
       io.in(huntId).emit('update', {
