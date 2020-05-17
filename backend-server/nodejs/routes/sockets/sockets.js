@@ -4,8 +4,6 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
-  var self = this;
-  
   function startHunt(huntId) {
     console.log('start hunt func');
 
@@ -14,18 +12,17 @@ module.exports.listen = function(server) {
     setInterval(function() {
 
       console.log('RoomStates: ' + JSON.stringify(RoomStates));
-      console.log('self.RoomStates: ' + JSON.stringify(self.RoomStates));
 
-      self.RoomStates[self.huntID].status = 'Hunt starting in ' + count + '...';
+      RoomStates[huntID].status = 'Hunt starting in ' + count + '...';
       
-      self.io.in(self.huntId).emit('update', {
-        status: self.RoomStates[self.huntID].status
+      io.in(huntId).emit('update', {
+        status: RoomStates[huntID].status
       });
 
       count--;
       if (count === 0) {
-        self.RoomStates[self.huntID].status = 'Hunt in progress';
-        self.io.in(self.huntId).emit('update', {
+        RoomStates[huntID].status = 'Hunt in progress';
+        io.in(huntId).emit('update', {
           status: 'GO!!!'
         });
         return;
