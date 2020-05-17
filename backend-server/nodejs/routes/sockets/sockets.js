@@ -6,15 +6,17 @@ module.exports.listen = function(server) {
 
   startHunt = (huntId) => {
     console.log('start hunt func');
-    
+
     let count = 5;
 
     setInterval(function() {
+      console.log('Hunt starting in ' + count + '...');
       io.sockets.in(huntId).emit(
         'Hunt starting in ' + count + '...'
       );
       count--;
       if (count === 0) {
+        console.log('Go!!!')
         io.sockets.in(huntId).emit(
           'GO!!!'
         );
