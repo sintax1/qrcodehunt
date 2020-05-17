@@ -11,13 +11,13 @@ module.exports.listen = function(server) {
 
     setInterval(function() {
       console.log('Hunt starting in ' + count + '...');
-      io.sockets.in(huntId).emit(
+      io.in(huntId).emit(
         'Hunt starting in ' + count + '...'
       );
       count--;
       if (count === 0) {
         console.log('Go!!!')
-        io.sockets.in(huntId).emit(
+        io.in(huntId).emit(
           'GO!!!'
         );
       }
