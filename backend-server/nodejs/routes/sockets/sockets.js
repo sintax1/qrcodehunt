@@ -8,22 +8,22 @@ module.exports.listen = function(server) {
     console.log('start hunt func');
 
     let count = 5;
-    let huntId = huntId;
+    let roomID = huntId;
 
     setInterval(function() {
 
       console.log('RoomStates: ' + JSON.stringify(RoomStates));
 
-      RoomStates[huntID].status = 'Hunt starting in ' + count + '...';
+      RoomStates[roomID].status = 'Hunt starting in ' + count + '...';
       
-      io.in(huntId).emit('update', {
-        status: RoomStates[huntID].status
+      io.in(roomID).emit('update', {
+        status: RoomStates[roomID].status
       });
 
       count--;
       if (count === 0) {
-        RoomStates[huntID].status = 'Hunt in progress';
-        io.in(huntId).emit('update', {
+        RoomStates[roomID].status = 'Hunt in progress';
+        io.in(roomID).emit('update', {
           status: 'GO!!!'
         });
         return;
