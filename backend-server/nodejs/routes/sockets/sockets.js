@@ -14,7 +14,7 @@ module.exports.listen = function(server) {
       let playerName = data.player;
 
       // Check if the room already exists
-      let room = io.manager.rooms[huntID];
+      let room = io.sockets.manager.rooms[huntID];
       let isControl = false;
 
       if (room == undefined) {
