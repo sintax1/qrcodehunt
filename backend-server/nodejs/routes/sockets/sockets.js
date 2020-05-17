@@ -4,6 +4,15 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
+  function updatePlayerReady(roomID, playerID, isReady) {
+    for (var i in RoomStates[roomID].players) {
+      if (RoomStates[roomID].players[i].id == playerID) {
+          RoomStates[roomID].players[i].isReady = isReady;
+          break;
+      }
+    }
+  }
+
   function getPlayerBySocket(roomID, socketID) {
     const player = RoomStates[roomID].players.find(player => player.socket == socketID);
     console.log('found player by socket: ' + JSON.stringify(player));
@@ -61,6 +70,14 @@ module.exports.listen = function(server) {
             socket: socket.id
           }]
         };
+      } else {
+        // Add player to existing room
+        // Todo: Avoid pushing a duplicate entry by first checking if one exists.
+        RoomStates[huntID].players.push({
+          name: data.player.name,
+          isReady: false,
+          socket: socket.id
+        })
       }
 
       // join the room
@@ -105,6 +122,8 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let player = getPlayerBySocket(rooms[0], socket.id);
 
+      updatePlayerReady(rooms[0], player.id, true);
+
       // Acknowledge player ready
       socket.emit('update', {
         isReady: true
@@ -118,12 +137,12 @@ module.exports.listen = function(server) {
         isReady: true
       }))
 
-      let pendingPlayers = Object.values(RoomStates[rooms[0]].players)
-        .reduce((result, { isReady }) => result || isReady, false);
+      let ready = Object.values(RoomStates[rooms[0]].players)
+        .reduce((result, { isReady }) => result && isReady, true);
 
-      console.log('pendingplayers: ' + JSON.stringify(pendingPlayers));
+      console.log('all players ready: ' + ready);
 
-      if (!pendingPlayers) {
+      if (ready) {
         console.log('Not waiting on any players. start the hunt.')
       }
     });
