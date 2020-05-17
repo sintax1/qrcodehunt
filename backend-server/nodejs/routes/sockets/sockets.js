@@ -3,16 +3,19 @@ var socketio = require('socket.io')
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
   let RoomStates = {};
+  var self = this;
+
+  console.log('listen.self: ' + JSON.stringify(self));
 
   startHunt = (huntId) => {
     console.log('start hunt func');
 
     let count = 5;
 
-    var self = this;
+    console.log('startHunt.self: ' + JSON.stringify(self));
     
     setInterval(() => {
-      console.log(JSON.stringify(self));
+      console.log('setInterval.self: ' + JSON.stringify(self));
 
       this.RoomStates[this.huntID].status = 'Hunt starting in ' + count + '...';
       
@@ -94,7 +97,7 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
 
       // Start the countdown then start the hunt
-      startHunt(rooms[0]).bind(this);
+      startHunt(rooms[0]);
     })
   });
 
