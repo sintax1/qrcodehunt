@@ -20,6 +20,7 @@ module.exports.listen = function(server) {
         io.in(huntId).emit(
           'GO!!!'
         );
+        return;
       }
     }, 1000);
   }
