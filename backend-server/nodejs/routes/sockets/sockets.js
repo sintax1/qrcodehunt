@@ -4,7 +4,7 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   let RoomStates = {};
 
-  startHunt = (huntId) => {
+  function startHunt(huntID){
     console.log('start hunt func');
 
     let count = 5;
