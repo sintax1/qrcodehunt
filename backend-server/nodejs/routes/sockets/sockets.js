@@ -3,11 +3,11 @@ var socketio = require('socket.io')
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
+
+  var self = this;
   
   function startHunt(huntId) {
     console.log('start hunt func');
-
-    var self = this;
 
     let count = 5;
 
