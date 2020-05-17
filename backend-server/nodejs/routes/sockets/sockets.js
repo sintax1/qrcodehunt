@@ -75,8 +75,8 @@ module.exports.listen = function(server) {
       }));
 
       // Send the playerlist to the new player
-      socket.emit('update', {
-        players: RoomStates[huntID].players.map((player) => {
+      socket.emit('players',
+        RoomStates[huntID].players.map((player) => {
           return {
             [player.name] : {
               name: player.name,
@@ -84,7 +84,7 @@ module.exports.listen = function(server) {
             }
           }
         })
-      })
+      )
 
       console.log('joinHunt: ' + JSON.stringify(data));
     });
