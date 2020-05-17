@@ -121,6 +121,7 @@ module.exports.listen = function(server) {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let player = getPlayerBySocket(rooms[0], socket.id);
+      let huntID = rooms[0];
 
       updatePlayerReady(rooms[0], player.id, true);
 
@@ -144,18 +145,9 @@ module.exports.listen = function(server) {
 
       if (ready) {
         console.log('Not waiting on any players. start the hunt.')
+        startHunt(huntID);
       }
     });
-
-    socket.on('startHunt', () => {
-      console.log('start hunt');
-
-      // get the rooms that this player is in
-      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
-
-      // Start the countdown then start the hunt
-      startHunt(rooms[0]);
-    })
   });
 
 
