@@ -78,8 +78,10 @@ module.exports.listen = function(server) {
       socket.emit('update', {
         players: RoomStates[huntID].players.map((player) => {
           return {
-            name: player.name,
-            isReady: player.isReady
+            [player.name] : {
+              name: player.name,
+              isReady: player.isReady
+            }
           }
         })
       })
