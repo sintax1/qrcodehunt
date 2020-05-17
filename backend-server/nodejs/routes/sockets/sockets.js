@@ -8,9 +8,11 @@ module.exports.listen = function(server) {
     console.log('start hunt func');
 
     let count = 5;
+
+    var self = this;
     
     setInterval(() => {
-      console.log(JSON.stringify(this));
+      console.log(JSON.stringify(self));
 
       this.RoomStates[this.huntID].status = 'Hunt starting in ' + count + '...';
       
