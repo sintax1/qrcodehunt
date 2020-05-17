@@ -10,9 +10,8 @@ module.exports.listen = function(server) {
 
     // Listen for new players that join the hunt
     socket.on('joinHunt', (data) => {
-      console.log('joinHunt data: ' + JSON.stringify(data))
       let huntID = data.id;
-      let playerName = data.player;
+      let player = data.player;
 
       // Check if the room already exists
       let room = io.sockets.adapter.rooms[huntID];
@@ -24,8 +23,12 @@ module.exports.listen = function(server) {
 
         // Populate the state data structure
         RoomStates[huntID] = {
-          status: 'Waiting for ' + playerName + ' to start the Hunt'
+          controlPlayer: player.id,
+          status: 'Waiting for ' + player.name + ' to start the Hunt'
         };
+      } else if (player.id == RoomStates[huntID].controlPlayer) {
+        // The player that just joined is the control player
+        isControl = true;
       }
 
       // join the room
