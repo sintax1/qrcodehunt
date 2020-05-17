@@ -4,6 +4,12 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
+  function getPlayerBySocket(roomID, socketID) {
+    const player = RoomStates[roomID].players.find(player => player.socket == socketID);
+    console.log('found player by socket: ' + JSON.stringify(player));
+    return player;
+  }
+
   function startHunt(huntId) {
     console.log('start hunt func');
 
@@ -51,7 +57,8 @@ module.exports.listen = function(server) {
           status: 'Waiting for all players to be ready',
           players: [{
             name: data.player.name,
-            isReady: false
+            isReady: false,
+            socket: socket.id
           }]
         };
       }
@@ -96,6 +103,7 @@ module.exports.listen = function(server) {
     socket.on('ready', () => {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+      let player = getPlayerBySocket(rooms[0], socket.id);
 
       // Acknowledge player ready
       socket.emit('update', {
