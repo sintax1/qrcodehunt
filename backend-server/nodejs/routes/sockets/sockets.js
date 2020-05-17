@@ -5,6 +5,8 @@ module.exports.listen = function(server) {
   let RoomStates = {};
 
   startHunt = (huntId) => {
+    console.log('start hunt func');
+    
     let count = 5;
 
     setInterval(function() {
@@ -77,6 +79,8 @@ module.exports.listen = function(server) {
     });
 
     socket.on('startHunt', () => {
+      console.log('start hunt');
+
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
 
