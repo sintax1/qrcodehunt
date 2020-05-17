@@ -5,10 +5,10 @@ module.exports.listen = function(server) {
 
   io.on('connection', (socket) => {
     console.log('websocket connection');
-    socket.emit('test', 'test');
+    socket.emit('connected');
 
-    socket.on('test', (data) => {
-      console.log('test: ' + data);
+    socket.on('joinHunt', (data) => {
+      console.log('joinHunt: ' + data);
     });
   });
 
