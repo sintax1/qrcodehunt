@@ -39,9 +39,9 @@ module.exports.listen = function(server) {
       
 
       // Notify everyone in the room that a new player joined
-      io.sockets.in(huntID).emit('newPlayer', {
+      io.sockets.in(huntID).emit('newPlayer', JSON.stringify({
         name: playerName
-      });
+      }));
 
       console.log('joinHunt: ' + JSON.stringify(data));
     });
