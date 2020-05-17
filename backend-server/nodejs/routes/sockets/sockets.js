@@ -49,6 +49,8 @@ module.exports.listen = function(server) {
     // Listen for general messages
     socket.on('getStatus', () => {
       // get the room that this player is in
+      console.log('socket rooms: ' + JSON.stringify(socket.rooms));
+      
       let room = io.sockets.manager.roomClients[socket.id];
       console.log('room: ' + JSON.stringify(room))
 
