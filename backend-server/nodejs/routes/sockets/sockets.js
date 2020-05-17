@@ -119,7 +119,7 @@ module.exports.listen = function(server) {
       }))
 
       let pendingPlayers = Object.values(RoomStates[rooms[0]].players)
-        .reduce((p, { isReady }) => p || isReady);
+        .reduce((p, { isReady }) => isReady);
 
       console.log('pendingplayers: ' + JSON.stringify(pendingPlayers));
 
