@@ -17,7 +17,6 @@ module.exports.listen = function(server) {
         status: RoomStates[roomID].status
       });
 
-      count--;
       if (count === 0) {
         RoomStates[roomID].status = 'Hunt in progress';
         io.in(roomID).emit('update', {
@@ -25,7 +24,11 @@ module.exports.listen = function(server) {
         });
         clearInterval(countdown);
       }
+
+      count--;
     }, 1000);
+
+    count--;
   }
 
   io.on('connection', (socket) => {
