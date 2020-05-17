@@ -78,10 +78,8 @@ module.exports.listen = function(server) {
       socket.emit('players',
         RoomStates[huntID].players.map((player) => {
           return {
-            [player.name] : {
-              name: player.name,
-              isReady: player.isReady
-            }
+            name: player.name,
+            isReady: player.isReady
           }
         })
       )
@@ -113,6 +111,8 @@ module.exports.listen = function(server) {
       })
 
       // Notify the room that the player is ready
+      // TODO: update this so everyone except the new player receives the message
+      //socket.to(rooms[0]).emit('playerReady', JSON.stringify({
       io.in(rooms[0]).emit('playerReady', JSON.stringify({
         name: player.name,
         isReady: true
