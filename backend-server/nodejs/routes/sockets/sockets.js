@@ -8,18 +8,19 @@ module.exports.listen = function(server) {
     console.log('start hunt func');
 
     let count = 5;
+    let self = this;
 
-    setInterval(function(huntID) {
-      RoomStates[huntID].status = 'Hunt starting in ' + count + '...';
+    setInterval(function() {
+      self.RoomStates[self.huntID].status = 'Hunt starting in ' + count + '...';
       
-      io.in(huntId).emit('update', {
-        status: RoomStates[huntID].status
+      self.io.in(self.huntId).emit('update', {
+        status: self.RoomStates[self.huntID].status
       });
 
       count--;
       if (count === 0) {
-        RoomStates[huntID].status = 'Hunt in progress';
-        io.in(huntId).emit('update', {
+        self.RoomStates[self.huntID].status = 'Hunt in progress';
+        self.io.in(self.huntId).emit('update', {
           status: 'GO!!!'
         });
         return;
