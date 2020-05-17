@@ -103,7 +103,10 @@ module.exports.listen = function(server) {
       })
 
       // Notify the room that the player is ready
-      
+      io.in(rooms[0]).emit('playerReady', {
+        name: player.name,
+        isReady: true
+      })
     });
 
     socket.on('startHunt', () => {
