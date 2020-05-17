@@ -116,7 +116,7 @@ module.exports.listen = function(server) {
       })
     });
 
-    // Player is Ready
+    // Player Ready
     socket.on('ready', () => {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
@@ -145,7 +145,17 @@ module.exports.listen = function(server) {
 
       if (ready) {
         console.log('Not waiting on any players. start the hunt.')
-        startHunt(huntID);
+
+        RoomStates[rooms[0]].status = 'All players are ready!';
+
+        io.in(roomID).emit('update', {
+          status: RoomStates[roomID].status
+        });
+
+        setTimeout(() => {
+          startHunt(huntID);
+        }, 2000);
+        
       }
     });
   });
