@@ -8,6 +8,7 @@ module.exports.listen = function(server) {
     console.log('start hunt func');
 
     let count = 5;
+    let huntId = huntId;
 
     setInterval(function() {
 
