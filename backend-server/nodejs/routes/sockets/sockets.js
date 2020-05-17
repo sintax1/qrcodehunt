@@ -10,6 +10,7 @@ module.exports.listen = function(server) {
 
     // Listen for new players that join the hunt
     socket.on('joinHunt', (data) => {
+      console.log('joinHunt data: ' + JSON.stringify(data))
       let huntID = data.id;
       let playerName = data.player;
 
@@ -36,8 +37,6 @@ module.exports.listen = function(server) {
         })
       }
 
-      
-
       // Notify everyone in the room that a new player joined
       io.sockets.in(huntID).emit('newPlayer', JSON.stringify({
         name: playerName
@@ -48,11 +47,8 @@ module.exports.listen = function(server) {
 
     // Listen for general messages
     socket.on('getStatus', () => {
-      // get the room that this player is in
+      // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
-
-      console.log('socket rooms:' + JSON.stringify(rooms));
-
 
       // Send the status of the room
       socket.emit('update', {
