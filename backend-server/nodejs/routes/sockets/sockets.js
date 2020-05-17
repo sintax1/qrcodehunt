@@ -94,7 +94,7 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
 
       // Start the countdown then start the hunt
-      startHunt(rooms[0]);
+      startHunt(rooms[0]).bind(this);
     })
   });
 
