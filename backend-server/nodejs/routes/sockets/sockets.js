@@ -2,7 +2,7 @@ var socketio = require('socket.io')
 
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
-  let RoomStates = {};
+  this.RoomStates = {};
   var self = this;
 
   console.log('listen.self: ' + JSON.stringify(self));
