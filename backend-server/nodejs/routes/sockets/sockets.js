@@ -20,9 +20,8 @@ module.exports.listen = function(server) {
   // format Steps/Hints and randomize, if necessary
   async function processSteps(hunt) {
     hunt.steps.forEach(function(step, sid, steps) {
-      steps[sid].hints[0].toObject().forEach(function(hint, hid, hints) {
+      steps[sid].hints.forEach(function(hint, hid, hints) {
         console.log('hint: ' + JSON.stringify(hint));
-        hints[hid]
       });
     });
     return hunt;
