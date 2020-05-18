@@ -25,6 +25,7 @@ module.exports.listen = function(server) {
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
+    console.log(RoomStates[roomID].players);
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
           // Remove the player
