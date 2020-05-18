@@ -7,6 +7,8 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
+    let roomID = huntID;
+    
     Hunt.findById(huntID)
     .populate({
       path: 'steps.hints.photo'
