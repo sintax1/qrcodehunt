@@ -237,7 +237,7 @@ module.exports.listen = function(server) {
 
       // Send the next available hint to the player
       socket.emit('hint', {
-        hint: getHint(roomId, player.id);
+        hint: getHint(roomId, player.id)
       })
     });
   });
