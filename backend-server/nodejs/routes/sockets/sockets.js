@@ -30,6 +30,7 @@ module.exports.listen = function(server) {
       if (RoomStates[roomID].players[i].id == playerID) {
           // Remove the player
           delete RoomStates[roomID].players[i];
+          return true;
       }
     }
     
