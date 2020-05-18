@@ -120,10 +120,10 @@ module.exports.listen = function(server) {
     socket.on('ready', () => {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
-      let player = getPlayerBySocket(rooms[0], socket.id);
-      let huntID = rooms[0];
+      let roomID = huntID = rooms[0];
+      let player = getPlayerBySocket(roomID, socket.id);
 
-      updatePlayerReady(rooms[0], player.id, true);
+      updatePlayerReady(roomID, player.id, true);
 
       // Acknowledge player ready
       socket.emit('update', {
@@ -132,15 +132,15 @@ module.exports.listen = function(server) {
 
       // Notify the room that the player is ready
       // TODO: update this so everyone except the new player receives the message
-      //socket.to(rooms[0]).emit('playerReady', JSON.stringify({
-      io.in(rooms[0]).emit('playerReady', JSON.stringify({
+      //socket.to(roomID).emit('playerReady', JSON.stringify({
+      io.in(roomID).emit('playerReady', JSON.stringify({
         name: player.name,
         isReady: true
       }))
 
-      console.log('RoomStates[rooms[0]].players: ' + JSON.stringify(RoomStates[rooms[0]].players));
+      console.log('RoomStates[roomID].players: ' + JSON.stringify(RoomStates[roomID].players));
 
-      let ready = Object.values(RoomStates[rooms[0]].players)
+      let ready = Object.values(RoomStates[roomID].players)
         .reduce((result, { isReady }) => result && isReady, true);
 
       console.log('all players ready: ' + ready);
@@ -148,7 +148,7 @@ module.exports.listen = function(server) {
       if (ready) {
         console.log('Not waiting on any players. start the hunt.')
 
-        RoomStates[rooms[0]].status = 'All players are ready!';
+        RoomStates[roomID].status = 'All players are ready!';
 
         io.in(roomID).emit('update', {
           status: RoomStates[roomID].status
