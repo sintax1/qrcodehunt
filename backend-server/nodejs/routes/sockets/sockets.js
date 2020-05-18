@@ -8,12 +8,22 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    return await Hunt.findById(huntID, undefined, {lean: true}, (err, doc) => {
+    let hunt = await Hunt.findById(huntID, undefined, {lean: true}, (err, doc) => {
         if (err) {
           console.log(err);
         }
         return doc;
     });
+
+    // Populate hunt hint photos
+    hunt.steps.forEach(function(step, sid, steps) {
+      steps[sid].hints.forEach(function(hint, hid, hints) {
+        console.log('hint: ' + JSON.stringify(hint));
+        hints[hid].photo = await getPhotoById(hint.photo);
+      });
+    });
+
+    return hunt;
   }
 
   async function getPlayerHint(roomID, playerID) {
@@ -26,9 +36,7 @@ module.exports.listen = function(server) {
         hintid = RoomStates[roomID].players[i].hint;
 
           //TODO: Check if player reached last hint/step
-          let hint = RoomStates[roomID].hunt.steps[stepid].hints[hintid];
-          hint.photo = await getPhotoById(hint.photo);
-          return hint;
+          return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
       }
     }
   }
