@@ -112,7 +112,7 @@ module.exports.listen = function(server) {
         })
         .then(() => {
           // Leave the room
-          socket.leave(huntID);
+          socket.leave(roomID);
         })
         .then(() => {
           // Delete the room if this was the last player in it
