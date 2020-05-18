@@ -80,6 +80,10 @@ module.exports.listen = function(server) {
     }, 1000);
   }
 
+  io.on('leave', (data) => {
+    console.log("Leave: " + JSON.stringify(data));
+  });
+
   io.on('connection', (socket) => {
     console.log('websocket connection');
     socket.emit('connected');
