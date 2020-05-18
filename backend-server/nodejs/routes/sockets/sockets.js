@@ -1,6 +1,6 @@
 var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
-import { getPhoto } from '../api/photo';
+const { getPhoto } = require('../api/photo');
 
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
