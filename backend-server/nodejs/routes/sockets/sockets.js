@@ -21,6 +21,7 @@ module.exports.listen = function(server) {
   async function processSteps(hunt) {
     hunt.steps.forEach(function(step, sid, steps) {
       steps[sid].hints.forEach(function(hint, hid, hints) {
+        console.log('typeof: ' + typeof hunt)
         for (let [key, value] of Object.entries(hint)) {
           console.log('hint: ' + key + ', ' + value);
         }
