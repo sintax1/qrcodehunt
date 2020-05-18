@@ -80,9 +80,7 @@ module.exports.listen = function(server) {
     }, 1000);
   }
 
-  io.on('leave', (data) => {
-    console.log("Leave: " + JSON.stringify(data));
-  });
+  
 
   io.on('connection', (socket) => {
     console.log('websocket connection');
@@ -91,6 +89,11 @@ module.exports.listen = function(server) {
     // Disconnect
     socket.on('disconnect', () => {
       console.log('Disconnect: ' + socket.id);
+    });
+
+    // Leave
+    socket.on('leave', (data) => {
+      console.log("Leave: " + JSON.stringify(data));
     });
 
     // Player left the Hunt
