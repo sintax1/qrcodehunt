@@ -1,6 +1,6 @@
 var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
-const { getPhoto } = require('../api/photo');
+const { getPhotoById } = require('../api/photo');
 
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
@@ -27,7 +27,7 @@ module.exports.listen = function(server) {
 
           //TODO: Check if player reached last hint/step
           let hint = RoomStates[roomID].hunt.steps[stepid].hints[hintid];
-          hint.photo = await getPhoto(hint.photo);
+          hint.photo = await getPhotoById(hint.photo);
           return hint;
       }
     }
