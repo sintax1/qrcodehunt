@@ -18,7 +18,6 @@ module.exports.listen = function(server) {
     // Populate hunt hint photos
     hunt.steps.forEach(async function(step, sid, steps) {
       Object.keys(steps[sid].hints).forEach(async function(hid) {
-        console.log('hint: ' + JSON.stringify(steps[sid].hints[hid]));
         steps[sid].hints[hid].photo = await getPhotoById(steps[sid].hints[hid].photo);
       });
     });
@@ -178,7 +177,6 @@ module.exports.listen = function(server) {
 
         // Populate the room with the Hunt Steps and Hints
         getHuntData(huntID).then(hunt => {
-          console.log('processed hunt: ' + JSON.stringify(hunt));
           RoomStates[huntID].hunt = hunt;
         });
 
@@ -322,7 +320,7 @@ module.exports.listen = function(server) {
               })
               // Send the finish signal
               socket.emit('fin');
-              
+
             } else {
               // Increment the players current step
               RoomStates[roomID].players[i].step++
@@ -335,7 +333,6 @@ module.exports.listen = function(server) {
               // Send the next available hint to the player
               getPlayerHint(roomID, player.id)
               .then(hint => {
-                console.log('Got a hint for player: ' + JSON.stringify(hint));
                 socket.emit('hint', {
                   hint: hint
                 })
