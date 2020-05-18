@@ -1,16 +1,43 @@
 var socketio = require('socket.io')
+const { Hunt } = require('../../models/QRHunt');
 
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
-  
+  // Populate the room state with hunt data
+  async function getHuntData(huntID) {
+    Hunt.findById(huntID)
+    .populate({
+      path: 'steps.hints.photo'
+    })
+    .exec((err, doc) => {
+        if (err) {
+          console.log(err);
+        }
 
-  function getPlayerHint(roomID, playerID) {
-    // TODO: Get all hints for this hunt and store in a dict.
-    // Add function to to provide hint based on player's last completed step and hint.
+        console.log(JSON.stringify(doc));
+
+        RoomStates[roomID].hunt = doc;
+    });
   }
 
+  async function getPlayerHint(roomID, playerID) {
+    let step = 1;
+    let hint = 1;
+
+    for (var i in RoomStates[roomID].players) {
+      if (RoomStates[roomID].players[i].id == playerID) {
+          step = RoomStates[roomID].players[i].step;
+          hint = RoomStates[roomID].players[i].hint;
+
+          //TODO: Check if player reached last hint/step
+          return RoomStates[roomID].hunt.steps[step].hints[hint];
+      }
+    }
+  }
+
+  /*
   function playerExistsInRoom(roomID, playerID) {
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
@@ -19,13 +46,13 @@ module.exports.listen = function(server) {
     }
     return false;
   }
+  */
 
   function roomIsEmpty(roomID) {
     return !RoomStates[roomID].players.length > 0;
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
-    console.log(RoomStates[roomID].players);
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
           // Remove the player
@@ -138,13 +165,20 @@ module.exports.listen = function(server) {
         // Populate the state data structure
         RoomStates[huntID] = {
           status: 'Waiting for all players to be ready',
+          hunt: null,
           players: [{
             id: data.player.id,
             name: data.player.name,
             isReady: false,
-            socket: socket.id
+            socket: socket.id,
+            step: 1,
+            hint: 1
           }]
         };
+
+        // Populate the room with the Hunt Steps and Hints
+        getHuntData(huntID);
+
       } else {
         // Add player to existing room
         // Todo: Avoid pushing a duplicate entry by first checking if one exists.
@@ -253,9 +287,13 @@ module.exports.listen = function(server) {
       let player = getPlayerBySocket(roomID, socket.id);
 
       // Send the next available hint to the player
-      socket.emit('hint', {
-        hint: getHint(roomId, player.id)
+      getPlayerHint(roomID, player.id)
+      .then(hint => {
+        socket.emit('hint', {
+          hint: hint
+        })
       })
+      
     });
   });
 

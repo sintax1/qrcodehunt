@@ -1,5 +1,4 @@
 const { Hunt } = require('../../models/QRHunt');
-const { getPhoto } = require('./photo')
 
 // GET api/hunt/:id
 exports.getHunt = async (req, res) => {
