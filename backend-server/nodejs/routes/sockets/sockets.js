@@ -76,7 +76,6 @@ module.exports.listen = function(server) {
 
   function getPlayerBySocket(roomID, socketID) {
     const player = RoomStates[roomID].players.find(player => player.socket == socketID);
-    console.log('found player by socket: ' + JSON.stringify(player));
     return player;
   }
 
@@ -108,7 +107,6 @@ module.exports.listen = function(server) {
   }
 
   io.on('connection', (socket) => {
-    console.log('websocket connection');
     socket.emit('connected');
 
     // Disconnect
@@ -280,8 +278,6 @@ module.exports.listen = function(server) {
 
     // Get a Hint
     socket.on('getHint', () => {
-      console.log('getHint');
-
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = rooms[0];
@@ -290,7 +286,6 @@ module.exports.listen = function(server) {
       // Send the next available hint to the player
       getPlayerHint(roomID, player.id)
       .then(hint => {
-        console.log('Got a hint for player: ' + JSON.stringify(hint));
         socket.emit('hint', {
           hint: hint
         })
