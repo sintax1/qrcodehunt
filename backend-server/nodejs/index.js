@@ -34,7 +34,6 @@ app.put('/api/step/:id', step.updateStep);
 app.delete('/api/step/:id', step.deleteStep);
 
 // Hint
-//app.post('/api/hint', hint.addHint);
 app.post('/api/hint', photo.upload.single('photo'), hint.addHint);
 app.get('/api/hint/:id', hint.getHint);
 app.get('/api/hints', hint.getAllHints);

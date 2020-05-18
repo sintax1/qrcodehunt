@@ -34,9 +34,7 @@ module.exports.listen = function(server) {
       if (RoomStates[roomID].players[i].id == playerID) {
         stepid = RoomStates[roomID].players[i].step;
         hintid = RoomStates[roomID].players[i].hint;
-
-          //TODO: Check if player reached last hint/step
-          return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
+        return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
       }
     }
   }
@@ -222,7 +220,7 @@ module.exports.listen = function(server) {
       console.log('joinHunt: ' + JSON.stringify(data));
     });
 
-    // Listen for general messages
+    // Listen for messages
     // 
     
     // Get the Hunt Status
@@ -299,8 +297,59 @@ module.exports.listen = function(server) {
           hint: hint
         })
       })
-      
     });
+
+    // Verify code
+    socket.on('code', (data) => {
+      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+      let roomID = huntID = rooms[0];
+      let player = getPlayerBySocket(roomID, socket.id);
+
+      for (var i in RoomStates[roomID].players) {
+        if (RoomStates[roomID].players[i].id == player.id) {
+          stepid = RoomStates[roomID].players[i].step;
+
+          //TODO: Check if player reached last hint/step
+          let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
+
+          if (qrcode == data.code) {
+            // Player submitted the correct QR Code
+
+            if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
+              // Player just completed the last step
+              socket.emit('update', {
+                status: 'Congratulations. You solved the challenge!'
+              })
+              // Send the finish signal
+              socket.emit('fin');
+              
+            } else {
+              // Increment the players current step
+              RoomStates[roomID].players[i].step++
+
+              // Update the players message
+              socket.emit('update', {
+                status: 'Nice Job! Here\'s your next Hint...'
+              })
+
+              // Send the next available hint to the player
+              getPlayerHint(roomID, player.id)
+              .then(hint => {
+                console.log('Got a hint for player: ' + JSON.stringify(hint));
+                socket.emit('hint', {
+                  hint: hint
+                })
+              })
+            }
+          }
+        }
+      }
+
+      socket.emit('update', {
+        status: 'Try Again!'
+      })
+
+    })
   });
 
 
