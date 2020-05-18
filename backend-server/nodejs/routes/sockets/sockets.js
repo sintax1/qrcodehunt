@@ -42,8 +42,6 @@ module.exports.listen = function(server) {
 
       count--;
     }, 2000);
-
-    count--;
   }
 
   io.on('connection', (socket) => {
