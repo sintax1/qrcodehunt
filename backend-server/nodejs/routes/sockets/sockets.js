@@ -7,7 +7,7 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    Hunt.findById(huntID)
+    return Hunt.findById(huntID)
       .populate({
         path: 'steps.hints.photo'
       })
@@ -17,6 +17,8 @@ module.exports.listen = function(server) {
           }
           console.log('doc: ' + JSON.stringify(doc))
           return doc;
+      }).then(hunt => {
+        return await processSteps(hunt);
       });
   }
 
@@ -195,10 +197,8 @@ module.exports.listen = function(server) {
 
         // Populate the room with the Hunt Steps and Hints
         getHuntData(huntID).then(hunt => {
-          processSteps(hunt).then(hunt => {
-            console.log('processed hunt: ' + JSON.stringify(hunt));
-            RoomStates[roomID].hunt = hunt;
-          });
+          console.log('processed hunt: ' + JSON.stringify(hunt));
+          RoomStates[roomID].hunt = hunt;
         });
 
       } else {
