@@ -297,6 +297,7 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
+      let invalid = true;
 
       for (var i in RoomStates[roomID].players) {
         if (RoomStates[roomID].players[i].id == player.id) {
@@ -309,6 +310,7 @@ module.exports.listen = function(server) {
 
           if (qrcode == data.code) {
             // Player submitted the correct QR Code
+            invalid = false;
 
             if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
               // Player just completed the last step
@@ -339,10 +341,11 @@ module.exports.listen = function(server) {
         }
       }
 
-      socket.emit('update', {
-        status: 'Try Again!'
-      })
-
+      if (invalid) {
+        socket.emit('update', {
+          status: 'Try Again!'
+        })
+      }
     })
   });
 
