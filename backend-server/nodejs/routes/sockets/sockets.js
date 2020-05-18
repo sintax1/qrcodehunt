@@ -1,5 +1,6 @@
 var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
+import { getPhoto } from '../api/photo';
 
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
@@ -16,25 +17,18 @@ module.exports.listen = function(server) {
   }
 
   async function getPlayerHint(roomID, playerID) {
-    let step = 0;
-    let hint = 0;
-
-    console.log('getPlayerHint: ' + JSON.stringify(RoomStates[roomID].hunt));
+    let stepid = 0;
+    let hintid = 0;
 
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
-          step = RoomStates[roomID].players[i].step;
-          hint = RoomStates[roomID].players[i].hint;
-
-          console.log('step: ' + step);
-          console.log('hint: ' + hint);
-
-          console.log('getPlayerHint.steps: ' + JSON.stringify(RoomStates[roomID].hunt.steps));
-          console.log('getPlayerHint.hints: ' + JSON.stringify(RoomStates[roomID].hunt.steps[step].hints));
-          console.log('getPlayerHint.hint: ' + JSON.stringify(RoomStates[roomID].hunt.steps[step].hints[hint]));
+        stepid = RoomStates[roomID].players[i].step;
+        hintid = RoomStates[roomID].players[i].hint;
 
           //TODO: Check if player reached last hint/step
-          return RoomStates[roomID].hunt.steps[step].hints[hint];
+          let hint = RoomStates[roomID].hunt.steps[stepid].hints[hintid];
+          hint.photo = await getPhoto(hint.photo);
+          return hint;
       }
     }
   }
@@ -107,8 +101,6 @@ module.exports.listen = function(server) {
       count--;
     }, 1000);
   }
-
-  
 
   io.on('connection', (socket) => {
     console.log('websocket connection');
