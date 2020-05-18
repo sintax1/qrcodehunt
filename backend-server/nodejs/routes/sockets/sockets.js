@@ -11,9 +11,7 @@ module.exports.listen = function(server) {
         if (err) {
           console.log(err);
         }
-        return processSteps(doc).then(hunt => {
-          return hunt;
-        })
+        return doc;
     });
   }
 
