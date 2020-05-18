@@ -110,7 +110,9 @@ module.exports.listen = function(server) {
     });
 
     // Listen for general messages
+    // 
     
+    // Get the Hunt Status
     socket.on('getStatus', () => {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
@@ -162,8 +164,22 @@ module.exports.listen = function(server) {
         setTimeout(() => {
           startHunt(huntID);
         }, 2000);
-
       }
+    });
+
+    // ws messages used while Hunt is in progress
+
+    // Get a Hint
+    socket.on('getHint', () => {
+      console.log('getHint');
+      
+      // get the rooms that this player is in
+      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+
+      // Send the next available hint to the player
+      socket.emit('hint', {
+        status: RoomStates[rooms[0]].status
+      })
     });
   });
 
