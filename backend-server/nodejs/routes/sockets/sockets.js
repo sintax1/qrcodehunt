@@ -7,7 +7,7 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    let hunt = await Hunt.findById(huntID)
+    return Hunt.findById(huntID)
       .populate({
         path: 'steps.hints.photo'
       })
@@ -16,11 +16,8 @@ module.exports.listen = function(server) {
             console.log(err);
           }
           console.log('doc: ' + JSON.stringify(doc))
+          return doc;
       });
-
-    console.log('getHuntData.hunt: ' + JSON.stringify(hunt));
-
-    return hunt;
   }
 
   // format Steps/Hints and randomize, if necessary
