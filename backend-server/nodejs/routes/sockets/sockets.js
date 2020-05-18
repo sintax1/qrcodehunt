@@ -127,6 +127,7 @@ module.exports.listen = function(server) {
         RoomStates[huntID] = {
           status: 'Waiting for all players to be ready',
           players: [{
+            id: data.player.id,
             name: data.player.name,
             isReady: false,
             socket: socket.id
