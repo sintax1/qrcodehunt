@@ -22,8 +22,8 @@ module.exports.listen = function(server) {
     hunt.steps.forEach(function(step, sid, steps) {
       steps[sid].hints.forEach(function(hint, hid, hints) {
         console.log('typeof: ' + typeof hunt)
-        for (let [key, value] of Object.entries(hint)) {
-          console.log('hint: ' + key + ', ' + value);
+        for (let key of Object.keys(hint)) {
+          console.log('hint: ' + key + ', ' + hint[key]);
         }
         
       });
