@@ -35,6 +35,9 @@ module.exports.listen = function(server) {
           step = RoomStates[roomID].players[i].step;
           hint = RoomStates[roomID].players[i].hint;
 
+          console.log('step: ' + step);
+          console.log('hint: ' + hint);
+
           console.log('getPlayerHint.steps: ' + JSON.stringify(RoomStates[roomID].hunt.steps));
           console.log('getPlayerHint.hints: ' + JSON.stringify(RoomStates[roomID].hunt.steps[step].hints));
           console.log('getPlayerHint.hint: ' + JSON.stringify(RoomStates[roomID].hunt.steps[step].hints[hint]));
