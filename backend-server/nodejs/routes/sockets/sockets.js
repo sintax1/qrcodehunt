@@ -24,6 +24,20 @@ module.exports.listen = function(server) {
     });
   }
 
+  // format Steps/Hints and randomize, if necessary
+  async function processSteps(huntID) {
+    let roomID = huntID;
+    let steps = RoomStates[roomID].hunt.steps;
+
+    steps.forEach(function(step, sid, steps) {
+      steps[sid].hints.forEach(function(hint, hid, hints) {
+        console.log('hint: ' + JSON.stringify(hint));
+      });
+    });
+    
+
+  }
+
   async function getPlayerHint(roomID, playerID) {
     let step = 1;
     let hint = 1;
@@ -188,7 +202,10 @@ module.exports.listen = function(server) {
         };
 
         // Populate the room with the Hunt Steps and Hints
-        getHuntData(huntID);
+        getHuntData(huntID)
+        .then(() => {
+          processSteps(huntID);
+        });
 
       } else {
         // Add player to existing room
