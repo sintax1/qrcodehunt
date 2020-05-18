@@ -16,8 +16,8 @@ module.exports.listen = function(server) {
     });
 
     // Populate hunt hint photos
-    hunt.steps.forEach(function(step, sid, steps) {
-      steps[sid].hints.forEach(function(hint, hid, hints) {
+    hunt.steps.forEach(async function(step, sid, steps) {
+      steps[sid].hints.forEach(async function(hint, hid, hints) {
         console.log('hint: ' + JSON.stringify(hint));
         hints[hid].photo = await getPhotoById(hint.photo);
       });
