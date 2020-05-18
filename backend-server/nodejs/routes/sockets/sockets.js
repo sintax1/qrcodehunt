@@ -15,6 +15,7 @@ module.exports.listen = function(server) {
           if (err) {
             console.log(err);
           }
+          console.log('doc: ' + JSON.stringify(doc))
           return doc;
       });
 
