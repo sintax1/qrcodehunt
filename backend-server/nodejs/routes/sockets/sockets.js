@@ -305,6 +305,8 @@ module.exports.listen = function(server) {
           //TODO: Check if player reached last hint/step
           let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
 
+          console.log('Comparing ' + qrcode + ' and ' + data.code);
+
           if (qrcode == data.code) {
             // Player submitted the correct QR Code
 
