@@ -313,7 +313,7 @@ module.exports.listen = function(server) {
             if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
               // Player just completed the last step
               socket.emit('update', {
-                status: 'Congratulations. You solved the challenge!'
+                status: 'Congratulations. You completed the challenge!'
               })
               // Send the finish signal
               socket.emit('fin');
