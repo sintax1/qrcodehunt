@@ -18,7 +18,7 @@ module.exports.listen = function(server) {
           console.log('doc: ' + JSON.stringify(doc))
           return doc;
       }).then(hunt => {
-        return await processSteps(hunt);
+        return processSteps(hunt);
       });
   }
 
