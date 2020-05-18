@@ -4,6 +4,36 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
+  
+
+  function getPlayerHint(roomID, playerID) {
+    // TODO: Get all hints for this hunt and store in a dict.
+    // Add function to to provide hint based on player's last completed step and hint.
+  }
+
+  function playerExistsInRoom(roomID, playerID) {
+    for (var i in RoomStates[roomID].players) {
+      if (RoomStates[roomID].players[i].id == playerID) {
+          return true;
+      }
+    }
+    return false;
+  }
+
+  function roomIsEmpty(roomID) {
+    return !RoomStates[roomID].players.length > 0;
+  }
+
+  async function removePlayerFromRoom(roomID, playerID) {
+    for (var i in RoomStates[roomID].players) {
+      if (RoomStates[roomID].players[i].id == playerID) {
+          delete RoomStates[roomID].players[i];
+          return true;
+      }
+    }
+    throw Error(playerID + " not found in " + roomID);
+  }
+
   function updatePlayerReady(roomID, playerID, isReady) {
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
@@ -55,7 +85,30 @@ module.exports.listen = function(server) {
       console.log('Disconnect: ' + socket.id);
     });
 
-    // Ne player joined Hunt
+    // Player left the Hunt
+    socket.on('leaveHunt', (data) => {
+      let roomID = data.id;
+      let player = data.player;
+
+      removePlayerFromRoom(roomID, player.id)
+        .then(res => {
+          //TODO: socket.to(roomID).emit('playerReady', JSON.stringify({
+          io.in(roomID).emit('playerLeft', JSON.stringify({
+            name: player.name
+          }))
+        })
+        .catch(err => {
+          console.log(err)
+        })
+        .then(() => {
+          if (roomIsEmpty(roomID)) {
+            console.log("Room " + roomID + " is empty.");
+            delete RoomStates[roomID];
+          }
+        })
+    });
+
+    // New player joined Hunt
     socket.on('joinHunt', (data) => {
       let huntID = data.id;
       let player = data.player;
@@ -78,11 +131,15 @@ module.exports.listen = function(server) {
       } else {
         // Add player to existing room
         // Todo: Avoid pushing a duplicate entry by first checking if one exists.
-        RoomStates[huntID].players.push({
-          name: data.player.name,
-          isReady: false,
-          socket: socket.id
-        })
+        /*
+        if (playerExistsInRoom()) {
+          RoomStates[huntID].players.push({
+            name: data.player.name,
+            isReady: false,
+            socket: socket.id
+          })
+        }
+        */
       }
 
       // join the room
@@ -172,13 +229,15 @@ module.exports.listen = function(server) {
     // Get a Hint
     socket.on('getHint', () => {
       console.log('getHint');
-      
+
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+      let roomID = rooms[0];
+      let player = getPlayerBySocket(roomID, socket.id);
 
       // Send the next available hint to the player
       socket.emit('hint', {
-        status: RoomStates[rooms[0]].status
+        hint: getHint(roomId, player.id);
       })
     });
   });
