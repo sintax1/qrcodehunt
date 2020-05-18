@@ -138,6 +138,8 @@ module.exports.listen = function(server) {
         isReady: true
       }))
 
+      console.log('RoomStates[rooms[0]].players: ' + JSON.stringify(RoomStates[rooms[0]].players));
+
       let ready = Object.values(RoomStates[rooms[0]].players)
         .reduce((result, { isReady }) => result && isReady, true);
 
@@ -155,7 +157,7 @@ module.exports.listen = function(server) {
         setTimeout(() => {
           startHunt(huntID);
         }, 2000);
-        
+
       }
     });
   });
