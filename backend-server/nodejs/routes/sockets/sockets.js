@@ -16,7 +16,6 @@ module.exports.listen = function(server) {
             console.log(err);
           }
           console.log('doc: ' + JSON.stringify(doc))
-          return doc;
       });
 
     console.log('getHuntData.hunt: ' + JSON.stringify(hunt));
