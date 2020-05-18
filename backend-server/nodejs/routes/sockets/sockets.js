@@ -8,7 +8,7 @@ module.exports.listen = function(server) {
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
     let roomID = huntID;
-    
+
     Hunt.findById(huntID)
     .populate({
       path: 'steps.hints.photo'
@@ -27,6 +27,8 @@ module.exports.listen = function(server) {
   async function getPlayerHint(roomID, playerID) {
     let step = 1;
     let hint = 1;
+
+    console.log('getPlayerHint: ' + JSON.stringify(RoomStates[roomID].hunt));
 
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
@@ -291,6 +293,7 @@ module.exports.listen = function(server) {
       // Send the next available hint to the player
       getPlayerHint(roomID, player.id)
       .then(hint => {
+        console.log('Got a hint for player: ' + JSON.stringify(hint));
         socket.emit('hint', {
           hint: hint
         })
