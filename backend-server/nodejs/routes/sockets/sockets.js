@@ -11,9 +11,7 @@ module.exports.listen = function(server) {
         if (err) {
           console.log(err);
         }
-        console.log('doc: ' + JSON.stringify(doc))
         return processSteps(doc).then(hunt => {
-          console.log('processed: ' + JSON.stringify(hunt));
           return hunt;
         })
     });
@@ -24,14 +22,15 @@ module.exports.listen = function(server) {
     hunt.steps.forEach(function(step, sid, steps) {
       steps[sid].hints.forEach(function(hint, hid, hints) {
         console.log('hint: ' + JSON.stringify(hint));
+        hints[hid]
       });
     });
     return hunt;
   }
 
   async function getPlayerHint(roomID, playerID) {
-    let step = 1;
-    let hint = 1;
+    let step = 0;
+    let hint = 0;
 
     console.log('getPlayerHint: ' + JSON.stringify(RoomStates[roomID].hunt));
 
@@ -187,8 +186,8 @@ module.exports.listen = function(server) {
             name: data.player.name,
             isReady: false,
             socket: socket.id,
-            step: 1,
-            hint: 1
+            step: 0,
+            hint: 0
           }]
         };
 
