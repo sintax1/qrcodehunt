@@ -7,12 +7,15 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    let hunt = await Hunt.findById(huntID, async (err, doc) => {
+    let hunt = await Hunt.findById(huntID, (err, doc) => {
         if (err) {
           console.log(err);
         }
         console.log('doc: ' + JSON.stringify(doc))
-        return await processSteps(doc);
+        processSteps(doc).then(hunt => {
+          console.log('processed: ' + JSON.stringify(hunt));
+          return hunt;
+        })
     });
   }
 
