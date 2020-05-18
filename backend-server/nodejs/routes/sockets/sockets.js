@@ -7,12 +7,12 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    let hunt = await Hunt.findById(huntID, (err, doc) => {
+    let hunt = await Hunt.findById(huntID, async (err, doc) => {
         if (err) {
           console.log(err);
         }
         console.log('doc: ' + JSON.stringify(doc))
-        return processSteps(doc);
+        return await processSteps(doc);
     });
   }
 
@@ -192,7 +192,7 @@ module.exports.listen = function(server) {
         // Populate the room with the Hunt Steps and Hints
         getHuntData(huntID).then(hunt => {
           console.log('processed hunt: ' + JSON.stringify(hunt));
-          RoomStates[roomID].hunt = hunt;
+          RoomStates[huntID].hunt = hunt;
         });
 
       } else {
