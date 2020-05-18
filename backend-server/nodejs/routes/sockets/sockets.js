@@ -25,16 +25,13 @@ module.exports.listen = function(server) {
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
-    console.log(RoomStates[roomID].players);
-
     for (var i in RoomStates[roomID].players) {
-      console.log("comparing " + RoomStates[roomID].players[i].id + " and " + playerID);
-
       if (RoomStates[roomID].players[i].id == playerID) {
+          // Remove the player
           delete RoomStates[roomID].players[i];
-          return true;
       }
     }
+    
     throw Error(playerID + " not found in " + roomID);
   }
 
@@ -112,11 +109,17 @@ module.exports.listen = function(server) {
           console.log(err)
         })
         .then(() => {
+          // Leave the room
+          socket.leave(huntID);
+        })
+        .then(() => {
+          // Delete the room if this was the last player in it
           if (roomIsEmpty(roomID)) {
             console.log("Room " + roomID + " is empty.");
             delete RoomStates[roomID];
           }
-        })
+          return true;
+        });
     });
 
     // New player joined Hunt
