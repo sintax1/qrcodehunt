@@ -38,10 +38,12 @@ module.exports.listen = function(server) {
           status: 'GO!!!'
         });
         clearInterval(countdown);
+
+        io.in(roomID).emit('beginHunt');
       }
 
       count--;
-    }, 2000);
+    }, 1000);
   }
 
   io.on('connection', (socket) => {
