@@ -12,7 +12,7 @@ module.exports.listen = function(server) {
           console.log(err);
         }
         console.log('doc: ' + JSON.stringify(doc))
-        return processSteps(hunt);
+        return processSteps(doc);
     });
   }
 
