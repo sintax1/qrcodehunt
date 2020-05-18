@@ -7,35 +7,30 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    let roomID = huntID;
+    let hunt = await Hunt.findById(huntID)
+      .populate({
+        path: 'steps.hints.photo'
+      })
+      .exec((err, doc) => {
+          if (err) {
+            console.log(err);
+          }
+          return doc;
+      });
 
-    Hunt.findById(huntID)
-    .populate({
-      path: 'steps.hints.photo'
-    })
-    .exec((err, doc) => {
-        if (err) {
-          console.log(err);
-        }
+    console.log('getHuntData.hunt: ' + JSON.stringify(hunt));
 
-        console.log(JSON.stringify(doc));
-
-        RoomStates[roomID].hunt = doc;
-    });
+    return hunt;
   }
 
   // format Steps/Hints and randomize, if necessary
-  async function processSteps(huntID) {
-    let roomID = huntID;
-    let steps = RoomStates[roomID].hunt.steps;
-
-    steps.forEach(function(step, sid, steps) {
+  async function processSteps(hunt) {
+    hunt.steps.forEach(function(step, sid, steps) {
       steps[sid].hints.forEach(function(hint, hid, hints) {
         console.log('hint: ' + JSON.stringify(hint));
       });
     });
-    
-
+    return hunt;
   }
 
   async function getPlayerHint(roomID, playerID) {
@@ -202,9 +197,11 @@ module.exports.listen = function(server) {
         };
 
         // Populate the room with the Hunt Steps and Hints
-        getHuntData(huntID)
-        .then(() => {
-          processSteps(huntID);
+        getHuntData(huntID).then(hunt => {
+          processSteps(hunt).then(hunt => {
+            console.log('processed hunt: ' + JSON.stringify(hunt));
+            RoomStates[roomID].hunt = hunt;
+          });
         });
 
       } else {
