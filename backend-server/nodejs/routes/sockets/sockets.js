@@ -37,6 +37,7 @@ module.exports.listen = function(server) {
 
           console.log('getPlayerHint.steps: ' + JSON.stringify(RoomStates[roomID].hunt.steps));
           console.log('getPlayerHint.hints: ' + JSON.stringify(RoomStates[roomID].hunt.steps[step].hints));
+          console.log('getPlayerHint.hint: ' + JSON.stringify(RoomStates[roomID].hunt.steps[step].hints[hint]));
 
           //TODO: Check if player reached last hint/step
           return RoomStates[roomID].hunt.steps[step].hints[hint];
