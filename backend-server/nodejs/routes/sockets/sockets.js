@@ -7,7 +7,7 @@ module.exports.listen = function(server) {
 
   // Populate the room state with hunt data
   async function getHuntData(huntID) {
-    return await Hunt.findById(huntID, (err, doc) => {
+    return await Hunt.findById(huntID, undefined, {lean: true}, (err, doc) => {
         if (err) {
           console.log(err);
         }
@@ -21,11 +21,7 @@ module.exports.listen = function(server) {
   async function processSteps(hunt) {
     hunt.steps.forEach(function(step, sid, steps) {
       steps[sid].hints.forEach(function(hint, hid, hints) {
-        console.log('typeof: ' + typeof hunt)
-        for (let key of Object.keys(hint)) {
-          console.log('hint: ' + key + ', ' + hint[key]);
-        }
-        
+        console.log('hint: ' + JSON.stringify(hint));
       });
     });
     return hunt;
