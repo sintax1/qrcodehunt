@@ -21,7 +21,10 @@ module.exports.listen = function(server) {
   async function processSteps(hunt) {
     hunt.steps.forEach(function(step, sid, steps) {
       steps[sid].hints.forEach(function(hint, hid, hints) {
-        console.log('hint: ' + JSON.stringify(hint));
+        for (let [key, value] of Object.entries(object1)) {
+          console.log('hint: ' + key + ', ' + value);
+        }
+        
       });
     });
     return hunt;
