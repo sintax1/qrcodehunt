@@ -41,7 +41,7 @@ module.exports.listen = function(server) {
       }
 
       count--;
-    }, 1000);
+    }, 2000);
 
     count--;
   }
