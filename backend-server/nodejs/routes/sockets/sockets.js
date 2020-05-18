@@ -19,7 +19,7 @@ module.exports.listen = function(server) {
     hunt.steps.forEach(async function(step, sid, steps) {
       Object.keys(steps[sid].hints).forEach(async function(hid) {
         console.log('hint: ' + JSON.stringify(steps[sid].hints[hid]));
-        steps[sid].hints[hid].photo = await getPhotoById(hint.photo);
+        steps[sid].hints[hid].photo = await getPhotoById(steps[sid].hints[hid].photo);
       });
     });
 
