@@ -50,7 +50,12 @@ module.exports.listen = function(server) {
     console.log('websocket connection');
     socket.emit('connected');
 
-    // Listen for new players that join the hunt
+    // Disconnect
+    socket.on('disconnect', () => {
+      console.log('Disconnect: ' + socket.id);
+    });
+
+    // Ne player joined Hunt
     socket.on('joinHunt', (data) => {
       let huntID = data.id;
       let player = data.player;
