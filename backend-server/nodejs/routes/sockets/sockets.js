@@ -17,9 +17,9 @@ module.exports.listen = function(server) {
 
     // Populate hunt hint photos
     hunt.steps.forEach(async function(step, sid, steps) {
-      steps[sid].hints.forEach(async function(hint, hid, hints) {
-        console.log('hint: ' + JSON.stringify(hint));
-        hints[hid].photo = await getPhotoById(hint.photo);
+      Object.keys(steps[sid].hints).forEach(async function(hid) {
+        console.log('hint: ' + JSON.stringify(steps[sid].hints[hid]));
+        steps[sid].hints[hid].photo = await getPhotoById(hint.photo);
       });
     });
 
