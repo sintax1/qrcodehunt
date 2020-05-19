@@ -67,16 +67,22 @@ module.exports.listen = function(server) {
       })
 
       // Increment player hint
+      console.log("increment player hint")
       for (var i in RoomStates[roomID].players) {
         if (RoomStates[roomID].players[i].id == playerID) {
           RoomStates[roomID].players[i].hint++;
+          console.log("hint: " + RoomStates[roomID].players[i].hint)
         }
       }
 
       console.log('Setting timer: ' + timer);
 
-      setInterval(async () => {
-        timer -= 1;
+      let countdown = setInterval(async () => {
+        console.log('timer: ' + timer);
+        timer -= 60000;
+        if (timer <= 0) {
+          clearInterval(countdown);
+        }
         socket.emit('update', {
           status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...'
         })
@@ -88,7 +94,7 @@ module.exports.listen = function(server) {
       }, timer);
     } else {
       socket.emit('update', {
-        status: 'You are on your last hint!'
+        status: 'No more hints. Find the code!'
       })
     }
   }
