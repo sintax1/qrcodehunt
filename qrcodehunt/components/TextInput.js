@@ -1,5 +1,6 @@
 import * as React from "react";
 import { StyleSheet, TextInput } from "react-native";
+import { normalize } from '../utils';
 
 const BLUE = "#428AF8";
 const LIGHT_GRAY = "#D3D3D3";
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
   textInput: {
     height: 100,
     paddingLeft: 6,
-    fontSize: 60
+    fontSize: normalize(60)
   }
 });
 

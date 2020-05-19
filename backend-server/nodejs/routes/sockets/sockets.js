@@ -50,6 +50,8 @@ module.exports.listen = function(server) {
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let timer = RoomStates[roomID].hunt.timer;
 
+    console.log('sendPlayerHint stepid: ' + stepid + ', hintid: ' + hintid);
+
     if (hintid < 3) {
       getPlayerHint(roomID, stepid, hintid)
       .then(hint => {
@@ -159,6 +161,9 @@ module.exports.listen = function(server) {
     // Disconnect
     socket.on('disconnect', () => {
       console.log('Disconnect: ' + socket.id);
+
+      // Remove player session from db
+
     });
 
     // A player is leaving the Hunt

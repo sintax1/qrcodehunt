@@ -9,7 +9,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import DefaultScreen from './screens/DefaultScreen';
 import { SetupScreen } from './screens/SetupScreen';
 import { GlobalContext, defaultContext } from './context';
-import { signout } from './api';
 
 const Stack = createStackNavigator();
 

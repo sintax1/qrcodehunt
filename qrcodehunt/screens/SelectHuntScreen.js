@@ -7,6 +7,7 @@ import {
 import { HuntList } from '../components/HuntList';
 import { GlobalContext } from '../context';
 import { getAllHunts } from '../api';
+import { normalize } from '../utils';
 
 
 export class SelectHuntScreen extends Component {
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     headerText: {
-        fontSize:40,
+        fontSize: normalize(40),
         fontWeight: "bold"
     }
 });

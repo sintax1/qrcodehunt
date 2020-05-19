@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { GlobalContext } from '../context';
+import { normalize } from '../utils';
 
 class Hint extends Component {
     constructor(props) {
@@ -23,12 +24,12 @@ class Hint extends Component {
                     {this.props.hint.photo && (
                         <Image
                             source={{ uri: this.props.hint.photo.uri }}
-                            style={{ width: 336, height: 400 }}
+                            style={{ width: normalize(200), height: normalize(300) }}
                         />
                     )}
                 </View>
                 <View style={{flex: 0}}>
-                    <Text>{this.props.hint.text}</Text>
+                    <Text style={styles.hintText}>{this.props.hint.text}</Text>
                 </View>
                 </>
             )}
@@ -135,7 +136,7 @@ export class PlayHuntScreen extends Component {
                 <View style={styles.scanner}>
                     {(enableScanner) ? (
                     <QRCodeScanner
-                        cameraStyle={{width: 400, height: 600, alignSelf: 'center'}}
+                        cameraStyle={{width: normalize(200), height: normalize(400), alignSelf: 'center'}}
                         onRead={(e) => this.handleScan(e)}
                         topContent={
                         <Text style={styles.scannerText}>
@@ -145,7 +146,7 @@ export class PlayHuntScreen extends Component {
                     />
                     ) : (
                     <TouchableOpacity style={styles.button} onPress={() => this.handleScanButton()}>
-                        <Text style={{fontSize: 40, color: '#fff'}}>Scan QR Code</Text>
+                        <Text style={{fontSize: normalize(40), color: '#fff'}}>Scan QR Code</Text>
                     </TouchableOpacity>
                     )}
                 </View>
@@ -166,23 +167,23 @@ export default PlayHuntScreen;
 const styles = StyleSheet.create({
     header: {
         flex: 0,
-        padding: 20,
+        padding: normalize(20),
         alignItems: 'center',
         justifyContent: 'center'
     },
     headerText: {
-        fontSize:40,
+        fontSize: normalize(40),
         fontWeight: "bold"
     },
     status: {
         flex: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: 20,
+        paddingBottom: normalize(20),
         flexDirection: 'row'
     },
     statusText: {
-        fontSize:40,
+        fontSize: normalize(20),
         textAlign: 'center'
     },
     hints: {
@@ -190,7 +191,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderBottomWidth: 1,
+        paddingTop: 10,
         borderTopWidth: 1
+    },
+    hintText: {
+        fontSize: normalize(20)
     },
     scanner: {
         flex: 1,
@@ -199,29 +204,29 @@ const styles = StyleSheet.create({
     },
     scannerText: {
         color: '#0015ff',
-        marginTop: 20,
+        marginTop: normalize(20),
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: normalize(20),
         zIndex: 1
     },
     button: {
         flex: 0,
         backgroundColor: 'green',
         borderRadius: 5,
-        padding: 15,
-        paddingHorizontal: 20,
+        padding: normalize(15),
+        paddingHorizontal: normalize(20),
         alignSelf: 'center',
-        bottom: 50
+        bottom: normalize(50)
     },
     message: {
         flex: 0,
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        padding: 10,
+        padding: normalize(10),
         backgroundColor: '#347deb',
     },
     messageText: {
-        fontSize: 20,
+        fontSize: normalize(20),
         color: '#fff'
     }
 });

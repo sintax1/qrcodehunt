@@ -15,6 +15,7 @@ import { SelectHuntScreen } from './SelectHuntScreen';
 import { PlayHuntScreen } from './PlayHuntScreen';
 import { WaitHuntScreen } from './WaitHuntScreen';
 import { signin, signout } from '../api';
+import { normalize } from '../utils';
 
 const Stack = createStackNavigator();
 
@@ -170,7 +171,7 @@ class DefaultScreen extends Component {
             <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
               {(SignInUsername) ? (
                 <TouchableOpacity onPress={this.SignIn} style={styles.button}>
-                  <Text style={{ fontSize: 40 }}> PLAY! </Text>
+                  <Text style={{ fontSize: normalize(40) }}> PLAY! </Text>
                 </TouchableOpacity>
               ) : (null)}
             </View>
@@ -202,12 +203,11 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#f7530c',
     fontWeight: 'bold',
-    fontSize: 30
+    fontSize: normalize(30)
   },
   message: {
-    height: 100,
     paddingLeft: 6,
-    fontSize: 60,
+    fontSize: normalize(60),
     textAlign: 'center',
     color: 'white'
   },

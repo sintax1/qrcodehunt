@@ -8,6 +8,7 @@ import {
 import { GlobalContext } from '../context';
 import { ws } from '../api';
 import { PlayerList } from '../components/PlayerList';
+import { normalize } from '../utils';
 
 export class WaitHuntScreen extends Component {
     constructor(props) {
@@ -148,7 +149,12 @@ export class WaitHuntScreen extends Component {
             this.setState(state => ({
                 ...state,
                 message: player.name + ' left the Hunt',
-                players: state.players.filter(p => p.name != player.name)
+                players: Object.keys(state.players)
+                    .filter(name =>name != player.name)
+                    .reduce((obj, key) => {
+                        obj[key] = state.players[key];
+                        return obj;
+                    }, {})
             }), () => {
                 console.log(this.state.players);
             });
@@ -201,7 +207,7 @@ export class WaitHuntScreen extends Component {
                 <View>
                     {(!isReady) ? (
                         <TouchableOpacity style={styles.button} disabled={isReady} onPress={() => this.handleReady()}>
-                            <Text style={{fontSize: 40, color: '#fff'}}>Ready</Text>
+                            <Text style={{fontSize: normalize(40), color: '#fff'}}>Ready</Text>
                         </TouchableOpacity>
                     ) : (null)}
                 </View>
@@ -225,7 +231,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     headerText: {
-        fontSize:40,
+        fontSize: normalize(40),
         fontWeight: "bold"
     },
     status: {
@@ -235,7 +241,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20
     },
     statusText: {
-        fontSize:40
+        fontSize: normalize(40)
     },
     playerList: {
         flex:1,
@@ -258,7 +264,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#347deb',
     },
     messageText: {
-        fontSize: 20,
+        fontSize: normalize(20),
         color: '#fff'
     }
 });

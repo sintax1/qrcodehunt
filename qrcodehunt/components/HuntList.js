@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Dimensions
 } from 'react-native';
-import { randomColor } from '../utils';
+import { normalize, randomColor } from '../utils';
 
 const numColumns = 4;
 
@@ -61,11 +61,11 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius:10,
+    borderRadius: 10,
     borderWidth: 1,
-    height: Dimensions.get('window').width / numColumns / 2
+    height: normalize(Dimensions.get('window').width / numColumns / 2)
   },
   title: {
-    fontSize: 20
+    fontSize: normalize(20)
   }
 });

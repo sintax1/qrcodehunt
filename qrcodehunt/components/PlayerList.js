@@ -5,6 +5,7 @@ import {
     StyleSheet
 } from 'react-native';
 import { ListItem, Icon } from 'react-native-elements'
+import { normalize } from '../utils';
 
 export class PlayerList extends Component {
     constructor(props) {
@@ -22,13 +23,13 @@ export class PlayerList extends Component {
                     key={key}
                     leftAvatar={<Icon
                         color='#a2acbd'
-                        size={40}
+                        size={normalize(40)}
                         name={ this.props.players[key].isReady ? 'smile' : 'dizzy' }
                         type='font-awesome-5'
                         color={ this.props.players[key].isReady ? 'green' : '#a2acbd' }
                       />}
                     title={key}
-                    titleStyle={{fontSize: 40}}
+                    titleStyle={{fontSize: normalize(40)}}
                     containerStyle={ this.props.players[key].isReady ? {backgroundColor: '#f0fff4'} : {backgroundColor: '#fff1f0'}}
                     bottomDivider
                 />
