@@ -61,8 +61,8 @@ module.exports.listen = function(server) {
       })
       .then(() => {
         socket.emit('update', {
-          status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...',
-          message: 'Use the hints to find hidden codes. Then, scan the code for the next hint.'
+          status: 'You have ' + timer + ' ' + (timer > 1) ? 'minutes' : 'minute' + ' until your next hint...',
+          message: 'Use the hints to find and scan the hidden code.'
         })
       })
 
@@ -79,19 +79,20 @@ module.exports.listen = function(server) {
 
       let countdown = setInterval(async () => {
         console.log('timer: ' + timer);
-        timer -= 60000;
+        timer--;
         if (timer <= 0) {
           clearInterval(countdown);
+        } else {
+          socket.emit('update', {
+            status: 'You have ' + timer + ' ' + (timer > 1) ? 'minutes' : 'minute' + ' until your next hint...',
+          })
         }
-        socket.emit('update', {
-          status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...'
-        })
       }, 60000);
 
       // Set time for the next hint
       setTimeout(() => {
         sendPlayerHint(socket, roomID, playerID);
-      }, timer);
+      }, timer * 60000);
     } else {
       socket.emit('update', {
         status: 'No more hints. Find the code!'

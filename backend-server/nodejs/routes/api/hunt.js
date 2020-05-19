@@ -49,7 +49,7 @@ exports.getAllHunts = async (req, res) => {
 // POST api/hunt
 exports.addHunt = async (req, res) => {
     let name = req.body.name;
-    let timer = Number(req.body.timer) * 60000;
+    let timer = Number(req.body.timer);
 
     const hunt = new Hunt({name: name, timer: timer});
 
