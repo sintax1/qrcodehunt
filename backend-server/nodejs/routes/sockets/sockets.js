@@ -61,7 +61,7 @@ module.exports.listen = function(server) {
       })
       .then(() => {
         socket.emit('update', {
-          status: 'You have ' + (timer/60000) + ' minutes until your next hint...'
+          status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...'
         })
       })
 
