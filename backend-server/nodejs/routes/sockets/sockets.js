@@ -39,7 +39,7 @@ module.exports.listen = function(server) {
     return { stepid: stepid, hintid: hintid }
   }
 
-  async function sendPlayerHint(roomID, playerID) {
+  async function sendPlayerHint(socket, roomID, playerID) {
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let timer = RoomStates[roomID].hunt.timer;
 
@@ -67,7 +67,7 @@ module.exports.listen = function(server) {
 
       // Set time for the next hint
       setTimeout(() => {
-        sendPlayerHint(roomID, playerID);
+        sendPlayerHint(socket, roomID, playerID);
       }, timer);
     } else {
       socket.emit('update', {
@@ -326,7 +326,7 @@ module.exports.listen = function(server) {
       let player = getPlayerBySocket(roomID, socket.id);
 
       // Send the next available hint to the player
-      sendPlayerHint(roomID, player.id);
+      sendPlayerHint(socket, roomID, player.id);
 
     });
 
@@ -369,7 +369,7 @@ module.exports.listen = function(server) {
 
               setTimeout(() => {
                 // Send the next available hint to the player
-                sendPlayerHint(roomID, player.id);
+                sendPlayerHint(socket, roomID, player.id);
               }, 2000);
             }
           }
