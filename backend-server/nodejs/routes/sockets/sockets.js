@@ -2,27 +2,34 @@ var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
 const { getPhotoById } = require('../api/photo');
 
+// Get Hunt Data from the DB
+async function getHuntData(huntID) {
+  let hunt = await Hunt.findById(huntID, undefined, {lean: true}, (err, doc) => {
+      if (err) {
+        console.log(err);
+      }
+      return doc;
+  });
+
+  // Populate hunt hint photos
+  hunt.steps.forEach(async function(step, sid, steps) {
+    Object.keys(steps[sid].hints).forEach(async function(hid) {
+      steps[sid].hints[hid].photo = await getPhotoById(steps[sid].hints[hid].photo);
+    });
+  });
+
+  return hunt;
+}
+
 module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
-  // Populate the room state with hunt data
-  async function getHuntData(huntID) {
-    let hunt = await Hunt.findById(huntID, undefined, {lean: true}, (err, doc) => {
-        if (err) {
-          console.log(err);
-        }
-        return doc;
-    });
-
-    // Populate hunt hint photos
-    hunt.steps.forEach(async function(step, sid, steps) {
-      Object.keys(steps[sid].hints).forEach(async function(hid) {
-        steps[sid].hints[hid].photo = await getPhotoById(steps[sid].hints[hid].photo);
-      });
-    });
-
-    return hunt;
+  function allPlayersReady() {
+    console.log('checking ready status');
+    let ready = Object.values(RoomStates[roomID].players)
+      .reduce((result, { isReady }) => result && isReady, true);
+    return ready;
   }
 
   function getPlayerStepHint(roomID, playerID) {
@@ -156,12 +163,7 @@ module.exports.listen = function(server) {
       console.log('Disconnect: ' + socket.id);
     });
 
-    // Leave
-    socket.on('leave', (data) => {
-      console.log("Leave: " + JSON.stringify(data));
-    });
-
-    // Player left the Hunt
+    // A player is leaving the Hunt
     socket.on('leaveHunt', (data) => {
       let roomID = data.id;
       let player = data.player;
@@ -192,6 +194,8 @@ module.exports.listen = function(server) {
 
     // New player joined Hunt
     socket.on('joinHunt', (data) => {
+      console.log('New player: ' + JSON.stringify(data));
+
       let huntID = data.id;
       let player = data.player;
 
@@ -274,6 +278,7 @@ module.exports.listen = function(server) {
 
     // Player Ready
     socket.on('ready', () => {
+      console.log('ready');
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
@@ -296,13 +301,8 @@ module.exports.listen = function(server) {
 
       console.log('RoomStates[roomID].players: ' + JSON.stringify(RoomStates[roomID].players));
 
-      let ready = Object.values(RoomStates[roomID].players)
-        .reduce((result, { isReady }) => result && isReady, true);
-
-      console.log('all players ready: ' + ready);
-
-      if (ready) {
-        console.log('Not waiting on any players. start the hunt.')
+      if (allPlayersReady()) {
+        console.log('All players are ready. start the hunt.')
 
         RoomStates[roomID].status = 'All players are ready!';
 
@@ -314,12 +314,14 @@ module.exports.listen = function(server) {
           startHunt(huntID);
         }, 2000);
       }
+      
     });
 
     // ws messages used while Hunt is in progress
 
     // Get a Hint
     socket.on('getHint', () => {
+      console.log('getHint');
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = rooms[0];
@@ -332,6 +334,7 @@ module.exports.listen = function(server) {
 
     // Verify code
     socket.on('code', (data) => {
+      console.log('code: ' + JSON.stringify(data));
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
