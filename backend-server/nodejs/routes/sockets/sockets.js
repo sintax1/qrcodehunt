@@ -126,6 +126,7 @@ module.exports.listen = function(server) {
       if (RoomStates[roomID].players[i].id == playerID) {
           // Remove the player
           console.log('delete: ' + roomID + ', ' + playerID )
+          console.log('players: ' + RoomStates[roomID].players )
           delete RoomStates[roomID].players[i];
           console.log('players: ' + RoomStates[roomID].players )
           return true;
