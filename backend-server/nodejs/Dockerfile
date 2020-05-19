@@ -25,4 +25,4 @@ RUN chmod +x /wait
 
 # Run the app when the container launches
 # CMD ["npm", "start"]
-CMD ["/wait", "&&", "npm", "start"]
+CMD /wait && npm start

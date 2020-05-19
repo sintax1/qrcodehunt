@@ -13,7 +13,6 @@ services:
       - "3000:3000"
     depends_on:
       - mongodb
-    restart: always
   mongodb:
     image: mongo
     container_name: mongodb
