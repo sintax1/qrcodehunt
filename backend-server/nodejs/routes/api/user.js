@@ -8,8 +8,6 @@ exports.signout = (req, res, next) => {
     userid
   } = body;
 
-  console.log('signout: ' + userid);
-
   UserSession.findOneAndDelete( { _id: userid}, (err, doc) => {
     if (err) {
       console.log('err:', err);
@@ -31,12 +29,10 @@ exports.signin = (req, res, next) => {
     username
   } = body;
 
-  console.log("Signin: " + username);
-
   if (!username) {
     return res.send({
       success: false,
-      message: 'Error: name cannot be blank.'
+      message: 'You must enter a name.'
     });
   }
 
@@ -54,7 +50,7 @@ exports.signin = (req, res, next) => {
       console.log('err: duplicate name');
       return res.send({
         success: false,
-        message: 'Error: Choose a different name.'
+        message: 'That name is already taken. Enter a different name.'
       });
     } else {
       const userSession = new UserSession({ username: username});
