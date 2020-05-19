@@ -74,7 +74,6 @@ module.exports.listen = function(server) {
 
       console.log('Setting timer: ' + timer);
 
-
       setInterval(async () => {
         timer--;
         socket.emit('update', {
@@ -170,8 +169,7 @@ module.exports.listen = function(server) {
     socket.on('disconnect', () => {
       console.log('Disconnect: ' + socket.id);
 
-      // Remove player session from db
-
+      console.log('RoomStates: ' + JSON.stringify(RoomStates));
     });
 
     // A player is leaving the Hunt
