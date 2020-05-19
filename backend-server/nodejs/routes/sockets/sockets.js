@@ -61,7 +61,8 @@ module.exports.listen = function(server) {
       })
       .then(() => {
         socket.emit('update', {
-          status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...'
+          status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...',
+          message: 'Use the hints to find hidden codes. Then, scan the code for the next hint.'
         })
       })
 
