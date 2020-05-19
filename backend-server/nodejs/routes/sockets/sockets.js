@@ -142,7 +142,7 @@ module.exports.listen = function(server) {
 
   function getPlayerBySocket(roomID, socketID) {
     console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
-    
+
     try {
       const player = RoomStates[roomID].players.find(player => player.socket == socketID);
       return player;
@@ -387,8 +387,9 @@ module.exports.listen = function(server) {
               socket.emit('fin');
 
             } else {
-              // Increment the players current step
+              // Increment the players current step and reset hint number to 0
               RoomStates[roomID].players[i].step++
+              RoomStates[roomID].players[i].hint=0
 
               // Update the players message
               socket.emit('update', {
