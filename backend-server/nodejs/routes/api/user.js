@@ -13,7 +13,7 @@ exports.signout = (req, res, next) => {
       console.log('err:', err);
       return res.send({
         success: false,
-        message: err
+        message: 'Failed to clear user session'
       });
     } else {
       return res.send({
