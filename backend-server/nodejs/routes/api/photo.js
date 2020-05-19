@@ -49,13 +49,14 @@ const getPhotosByIds = async (photoIDs) => {
     return photos;
 };
 
-exports.getPhotoById = async (photoID) => {
+const getPhotoById = async (photoID) => {
     let photos = await getPhotosByIds([photoID]);
     if (photos) {
         return photos[0];
     }
     return null
 };
+exports.getPhotoById = getPhotoById;
 
 exports.getPhotos = async (req, res) => {
     let IDs = req.body;
