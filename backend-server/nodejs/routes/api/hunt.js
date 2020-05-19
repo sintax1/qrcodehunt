@@ -49,8 +49,9 @@ exports.getAllHunts = async (req, res) => {
 // POST api/hunt
 exports.addHunt = async (req, res) => {
     let name = req.body.name;
+    let timer = Number(req.body.timer) * 1000;
 
-    const hunt = new Hunt({name: name});
+    const hunt = new Hunt({name: name, timer: timer});
 
     hunt.save((err, doc) => {
         if (err) {
