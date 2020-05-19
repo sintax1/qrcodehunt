@@ -75,7 +75,7 @@ module.exports.listen = function(server) {
       console.log('Setting timer: ' + timer);
 
       setInterval(async () => {
-        timer--;
+        timer -= 1;
         socket.emit('update', {
           status: 'You have ' + Math.floor(timer/60000) + ' minutes until your next hint...'
         })
