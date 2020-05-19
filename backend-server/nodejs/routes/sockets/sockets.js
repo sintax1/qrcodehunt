@@ -116,21 +116,14 @@ module.exports.listen = function(server) {
   }
 
   function roomIsEmpty(roomID) {
-    
-    console.log('Checking if room is empty: ' + RoomStates[roomID].players.length)
-    console.log(RoomStates[roomID].players);
     return (RoomStates[roomID].players.length <= 0);
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
-    console.log('removing player from room: ' + roomID + ', ' + playerID )
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
           // Remove the player
-          console.log('delete: ' + roomID + ', ' + playerID )
-          console.log('players: ' + JSON.stringify(RoomStates[roomID].players) )
           RoomStates[roomID].players.splice(i, 1);
-          console.log('players: ' + JSON.stringify(RoomStates[roomID].players ))
           return true;
       }
     }
@@ -167,6 +160,7 @@ module.exports.listen = function(server) {
 
     let countdown = setInterval(function() {
       RoomStates[roomID].status = 'Hunt starting in ' + count + '...';
+      RoomStates[roomID].inProgress = true;
       
       io.in(roomID).emit('update', {
         status: RoomStates[roomID].status
@@ -241,6 +235,7 @@ module.exports.listen = function(server) {
         RoomStates[huntID] = {
           status: 'Waiting for all players to be ready',
           hunt: null,
+          inProgress: false,
           players: [{
             id: data.player.id,
             name: data.player.name,
@@ -267,6 +262,10 @@ module.exports.listen = function(server) {
             step: 0,
             hint: 0
           })
+        } else {
+          // Player is already in the room
+          console.log('Player was already in room before')
+          socket.emit('beginHunt');
         }
 
       }
