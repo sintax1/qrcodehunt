@@ -286,6 +286,8 @@ module.exports.listen = function(server) {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
 
+      console.log('getStatus: ' + JSON.stringify(rooms[0]));
+
       // Send the status of the room
       socket.emit('update', {
         status: RoomStates[rooms[0]].status
