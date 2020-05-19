@@ -2,10 +2,13 @@ UserSession = require('../../models/UserSession');
 
 // Remove User session
 exports.signout = (req, res, next) => {
+  
   const { body } = req;
   const {
     userid
   } = body;
+
+  console.log('signout: ' + userid);
 
   UserSession.findOneAndDelete( { _id: userid}, (err, doc) => {
     if (err) {
