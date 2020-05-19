@@ -25,7 +25,7 @@ module.exports.listen = function(server) {
   let io = socketio.listen(server);
   RoomStates = {};
 
-  function allPlayersReady() {
+  function allPlayersReady(roomID) {
     console.log('checking ready status');
     let ready = Object.values(RoomStates[roomID].players)
       .reduce((result, { isReady }) => result && isReady, true);
@@ -298,7 +298,7 @@ module.exports.listen = function(server) {
 
       console.log('RoomStates[roomID].players: ' + JSON.stringify(RoomStates[roomID].players));
 
-      if (allPlayersReady()) {
+      if (allPlayersReady(roomID)) {
         console.log('All players are ready. start the hunt.')
 
         RoomStates[roomID].status = 'All players are ready!';
