@@ -127,6 +127,7 @@ module.exports.listen = function(server) {
           // Remove the player
           console.log('delete: ' + roomID + ', ' + playerID )
           delete RoomStates[roomID].players[i];
+          console.log('players: ' + RoomStates[roomID].players )
           return true;
       }
     }
