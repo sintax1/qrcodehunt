@@ -245,7 +245,7 @@ module.exports.listen = function(server) {
       //socket.to(huntID).emit('playerJoin', JSON.stringify({
       io.in(huntID).emit('playerJoin', JSON.stringify({
         name: player.name,
-        ready: false
+        isReady: false
       }));
 
       // Send the playerlist to the new player
