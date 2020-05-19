@@ -77,7 +77,7 @@ module.exports.listen = function(server) {
 
       console.log('Setting timer: ' + timer);
 
-      let countdown = setInterval(async () => {
+      let countdown = setInterval(() => {
         console.log('timer: ' + timer);
         timer -= 1;
         if (timer <= 0) {
