@@ -120,6 +120,7 @@ module.exports.listen = function(server) {
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
+    console.log('removePlayerFromRoom: ' + roomid + ', ' + playerID)
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
           // Remove the player
@@ -201,7 +202,7 @@ module.exports.listen = function(server) {
 
     // A player is leaving the Hunt
     socket.on('leaveHunt', (data) => {
-      console.log('eaveHunt: ' + JSON.stringify(data));
+      console.log('leaveHunt: ' + JSON.stringify(data));
 
       let roomID = data.id;
       let player = data.player;
