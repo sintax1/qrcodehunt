@@ -87,7 +87,6 @@ module.exports.listen = function(server) {
     return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
   }
 
-  /*
   function playerExistsInRoom(roomID, playerID) {
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
@@ -96,7 +95,6 @@ module.exports.listen = function(server) {
     }
     return false;
   }
-  */
 
   function roomIsEmpty(roomID) {
     return !RoomStates[roomID].players.length > 0;
@@ -226,16 +224,17 @@ module.exports.listen = function(server) {
 
       } else {
         // Add player to existing room
-        // Todo: Avoid pushing a duplicate entry by first checking if one exists.
-        /*
-        if (playerExistsInRoom()) {
+        if (!playerExistsInRoom()) {
           RoomStates[huntID].players.push({
+            id: data.player.id,
             name: data.player.name,
             isReady: false,
-            socket: socket.id
+            socket: socket.id,
+            step: 0,
+            hint: 0
           })
         }
-        */
+
       }
 
       // join the room
@@ -258,8 +257,6 @@ module.exports.listen = function(server) {
           }
         })
       )
-
-      console.log('joinHunt: ' + JSON.stringify(data));
     });
 
     // Listen for messages
