@@ -201,6 +201,8 @@ module.exports.listen = function(server) {
 
     // A player is leaving the Hunt
     socket.on('leaveHunt', (data) => {
+      console.log('eaveHunt: ' + JSBO.stringify(data));
+      
       let roomID = data.id;
       let player = data.player;
 
