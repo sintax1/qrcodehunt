@@ -141,8 +141,15 @@ module.exports.listen = function(server) {
   }
 
   function getPlayerBySocket(roomID, socketID) {
-    const player = RoomStates[roomID].players.find(player => player.socket == socketID);
-    return player;
+    console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
+    
+    try {
+      const player = RoomStates[roomID].players.find(player => player.socket == socketID);
+      return player;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
   }
 
   function startHunt(huntId) {
