@@ -34,7 +34,8 @@ export class HuntSettingsScreen extends Component {
               'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-              name: this.state.name
+              name: this.state.name,
+              timer: this.state.timer
           }),
       })
       .then(res => res.json())
@@ -60,7 +61,7 @@ export class HuntSettingsScreen extends Component {
     }
 
     handleTimer = (value) => {
-      if (/^\d+$/.test(value)) {
+      if (value === '' || /^\d+$/.test(value)) {
         this.setState({
           timer: value
         });

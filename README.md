@@ -28,6 +28,21 @@ QRCodeHunt
 └───qrcodehunt      // Front End App
 ```
 
+### Build/Install apk for Android
+
+1. In Android Studio, navigate to Build->Generate Signed APK
+2. follow the prompts
+3. Ensure device is plugged in a visible adb
+    ```
+    > adb devices
+    List of devices attached
+    8de72b8a        device
+    ```
+4. install with adb
+    ```
+    adb install <release path>\app-release.apk
+    ```
+
 ### Starting the Android Dev environment
 
 1. Connect Android device via usb.
@@ -52,4 +67,47 @@ QRCodeHunt
 2. Build and Run with docker-compose
     ```
     backend-server]$ sudo docker-compose up --build
+    ```
+
+#### Remove the mongo datastore
+
+Follow these steps to clear the mongo db completely:
+
+1. Delete the mongodb container
+    ```
+    sudo docker rm <mongodb container id>
+    ```
+2. Clear the data volume
+    ```
+    sudo docker volume prune
+    ```
+3. Rebuild the docker container
+
+#### Login to mongo for manual queries
+
+Follow these steps to login to mongodb container and run queries:
+
+1. Get bash shell in the mongo container
+    ```
+    sudo docker exec -it <container id> /bin/bash
+    ```
+2. Start mongo cli
+    ```
+    mongo --username=<username>
+    ```
+
+3. Run queries
+    ```
+    > show dbs
+    admin   0.000GB
+    config  0.000GB
+    local   0.000GB
+    qrhunt  0.000GB
+    > use qrhunt
+    switched to db qrhunt
+    > show collections
+    adminusers
+    hunts
+    usersessions
+    > db.hunts.find()
     ```

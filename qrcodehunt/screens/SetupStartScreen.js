@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { HuntList } from '../components/HuntList';
 import {
-  Button
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity
 } from 'react-native';
 import { GlobalContext } from '../context';
   
 export class SetupStartScreen extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+          message: 'Select a Hunt to edit or create a new Hunt'
+        }
     }
 
     selectHunt = (id) => {
@@ -15,24 +22,57 @@ export class SetupStartScreen extends Component {
     }
 
     render() {
+      const {
+        message
+      } = this.state;
+
       let context = this.context;
 
       console.log('SetupStartScreen context: ' + JSON.stringify(context));
 
       return (
         <>
-        <HuntList
-          selectHunt={this.selectHunt}
-          hunts={context.hunts}
-          isAdmin={context.isAdmin}
-        />
-        <Button
-          onPress={() => this.props.navigation.navigate('Hunt Settings')}
-          title="New Hunt"
-          color="#0068ad"
-        />
+        <View style={styles.header}>
+            <Text style={styles.headerText}>{message}</Text>
+        </View>
+
+        <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
+          <HuntList
+            selectHunt={this.selectHunt}
+            hunts={context.hunts}
+            isAdmin={context.isAdmin}
+          />
+        </View>
+        
+        <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Hunt Settings')} style={styles.button}>
+            <Text style={{ fontSize: 40, color: '#fff' }}> New Hunt </Text>
+          </TouchableOpacity>
+        </View>
         </>
       );
     };
 };
 SetupStartScreen.contextType = GlobalContext;
+
+const styles = StyleSheet.create({
+  header: {
+      flex: 0,
+      padding: 20,
+      alignItems: 'center',
+      justifyContent: 'center'
+  },
+  headerText: {
+      fontSize:40,
+      fontWeight: "bold"
+  },
+  button: {
+    flex: 0,
+    backgroundColor: '#347deb',
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    bottom: 50
+  }
+});

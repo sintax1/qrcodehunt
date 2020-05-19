@@ -2,39 +2,22 @@ import React, { Component } from 'react';
 import {
     Text,
     View,
-    TextInput,
     Button,
-    Alert,
     TouchableOpacity,
     StyleSheet
-  } from 'react-native';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
+} from 'react-native';
+
 import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
-import { HuntList } from '../components/HuntList';
 import { GlobalContext } from '../context';
 import CustomTextInput from '../components/TextInput';
+import { createStackNavigator } from '@react-navigation/stack';
+import { SelectHuntScreen } from './SelectHuntScreen';
+import { PlayHuntScreen } from './PlayHuntScreen';
+import { WaitHuntScreen } from './WaitHuntScreen';
+import { signin, signout } from '../api';
 
-class Login extends Component {
-    render() {
-      return (
-        <>
-          <Text>Login</Text>
-        </>
-      )
-    }
-}
+const Stack = createStackNavigator();
 
-class Hints extends Component {
-    render() {
-      return (
-        <>
-          <Text>Hints</Text>
-        </>
-      )
-    }
-}
-  
 class DefaultScreen extends Component {
     constructor(props) {
       super(props);
@@ -46,14 +29,40 @@ class DefaultScreen extends Component {
         isFocused: false
       };
     }
-  
-    /*
-    componentWillUnmount() {
-      // Save context in storage
-      console.log('Saving context: ' + JSON.stringify(this.context));
-      setStorageValue('context', JSON.stringify(this.context));
+
+    clearUserData = () => {
+      this.context.setPlayer(null);
+
+      clearStorageValue('player');
+
+      console.log('cleared user data');
     }
-    */
+
+    setUserData = (player) => {
+      this.context.setPlayer(player);
+
+      setStorageValue('player', player);
+
+      console.log('set player: ' + JSON.stringify(player));
+    }
+
+    restoreUserData = async () => {
+      let player = await getStorageValue('player');
+
+      this.context.setPlayer(player);
+
+      console.log('restored player: ' + JSON.stringify(player));
+    }
+
+    signOut = () => {
+      console.log('signOut: ' + JSON.stringify(this.context.player.id));
+      signout(this.context.player.id).then(resp => {
+        if (resp.success) {
+          console.log('signout success');
+          this.clearUserData();
+        }
+      })
+    }
 
     SignIn = () => {
         const {
@@ -64,83 +73,65 @@ class DefaultScreen extends Component {
           isLoading: true
         });
 
-        // Post request to backend
-        fetch('http://192.168.7.253:3000/api/signin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: SignInUsername
-            }),
-        }).then(res => res.json())
-            .then(json => {
-                console.log('json', json);
-                if (json.success) {
-                    //setStorageValue('token', json.token);
-
-                    this.setState({
-                        SignInError: json.message,
-                        isLoading: false
-                    });
-
-                    this.context.setToken(json.token);
-                } else {
-                    this.setState({
-                        SignInError: json.message,
-                        isLoading: false,
-                    });
-                }
-        });
-    }
-
-    restoreContext = () => {
-      // Restore context from storage
-      getStorageValue('context')
-      .then(context => {
-        if (context) {
-          this.context = JSON.parse(context);
-        }
-        console.log("Restored context: " + JSON.stringify(this.context));
-      })
+        signin(SignInUsername)
+        .then(resp => {
+          console.log('signin resp: ', JSON.stringify(resp));
+          if (resp.success) {
+              this.setUserData({
+                id: resp.token,
+                name: SignInUsername
+              });
+              this.setState({
+                SignInError: '',
+                isLoading: false
+            });
+          } else {
+              this.setState({
+                  SignInError: resp.message,
+                  isLoading: false,
+              });
+          }
+        })
+        .catch(err => {
+          console.log('signin error: ' + JSON.stringify(err))
+          this.setState({
+            isLoading: false,
+            SignInError: 'Failed to connect to server'
+          });
+        })
     }
 
     componentDidMount = () => {
-      console.log('DefaultScreen mounted')
+      console.log('DefaultScreen context: ' + JSON.stringify(this.context))
 
-        this.setState({
-          isLoading: false
-        });
+      this.setState({
+        isLoading: false
+      });
 
-        //this.restoreContext();
+      this.restoreUserData();
 
-        // https://reactnavigation.org/docs/function-after-focusing-screen/#triggering-an-action-with-a-focus-event-listener
-        const unsubscribe = this.props.navigation.addListener('focus', () => {
-          console.log('DefaultScreen focused')
-        });
-
-        this.props.navigation.setOptions({
-            headerRight: () => (
-              <Button
-                onPress={() => this.props.navigation.navigate('Setup')}
-                title="Setup"
-                color="#0068ad"
-              />
-            )
-        });
-
-        /*
-        getStorageValue('token')
-        .then(token => {
-            if (token) {
-                this.context.token = token;
-            }
-        })
-        */
-    }
-
-    selectHunt = (id) => {
-        this.setState({ selectedHunt: id });
+      this.props.navigation.setOptions({
+          headerRight: () => (
+            <View style={{flexDirection: 'row'}}>
+              {(this.context.player && this.context.player.id) ? (
+                <View style={{paddingRight: 5}}>
+                <Button
+                  onPress={() => this.signOut()}
+                  title="Logout"
+                  color="#0068ad"
+                />
+                </View>
+              ) : (null)}
+              <View style={{paddingRight: 5}}>
+                <Button
+                  onPress={() => this.props.navigation.navigate('Setup')}
+                  title="Setup"
+                  color="#0068ad"
+                />
+              </View>
+            </View>
+          )
+      });
     }
 
     render() {
@@ -148,12 +139,7 @@ class DefaultScreen extends Component {
         isLoading,
         SignInError,
         SignInUsername,
-        selectedHunt
       } = this.state;
-
-      //this.restoreContext();
-
-      console.log('defaultscreen context: ' + JSON.stringify(this.context));
 
       // Loading Screen 
       if (isLoading) {
@@ -161,13 +147,13 @@ class DefaultScreen extends Component {
       }
 
       // Login Screen
-      if (!this.context.token) {
+      if (!this.context.player || !this.context.player.id) {
         return (
           <View style={{flex:1, backgroundColor:'#347deb'}}>
             {
             (SignInError) ? (
-              <View style={{flex:1}}>
-                <Text>{SignInError}</Text>
+              <View style={styles.error}>
+                <Text style={styles.errorText}>{SignInError}</Text>
               </View>
             ) : (null)
             }
@@ -187,47 +173,19 @@ class DefaultScreen extends Component {
                   <Text style={{ fontSize: 40 }}> PLAY! </Text>
                 </TouchableOpacity>
               ) : (null)}
-              </View>
+            </View>
+            <View style={{flex: 1}}></View>
          </View>
         );
       }
 
-      if (selectedHunt == null) {
-        return (
-          <>
-            <HuntList selectHunt={this.selectHunt} hunts={this.context.hunts} />
-            <Text>{this.context.token}</Text>
-            <Button
-              title="Clear Context"
-              onPress={() => clearStorageValue('context')}
-            />
-          </>
-        )
-      }
-    
       return (
-        <View style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'stretch',
-        }}>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              <QRCodeScanner
-                onRead={this.onSuccess}
-                flashMode={RNCamera.Constants.FlashMode.torch}
-                topContent={
-                  <Text style={styles.centerText}>
-                    Follow the clues to find the QR Code, then scan it for your next clue.
-                  </Text>
-                }
-              />
-            </View>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Hints />
-          </View>
-        </View>
-      );
+        <Stack.Navigator>
+            <Stack.Screen name="Select a Hunt" component={SelectHuntScreen} />
+            <Stack.Screen name="Wait to Start" component={WaitHuntScreen} />
+            <Stack.Screen name="Hunt" component={PlayHuntScreen} />
+        </Stack.Navigator>
+      )
     }
 };
 DefaultScreen.contextType = GlobalContext;
@@ -235,6 +193,17 @@ DefaultScreen.contextType = GlobalContext;
 export default DefaultScreen;
 
 const styles = StyleSheet.create({
+  error: {
+    flex: 0,
+    alignItems: 'center',
+    alignContent: 'center',
+    marginTop: 10
+  },
+  errorText: {
+    color: '#f7530c',
+    fontWeight: 'bold',
+    fontSize: 30
+  },
   message: {
     height: 100,
     paddingLeft: 6,

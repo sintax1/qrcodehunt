@@ -3,10 +3,12 @@ import React from 'react';
 export const defaultContext = {
     token: '',
     isAdmin: false,
-    hunt: {},
+    player: null,
+    ws: null,
     setToken: () => {},
     setAdmin: () => {},
-    setHunt: () => {}
+    setPlayer: () => {},
+    setWebsocket: () => {}
 };
   
 export const GlobalContext = React.createContext();

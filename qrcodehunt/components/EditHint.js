@@ -10,6 +10,7 @@ import {
     TextInput
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import RNFetchBlob from 'rn-fetch-blob';
 
 const createFormData = (photo, data) => {
@@ -33,8 +34,6 @@ const createFormData = (photo, data) => {
 
 exports.handleSaveHint = (photo, data) => {
     return new Promise((resolve, reject) => {
-        console.log('handleSaveHint: ' + JSON.stringify(photo));
-
         RNFetchBlob.fetch('POST', 'http://192.168.7.253:3000/api/hint', {
         'Content-Type': 'multipart/form-data',
         },
@@ -44,10 +43,7 @@ exports.handleSaveHint = (photo, data) => {
         )
         .then(response => response.json())
         .then(response => {
-            resolve({
-                success: true,
-                response: response
-            });
+            resolve(response);
         })
         .catch(error => {
             console.log('upload error', error);
@@ -67,7 +63,8 @@ export class EditHint extends Component {
         photo: null,
         hintText: '',
         takePictureCallback: this.props.takePictureCallback,
-        savePictureCallback: this.props.savePictureCallback
+        savePictureCallback: this.props.savePictureCallback,
+        QRCodeCallback: this.props.QRCodeCallback
       };
     };
 
@@ -107,34 +104,50 @@ export class EditHint extends Component {
 
     render() {
       const {
-        photo,
+        photo
       } = this.state;
+
+      const {
+        QRScannerEnabled
+      } = this.props;
 
       return (
         <>
           <View style={styles.CameraContainer}>
             <View style={{flex: 2}}>
-              <RNCamera
-                ref={ref => {
-                  this.camera = ref;
-                }}
-                style={styles.preview}
-                captureAudio={false}
-                type={RNCamera.Constants.Type.back}
-                flashMode={RNCamera.Constants.FlashMode.on}
-                androidCameraPermissionOptions={{
-                  title: 'Permission to use camera',
-                  message: 'We need your permission to use your camera',
-                  buttonPositive: 'Ok',
-                  buttonNegative: 'Cancel',
-                }}
-                onGoogleVisionBarcodesDetected={({ barcodes }) => {
-                  console.log(barcodes);
-                }}
-              />
-              <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-                <Text style={{ fontSize: 14 }}> SNAP </Text>
-              </TouchableOpacity>
+              {(QRScannerEnabled) ? (
+                <QRCodeScanner
+                  cameraStyle={{width: 400, height: 600, alignSelf: 'center'}}
+                  onRead={(e) => this.state.QRCodeCallback(e)}
+                  topContent={
+                    <Text style={styles.centerText}>
+                      Scan a QR Code for this Step
+                    </Text>
+                  }
+                />
+              ) : (
+                <>
+                <RNCamera
+                  ref={ref => {
+                    this.camera = ref;
+                  }}
+                  style={styles.preview}
+                  captureAudio={false}
+                  type={RNCamera.Constants.Type.back}
+                  flashMode={RNCamera.Constants.FlashMode.on}
+                  androidCameraPermissionOptions={{
+                    title: 'Permission to use camera',
+                    message: 'We need your permission to use your camera',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Cancel',
+                  }}
+                />
+                <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
+                  <Text style={{ fontSize: 14 }}> SNAP </Text>
+                </TouchableOpacity>
+                </>
+              )}
+              
             </View>
             
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

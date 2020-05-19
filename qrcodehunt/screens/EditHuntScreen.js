@@ -9,13 +9,14 @@ import {
   Button
 } from 'react-native';
 import { StepList } from '../components/StepList';
-  
+import { getPhoto, saveQRCode } from '../api';
+
 export class EditHuntScreen extends Component {
     constructor(props) {
       super(props);
 
       const { hunt } = this.props.route.params;
-
+      
       this.state = {
         hunt: hunt,
         message: `The Hunt will have several player steps. Each step will have 3 hints which the player will receive in order.
@@ -24,7 +25,9 @@ Take a picture of the first hint to get started.`,
         hint: 1,
         hintText: '',
         photo: null,
-        doneEnabled: false
+        doneEnabled: false,
+        stepList: [],
+        QRScannerEnabled: false
       };
     }
 
@@ -52,8 +55,8 @@ Take a picture of the first hint to get started.`,
         hint,
         hintText
       }).then((response) => {
-        console.log('promise response: ' + JSON.stringify(response));
         if (this.state.hint < 3) {
+          // Step is not finished yet, add more hints
           this.setState({
             message: 'Success! Take another photo for step #' + this.state.step + ', hint #' + (this.state.hint + 1),
             photo: null,
@@ -61,13 +64,18 @@ Take a picture of the first hint to get started.`,
             doneEnabled: false
           });
         } else {
-          this.setState({
-            message: 'Success! You finished all hints for step #' + this.state.step + '. Continue taking photos to add more hints, or click Done to finish.',
-            photo: null,
-            step: this.state.step + 1,
-            hint: 1,
-            doneEnabled: true
-          });
+          // Last hint added
+
+          // Get the contents of photo
+          getPhoto(response.photo.id).then(resp => {
+            this.setState({
+              message: 'Now, scan a QR Code and hide it for Step #' + this.state.step,
+              QRScannerEnabled: true,
+              photo: null,
+              hint: 1,
+              stepList: [...this.state.stepList, { number: this.state.step, photo: resp.photo } ]
+            });
+          })
         }
       })
       .catch((error) => {
@@ -82,8 +90,29 @@ Take a picture of the first hint to get started.`,
      this.setState(data, this.saveHint);
     }
 
+    QRCodeCallback = capture => {
+      saveQRCode({
+        hunt: this.state.hunt,
+        step: this.state.step,
+        qrcode: capture.data
+      }).then(resp => {
+        if (resp.success) {
+          this.setState({
+            message: 'Success! You finished all hints for step #' + this.state.step + '. Continue taking photos to add more hints, or click Done to finish.',
+            doneEnabled: true,
+            QRScannerEnabled: false,
+            step: this.state.step + 1
+          });
+        } else {
+          this.setState({
+            message: 'Something went wrong. Try again.'
+          });
+        }
+      })
+    }
+
     handleDone = () => {
-      console.log('Done!');
+      this.context.setToken(null);
     }
 
     render() {
@@ -92,13 +121,11 @@ Take a picture of the first hint to get started.`,
         hunt,
         step,
         hint,
-        doneEnabled
+        doneEnabled,
+        stepList,
+        QRScannerEnabled
       } = this.state;
-
-      let context = this.context;
       
-      console.log('SetupHuntHintsScreen context: ' + JSON.stringify(context));
-
       return (
         <View style={{flex: 1, flexDirection: 'column'}}>
           <View style={styles.messageContainer}>
@@ -112,7 +139,7 @@ Take a picture of the first hint to get started.`,
           </View>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex: 1, flexDirection: 'column', borderRightWidth: 1}}>
-              <StepList />
+              <StepList stepList={stepList} />
             </View>
             <View style={{
               flex: 2,
@@ -125,6 +152,8 @@ Take a picture of the first hint to get started.`,
                 <EditHint
                   takePictureCallback={this.takePictureCallback}
                   savePictureCallback={this.savePictureCallback}
+                  QRCodeCallback={this.QRCodeCallback}
+                  QRScannerEnabled={QRScannerEnabled}
                   />
               </View>
               

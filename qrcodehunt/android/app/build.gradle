@@ -152,6 +152,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('QRHUNT_UPLOAD_STORE_FILE')) {
+                storeFile file(QRHUNT_UPLOAD_STORE_FILE)
+                storePassword QRHUNT_UPLOAD_STORE_PASSWORD
+                keyAlias QRHUNT_UPLOAD_KEY_ALIAS
+                keyPassword QRHUNT_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
@@ -160,7 +168,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
