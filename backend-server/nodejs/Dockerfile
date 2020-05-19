@@ -19,5 +19,10 @@ RUN chmod -R 777 /home/node/app/images
 # Make port 3000 available to the world outside this container
 EXPOSE 3000
 
+# Add the wait script to wait for mongo service to be available
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
+RUN chmod +x /wait
+
 # Run the app when the container launches
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
+CMD ["/wait", "&&", "npm", "start"]

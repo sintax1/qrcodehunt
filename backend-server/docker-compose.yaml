@@ -5,14 +5,15 @@ services:
     user: node
     working_dir: /home/node/app
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      WAIT_HOSTS: mongodb:27017
     expose:
       - "3000"
     ports:
       - "3000:3000"
     depends_on:
       - mongodb
-    command: "npm start"
+    restart: always
   mongodb:
     image: mongo
     container_name: mongodb
