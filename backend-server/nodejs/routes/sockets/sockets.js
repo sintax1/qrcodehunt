@@ -224,7 +224,7 @@ module.exports.listen = function(server) {
 
       } else {
         // Add player to existing room
-        if (!playerExistsInRoom()) {
+        if (!playerExistsInRoom(huntID, player.id)) {
           RoomStates[huntID].players.push({
             id: data.player.id,
             name: data.player.name,
