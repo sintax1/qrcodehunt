@@ -74,6 +74,14 @@ module.exports.listen = function(server) {
 
       console.log('Setting timer: ' + timer);
 
+
+      setInterval(async () => {
+        timer--;
+        socket.emit('update', {
+          status: 'You have ' + (timer/60000) + ' minutes until your next hint...'
+        })
+      }, 1000);
+
       // Set time for the next hint
       setTimeout(() => {
         sendPlayerHint(socket, roomID, playerID);
