@@ -25,7 +25,7 @@ module.exports.listen = function(server) {
     return hunt;
   }
 
-  async function getPlayerHint(roomID, playerID) {
+  function getPlayerStepHint(roomID, playerID) {
     let stepid = 0;
     let hintid = 0;
 
@@ -33,9 +33,51 @@ module.exports.listen = function(server) {
       if (RoomStates[roomID].players[i].id == playerID) {
         stepid = RoomStates[roomID].players[i].step;
         hintid = RoomStates[roomID].players[i].hint;
-        return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
       }
     }
+
+    return { stepid: stepid, hintid: hintid }
+  }
+
+  async function sendPlayerHint(roomID, playerID) {
+    const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
+    let timer = RoomStates[roomID].hunt.timer;
+
+    if (hintid < 3) {
+      getPlayerHint(roomID, stepid, hintid)
+      .then(hint => {
+        socket.emit('hint', {
+          hint: hint
+        })
+      })
+      .then(() => {
+        socket.emit('update', {
+          status: 'You have ' + (timer/1000) + ' minutes until your next hint...'
+        })
+      })
+
+      // Increment player hint
+      for (var i in RoomStates[roomID].players) {
+        if (RoomStates[roomID].players[i].id == playerID) {
+          RoomStates[roomID].players[i].hint++;
+        }
+      }
+
+      console.log('Setting timer: ' + timer);
+
+      // Set time for the next hint
+      setTimeout(() => {
+        sendPlayerHint(roomID, playerID);
+      }, timer);
+    } else {
+      socket.emit('update', {
+        status: 'You are on your last hint!'
+      })
+    }
+  }
+
+  async function getPlayerHint(roomID, stepid, hintid) {
+    return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
   }
 
   /*
@@ -284,12 +326,8 @@ module.exports.listen = function(server) {
       let player = getPlayerBySocket(roomID, socket.id);
 
       // Send the next available hint to the player
-      getPlayerHint(roomID, player.id)
-      .then(hint => {
-        socket.emit('hint', {
-          hint: hint
-        })
-      })
+      sendPlayerHint(roomID, player.id);
+
     });
 
     // Verify code
@@ -315,7 +353,7 @@ module.exports.listen = function(server) {
             if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
               // Player just completed the last step
               socket.emit('update', {
-                status: 'Congratulations. You completed the challenge!'
+                status: 'Congratulations. You completed the Hunt!'
               })
               // Send the finish signal
               socket.emit('fin');
@@ -326,16 +364,13 @@ module.exports.listen = function(server) {
 
               // Update the players message
               socket.emit('update', {
-                status: 'Nice Job! Here\'s your next Hint...'
+                status: 'Nice Job! Here comes your next Hint...'
               })
 
-              // Send the next available hint to the player
-              getPlayerHint(roomID, player.id)
-              .then(hint => {
-                socket.emit('hint', {
-                  hint: hint
-                })
-              })
+              setTimeout(() => {
+                // Send the next available hint to the player
+                sendPlayerHint(roomID, player.id);
+              }, 2000);
             }
           }
         }
