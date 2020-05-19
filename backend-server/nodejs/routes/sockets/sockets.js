@@ -61,7 +61,7 @@ module.exports.listen = function(server) {
       })
       .then(() => {
         socket.emit('update', {
-          status: 'You have ' + timer + ' ' + (timer > 1) ? 'minutes' : 'minute' + ' until your next hint...',
+          status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
           message: 'Use the hints to find and scan the hidden code.'
         })
       })
@@ -84,7 +84,7 @@ module.exports.listen = function(server) {
           clearInterval(countdown);
         } else {
           socket.emit('update', {
-            status: 'You have ' + timer + ' ' + (timer > 1) ? 'minutes' : 'minute' + ' until your next hint...',
+            status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
           })
         }
       }, 60000);
