@@ -181,6 +181,7 @@ module.exports.listen = function(server) {
 
   io.on('connection', (socket) => {
     socket.emit('connected');
+    console.log('connected');
 
     // Disconnect
     socket.on('disconnect', () => {
