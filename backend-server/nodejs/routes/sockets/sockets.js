@@ -129,7 +129,7 @@ module.exports.listen = function(server) {
           // Remove the player
           console.log('delete: ' + roomID + ', ' + playerID )
           console.log('players: ' + JSON.stringify(RoomStates[roomID].players) )
-          //delete RoomStates[roomID].players[i];
+          RoomStates[roomID].players.splice(i, 1);
           console.log('players: ' + JSON.stringify(RoomStates[roomID].players ))
           return true;
       }
