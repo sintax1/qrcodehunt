@@ -181,7 +181,7 @@ module.exports.listen = function(server) {
     }, 1000);
   }
 
-  function updatePlayerSocket(playerID, socketID) {
+  function updatePlayerSocket(playerID, roomID, socketID) {
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
           RoomStates[roomID].players[i].socket = socketID;
@@ -276,7 +276,7 @@ module.exports.listen = function(server) {
           // Player is already in the room
           console.log('Player was already in room before')
           console.log('update player socket')
-          updatePlayerSocket(player.id, socket.id);
+          updatePlayerSocket(player.id, huntID, socket.id);
           socket.emit('beginHunt');
         }
 
