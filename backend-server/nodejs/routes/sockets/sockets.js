@@ -145,6 +145,7 @@ module.exports.listen = function(server) {
 
     try {
       const player = RoomStates[roomID].players.find(player => player.socket == socketID);
+      console.log(player);
       return player;
     } catch (err) {
       console.log(err);
@@ -178,6 +179,15 @@ module.exports.listen = function(server) {
 
       count--;
     }, 1000);
+  }
+
+  function updatePlayerSocket(playerID, socketID) {
+    for (var i in RoomStates[roomID].players) {
+      if (RoomStates[roomID].players[i].id == playerID) {
+          RoomStates[roomID].players[i].socket = socketID;
+          break;
+      }
+    }
   }
 
   io.on('connection', (socket) => {
@@ -237,8 +247,8 @@ module.exports.listen = function(server) {
           hunt: null,
           inProgress: false,
           players: [{
-            id: data.player.id,
-            name: data.player.name,
+            id: player.id,
+            name: player.name,
             isReady: false,
             socket: socket.id,
             step: 0,
@@ -265,6 +275,8 @@ module.exports.listen = function(server) {
         } else {
           // Player is already in the room
           console.log('Player was already in room before')
+          console.log('update player socket')
+          updatePlayerSocket(player.id, socket.id);
           socket.emit('beginHunt');
         }
 
