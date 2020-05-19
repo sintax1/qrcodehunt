@@ -315,15 +315,21 @@ module.exports.listen = function(server) {
     
     // Get the Hunt Status
     socket.on('getStatus', () => {
-      // get the rooms that this player is in
-      let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
+      try {
+        // get the rooms that this player is in
+        let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
 
-      console.log('getStatus: ' + JSON.stringify(rooms[0]));
+        console.log('getStatus: ' + JSON.stringify(rooms[0]));
 
-      // Send the status of the room
-      socket.emit('update', {
-        status: RoomStates[rooms[0]].status
-      })
+        // Send the status of the room
+        socket.emit('update', {
+          status: RoomStates[rooms[0]].status
+        })
+      } catch (err) {
+        // Error will be thrown if the user can't join the Hunt but still tries to get the status
+        console.log(err);
+      }
+      
     });
 
     // Player Ready
