@@ -89,6 +89,8 @@ module.exports.listen = function(server) {
         }
       }, 60000);
 
+      console.log("Settimerout for next hint");
+
       // Set time for the next hint
       setTimeout(() => {
         sendPlayerHint(socket, roomID, playerID);
@@ -176,8 +178,6 @@ module.exports.listen = function(server) {
     // Disconnect
     socket.on('disconnect', () => {
       console.log('Disconnect: ' + socket.id);
-
-      console.log('RoomStates: ' + JSON.stringify(RoomStates));
     });
 
     // A player is leaving the Hunt
