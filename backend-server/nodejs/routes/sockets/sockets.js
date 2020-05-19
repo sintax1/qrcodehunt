@@ -237,12 +237,28 @@ module.exports.listen = function(server) {
       let huntID = data.id;
       let player = data.player;
 
-      // Check if the room already exists
-      let room = io.sockets.adapter.rooms[huntID];
+      // Don't let the player in if the Hunt is already in progress and they weren't in it before
+      if (RoomStates[huntID].inProgress && !playerExistsInRoom(huntID, player.id)) {
+        socket.emit('update', {
+          message: 'Hunt already in progress. Wait until it\'s over or join a different Hunt.'
+        });
+      } else {
+        socket.emit('joinAck', {
+          hunt: huntID
+        });
+      }
+    });
 
-      if (room == undefined) {
-        // Room does not exist
+    // New player joined Hunt
+    socket.on('joinHunt', (data) => {
+      console.log('New player: ' + JSON.stringify(data));
 
+      let huntID = data.id;
+      let player = data.player;
+
+      // Room does not exist
+      if (io.sockets.adapter.rooms[huntID] == undefined) {
+        
         // Populate the state data structure
         RoomStates[huntID] = {
           status: 'Waiting for all players to be ready',
@@ -263,15 +279,8 @@ module.exports.listen = function(server) {
           RoomStates[huntID].hunt = hunt;
         });
 
-      } else {
-        if (RoomStates[huntID].inProgress && !playerExistsInRoom(huntID, player.id)) {
-          // Don't let the player in if the Hunt is already in progress and they weren't in it before
-
-          socket.emit('update', {
-            message: 'Hunt already in progress. Wait until it\'s over or join a different Hunt.'
-          });
-          return;
-        }
+      } else { // Room already exists
+        
         // Add player to existing room
         if (!playerExistsInRoom(huntID, player.id)) {
           RoomStates[huntID].players.push({
@@ -284,32 +293,13 @@ module.exports.listen = function(server) {
           })
         } else {
           // Player is already in the room
-          console.log('Player was already in room before')
-          console.log('update player socket')
           updatePlayerSocket(player.id, huntID, socket.id);
         }
       }
 
-      socket.emit('joinAck', {
-        hunt: huntID
-      });
-    });
-
-    // New player joined Hunt
-    socket.on('joinHunt', (data) => {
-      console.log('New player: ' + JSON.stringify(data));
-
-      let huntID = data.id;
-      let player = data.player;
-
-      socket.emit('joinAck', {
-        hunt: huntID
-      });
-
       // join the room
       socket.join(huntID);
       
-
       // Notify everyone in the room that a new player joined
       // TODO: update this so everyone except the new player receives the message
       //socket.to(huntID).emit('playerJoin', JSON.stringify({
