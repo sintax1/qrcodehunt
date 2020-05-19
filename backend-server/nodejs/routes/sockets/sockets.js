@@ -116,7 +116,8 @@ module.exports.listen = function(server) {
   }
 
   function roomIsEmpty(roomID) {
-    return !RoomStates[roomID].players.length > 0;
+    console.log('Checking if room is empty: ' + RoomStates[roomID].players.length)
+    return (RoomStates[roomID].players.length <= 0);
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
