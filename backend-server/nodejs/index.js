@@ -44,6 +44,7 @@ app.delete('/api/hint/:id', hint.deleteHint);
 app.post('/api/signin', user.signin);
 app.post('/api/signout', user.signout);
 app.post('/api/admin/signin', admin.signin);
+app.post('/api/admin/signout', admin.signout);
 
 // Photo
 app.get('/api/photo/:id', photo.getPhoto);
