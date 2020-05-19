@@ -284,12 +284,16 @@ module.exports.listen = function(server) {
           console.log('Player was already in room before')
           console.log('update player socket')
           updatePlayerSocket(player.id, huntID, socket.id);
-          socket.emit('beginHunt');
         }
       }
 
+      socket.emit('joinAck', {
+        hunt: huntID
+      });
+
       // join the room
       socket.join(huntID);
+      
 
       // Notify everyone in the room that a new player joined
       // TODO: update this so everyone except the new player receives the message
