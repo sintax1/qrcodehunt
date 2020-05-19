@@ -79,7 +79,7 @@ module.exports.listen = function(server) {
 
       let countdown = setInterval(async () => {
         console.log('timer: ' + timer);
-        timer--;
+        timer -= 1;
         if (timer <= 0) {
           clearInterval(countdown);
         } else {
