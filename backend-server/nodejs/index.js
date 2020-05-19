@@ -42,6 +42,7 @@ app.delete('/api/hint/:id', hint.deleteHint);
 
 // Auth
 app.post('/api/signin', user.signin);
+app.post('/api/signout', user.signout);
 app.post('/api/admin/signin', admin.signin);
 
 // Photo
