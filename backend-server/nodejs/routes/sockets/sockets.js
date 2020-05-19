@@ -232,9 +232,8 @@ module.exports.listen = function(server) {
     });
 
     // New player joined Hunt
-    socket.on('joinHunt', (data) => {
-      console.log('New player: ' + JSON.stringify(data));
-
+    socket.on('joinReq', (data) => {
+      console.log('joinReq: ' + JSON.stringify(data));
       let huntID = data.id;
       let player = data.player;
 
@@ -290,6 +289,18 @@ module.exports.listen = function(server) {
           updatePlayerSocket(player.id, huntID, socket.id);
         }
       }
+
+      socket.emit('joinAck', {
+        hunt: huntID
+      });
+    });
+
+    // New player joined Hunt
+    socket.on('joinHunt', (data) => {
+      console.log('New player: ' + JSON.stringify(data));
+
+      let huntID = data.id;
+      let player = data.player;
 
       socket.emit('joinAck', {
         hunt: huntID
