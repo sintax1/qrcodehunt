@@ -160,7 +160,7 @@ module.exports.listen = function(server) {
     let roomID = huntId;
 
     let countdown = setInterval(function() {
-      RoomStates[roomID].status = 'Hunt starting in ' + count + '...';
+      RoomStates[roomID].status = 'Hunt starts in ' + count + '...';
       RoomStates[roomID].inProgress = true;
       
       io.in(roomID).emit('update', {
@@ -262,6 +262,13 @@ module.exports.listen = function(server) {
         });
 
       } else {
+        if (RoomStates[huntID].inProgress && !playerExistsInRoom(huntID, player.id)) {
+          // Don't let the player in if the Hunt is already in progress and they weren't in it before
+          io.in(roomID).emit('update', {
+            status: 'Hunt already in progress. Wait until it\'s over or join a different Hunt.'
+          });
+          return;
+        }
         // Add player to existing room
         if (!playerExistsInRoom(huntID, player.id)) {
           RoomStates[huntID].players.push({
@@ -279,7 +286,6 @@ module.exports.listen = function(server) {
           updatePlayerSocket(player.id, huntID, socket.id);
           socket.emit('beginHunt');
         }
-
       }
 
       // join the room
@@ -373,7 +379,6 @@ module.exports.listen = function(server) {
 
       // Send the next available hint to the player
       sendPlayerHint(socket, roomID, player.id);
-
     });
 
     // Verify code
