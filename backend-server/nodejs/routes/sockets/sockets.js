@@ -52,6 +52,11 @@ module.exports.listen = function(server) {
 
     console.log('sendPlayerHint stepid: ' + stepid + ', hintid: ' + hintid);
 
+    if (stepid > RoomStates[roomID].hunt.steps.length) {
+      console.log('player completed all steps. cancelling loop');
+      return;
+    }
+
     if (hintid < 3) {
       getPlayerHint(roomID, stepid, hintid)
       .then(hint => {
