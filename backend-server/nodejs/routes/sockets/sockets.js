@@ -134,10 +134,16 @@ module.exports.listen = function(server) {
     clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
     delete RoomStates[roomID].players[playerID];
 
-    // Delete the room if this was the last player in it
+    // Set the room to delete in 5 minutes if it is empty
     if (roomIsEmpty(roomID)) {
-      console.log("Room " + roomID + " is empty.");
-      //delete RoomStates[roomID];
+      console.log("Room " + roomID + " is empty. setting timer for deletion");
+      //
+      RoomStates[roomID].deleteTimer = setTimeout(() => {
+        if (roomIsEmpty(roomID)) {
+          console.log("Room " + roomID + " is empty. Deleting");
+          delete RoomStates[roomID];
+        }
+      }, 5 * 60 * 1000)
     }
   }
 
@@ -229,6 +235,9 @@ module.exports.listen = function(server) {
 
       // TODO: is this necessary?
       updatePlayerSocket(player.id, huntID, socket)
+
+      // Clear the room delete timer
+      clearTimeout(RoomStates[roomID].deleteTimer);
     });
 
 
@@ -294,6 +303,7 @@ module.exports.listen = function(server) {
           status: 'Waiting for all players to be ready',
           hunt: await getHuntData(huntID),
           inProgress: false,
+          deleteTimer: null,
           players: {}
         };
 
