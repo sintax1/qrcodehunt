@@ -145,11 +145,13 @@ module.exports.listen = function(server) {
       })
     }
 
+    timer -= 1;
+
     // Set time for the next hint
     return setTimeout(() => {
       // Send the next available hint to the player
 
-      let timeout = sendPlayerHint(socket, roomID, playerID, timer--);
+      let timeout = sendPlayerHint(socket, roomID, playerID, timer);
       RoomStates[roomID].players[pid].hintTimeout = timeout;
     }, 60000);
   };
