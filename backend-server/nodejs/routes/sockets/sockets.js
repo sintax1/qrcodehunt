@@ -186,9 +186,9 @@ module.exports.listen = function(server) {
     // Reconnect
     socket.on('player-reconnected', (data) => {
       console.log('reconnect: ' + JSON.stringify(data));
-      let roomID = data.id;
+      let huntID = data.hunt;
       let player = data.player;
-      updatePlayerSocket(player.id, roomID, socket.id)
+      updatePlayerSocket(player.id, huntID, socket.id)
     });
 
 
