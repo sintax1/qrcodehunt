@@ -112,13 +112,17 @@ module.exports.listen = function(server) {
     console.log('sendPlayerHint: ' + playerID + ', timer: ' + timer)
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let pid = getPlayerIndex(roomID, playerID);
+
+    console.log(1);
  
     if (timer == 0) {
+      console.log(2);
       // Reset timer
       timer = RoomStates[roomID].hunt.timer;
 
       getPlayerHint(roomID, stepid, hintid)
       .then(hint => {
+        console.log(3);
         socket.emit('hint', {
           hint: hint
         })
@@ -127,18 +131,23 @@ module.exports.listen = function(server) {
           message: 'Use the hints to find and scan the hidden code.'
         })
       }).then(() => {
+        console.log(4);
         // Increment Hint
         RoomStates[roomID].players[pid].hint++;
       })
 
+      console.log(5);
+
       // Last hint, stop loop
       if (hintid >= 2) {
+        console.log(6);
         socket.emit('update', {
           status: 'No more hints. Find the code!'
         })
         return null;
       }
     } else {
+      console.log(7);
       socket.emit('update', {
         status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
         message: 'Use the hints to find and scan the hidden code.'
@@ -149,8 +158,9 @@ module.exports.listen = function(server) {
 
     // Set time for the next hint
     return setTimeout(() => {
+      console.log(8);
       // Send the next available hint to the player
-
+      console.log('scheduling next timer: ' + playerID + ', ' + timer);
       let timeout = sendPlayerHint(socket, roomID, playerID, timer);
       RoomStates[roomID].players[pid].hintTimeout = timeout;
     }, 60000);
