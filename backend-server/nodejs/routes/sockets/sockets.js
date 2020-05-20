@@ -52,7 +52,7 @@ module.exports.listen = function(server) {
 
     console.log('sendPlayerHint stepid: ' + stepid + ', hintid: ' + hintid);
 
-    if (stepid > RoomStates[roomID].hunt.steps.length) {
+    if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
       console.log('player completed all steps. cancelling loop');
       return;
     }
