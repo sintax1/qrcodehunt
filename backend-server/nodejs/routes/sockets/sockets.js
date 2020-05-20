@@ -40,74 +40,6 @@ module.exports.listen = function(server) {
     }
   }
 
-  /*
-  async function sendPlayerHint(socket, roomID, playerID) {
-    const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
-    let timer = RoomStates[roomID].hunt.timer;
-
-    console.log('sendPlayerHint player: ' + playerID + ', stepid: ' + stepid + ', hintid: ' + hintid);
-
-    if (stepid > RoomStates[roomID].hunt.steps.length-1) {
-      console.log('player completed all steps. cancelling loop');
-      return;
-    }
-
-    if (hintid < 3) {
-      getPlayerHint(roomID, stepid, hintid)
-      .then(hint => {
-        socket.emit('hint', {
-          hint: hint
-        })
-      })
-      .then(() => {
-        socket.emit('update', {
-          status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
-          message: 'Use the hints to find and scan the hidden code.'
-        })
-      })
-
-      
-
-      console.log('Setting timer: ' + timer);
-
-      let interval = setInterval(() => {
-        console.log('Player: ' + playerID + ', timer: ' + timer);
-        timer -= 1;
-        if (timer <= 0) {
-          clearInterval(interval);
-        } else {
-          socket.emit('update', {
-            status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
-          })
-        }
-      }, 60000);
-
-      // store interval timer
-      for (var i in RoomStates[roomID].players) {
-        if (RoomStates[roomID].players[i].id == playerID) {
-          RoomStates[roomID].players[i].interval = interval;
-        }
-      }
-
-      console.log("Settimerout for next hint");
-
-      // Set time for the next hint
-      setTimeout(() => {
-        // Increment player hint
-        console.log("increment player hint")
-        for (var i in RoomStates[roomID].players) {
-          if (RoomStates[roomID].players[i].id == playerID) {
-            RoomStates[roomID].players[i].hint++;
-          }
-        }
-        sendPlayerHint(socket, roomID, playerID);
-      }, timer * 60000);
-    } else {
-      
-    }
-  }
-  */
-
   async function sendPlayerHint(socket, roomID, playerID, timer) {
     console.log('sendPlayerHint: ' + playerID + ', timer: ' + timer)
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
@@ -137,7 +69,7 @@ module.exports.listen = function(server) {
       if (hintid >= 2) {
         console.log(5);
         socket.emit('update', {
-          status: 'No more hints. Find the code!'
+          status: 'Last hint. Find the code!'
         })
         return null;
       } else {
@@ -147,7 +79,6 @@ module.exports.listen = function(server) {
           message: 'Use the hints to find and scan the hidden code.'
         })
       }
-
     } else {
       console.log(7);
       socket.emit('update', {
@@ -251,6 +182,15 @@ module.exports.listen = function(server) {
   io.on('connection', (socket) => {
     socket.emit('connected');
     console.log('connected');
+
+    // Reconnect
+    socket.on('user-reconnected', (data) => {
+      console.log('reconnect: ' + JSON.stringify(data));
+      let roomID = data.id;
+      let player = data.player;
+      updatePlayerSocket(player.id, roomID, socket.id)
+    });
+
 
     // Disconnect
     socket.on('disconnect', () => {
