@@ -292,8 +292,9 @@ module.exports.listen = function(server) {
         // Populate the room with the Hunt Steps and Hints
         await getHuntData(huntID)
         .then(hunt => {
-          RoomStates[huntID].hunt = hunt;
-          return huntID;
+          console.log(hunt);
+          RoomStates[hunt.id].hunt = hunt;
+          return hunt.id;
         })
         .then((huntID) => {
           // Populate the state data structure
