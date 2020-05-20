@@ -216,13 +216,14 @@ module.exports.listen = function(server) {
     }
   }
 
-  io.on('error', (err) => {
-    console.log('io.error: ' + JSON.stringify(err));
-  })
-
   io.on('connection', (socket) => {
     socket.emit('connected');
     console.log('connected');
+
+    // Error
+    socket.on('error', (err) => {
+      console.log('io.error: ' + JSON.stringify(err));
+    })
 
     // Reconnect
     socket.on('player-reconnected', (data) => {
