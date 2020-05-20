@@ -205,13 +205,10 @@ module.exports.listen = function(server) {
 
   function getHuntSteps(huntID) {
     let steps = [...Array(RoomStates[huntID].hunt.steps.length).keys()];
-    console.log('steps: ' + steps);
     if (RoomStates[huntID].hunt.isRandom) {
       // Randomize the steps if the setting is enabled
-      console.log('random enabled');
       return shuffle(steps);
     } else {
-      console.log('random disabled');
       return steps;
     }
   }
@@ -238,9 +235,8 @@ module.exports.listen = function(server) {
       updatePlayerSocket(player.id, huntID, socket)
 
       // Clear the room delete timer
-      clearTimeout(RoomStates[roomID].deleteTimer);
+      clearTimeout(RoomStates[huntID].deleteTimer);
     });
-
 
     // Disconnect
     socket.on('disconnect', () => {
