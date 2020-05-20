@@ -138,7 +138,7 @@ module.exports.listen = function(server) {
     console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
 
     try {
-      const player = RoomStates[roomID].players.find(player => player.socket == socketID);
+      const player = RoomStates[roomID].players.find(player => player.socket.id == socketID);
       console.log(player);
       return player;
     } catch (err) {
