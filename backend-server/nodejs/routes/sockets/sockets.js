@@ -153,7 +153,7 @@ module.exports.listen = function(server) {
   }
 
   function getPlayerBySocket(roomID, socketID) {
-    console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
+    //console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
 
     try {
       const player = RoomStates[roomID].players.find(player => player.socket.id == socketID);
