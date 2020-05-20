@@ -120,6 +120,10 @@ module.exports.listen = function(server) {
         socket.emit('hint', {
           hint: hint
         })
+        socket.emit('update', {
+          status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
+          message: 'Use the hints to find and scan the hidden code.'
+        })
       }).then(() => {
         // Increment Hint
         RoomStates[roomID].players[pid].hint++;
@@ -136,6 +140,7 @@ module.exports.listen = function(server) {
       // Reset timer
       timer = RoomStates[roomID].hunt.timer;
     } else {
+      timer--;
       socket.emit('update', {
         status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
         message: 'Use the hints to find and scan the hidden code.'
