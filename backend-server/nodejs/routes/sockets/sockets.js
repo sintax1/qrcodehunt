@@ -1,7 +1,7 @@
 var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
 const { getPhotoById } = require('../api/photo');
-
+const { shuffle } = require('../../utils');
 
 function getTimestamp() {
 
@@ -69,7 +69,7 @@ module.exports.listen = function(server) {
       // Reset timer
       timer = RoomStates[roomID].hunt.timer;
 
-      await getPlayerHint(roomID, stepid, hintid)
+      await getPlayerHint(roomID, playerID, stepid, hintid)
       .then(hint => {
         console.log(3);
         // Send the hint
@@ -115,8 +115,9 @@ module.exports.listen = function(server) {
     }, 60000);
   };
 
-  async function getPlayerHint(roomID, stepid, hintid) {
-    return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
+  async function getPlayerHint(roomID, playerID, stepid, hintid) {
+    let huntStep = RoomStates[roomID].players[playerID].stepSequence[stepid];
+    return RoomStates[roomID].hunt.steps[huntStep].hints[hintid];
   }
 
   function playerExistsInRoom(roomID, playerID) {
@@ -196,11 +197,18 @@ module.exports.listen = function(server) {
     }
   }
 
-  /*
-  function getHuntSteps(huntID) {
-    RoomStates[roomID].hunt.steps.
+  function getHintSteps(huntID) {
+    let steps = [...Array(RoomStates[huntID].hunt.steps.length).keys()];
+    console.log('steps: ' + steps);
+    if (RoomStates[roomID].hunt.isRandom) {
+      // Randomize the steps if the setting is enabled
+      console.log('random enabled');
+      return shuffle(steps);
+    } else {
+      console.log('random disabled');
+      return steps;
+    }
   }
-  */
 
   io.on('error', (err) => {
     console.log('io.error: ' + JSON.stringify(err));
@@ -280,32 +288,33 @@ module.exports.listen = function(server) {
 
       // Room does not exist
       if (io.sockets.adapter.rooms[huntID] == undefined) {
-        
-        // Populate the state data structure
-        RoomStates[huntID] = {
-          status: 'Waiting for all players to be ready',
-          hunt: null,
-          inProgress: false,
-          players: {
-            [player.id]: {
-              id: player.id,
-              name: player.name,
-              isReady: false,
-              socket: socket,
-              step: 0,
-              hint: 0,
-              interval: null,
-              stepSequence: []
-            }
-          }
-        };
 
         // Populate the room with the Hunt Steps and Hints
         getHuntData(huntID)
         .then(hunt => {
           RoomStates[huntID].hunt = hunt;
-        });
-
+          return huntID;
+        })
+        .then((huntID) => {
+          // Populate the state data structure
+          RoomStates[huntID] = {
+            status: 'Waiting for all players to be ready',
+            hunt: null,
+            inProgress: false,
+            players: {
+              [player.id]: {
+                id: player.id,
+                name: player.name,
+                isReady: false,
+                socket: socket,
+                step: 0,
+                hint: 0,
+                interval: null,
+                stepSequence: getHintSteps(huntID)
+              }
+            }
+          };
+        })
       } else { // Room already exists
         
         // Add player to existing room if they aren't already in it
@@ -318,7 +327,7 @@ module.exports.listen = function(server) {
             step: 0,
             hint: 0,
             interval: null,
-            stepSequence: []
+            stepSequence: getHintSteps(huntID)
           }
         } else {
           // Player is already in the room
@@ -424,7 +433,8 @@ module.exports.listen = function(server) {
       let roomID = huntID = rooms[0];
       let playerID = getPlayerIDBySocket(roomID, socket.id);
       let stepid = RoomStates[roomID].players[playerID].step;
-      let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
+      let huntStep = RoomStates[roomID].players[playerID].stepSequence[stepid];
+      let qrcode = RoomStates[roomID].hunt.steps[huntStep].qrcode;
 
       console.log('Comparing ' + qrcode + ' and ' + data.code);
 
