@@ -193,9 +193,17 @@ module.exports.listen = function(server) {
   }
 
   function updatePlayerSocket(playerID, roomID, socket) {
-    console.log('updating the player socket: ' + playerID + ', ' + socket.id);
-    let pid = getPlayerIndex(roomID, playerID);
-    RoomStates[roomID].players[pid].socket = socket;
+    try {
+      console.log('updating the player socket: ' + playerID + ', ' + socket.id);
+      let pid = getPlayerIndex(roomID, playerID);
+      RoomStates[roomID].players[pid].socket = socket;
+    } catch (err) {
+      console.log(err);
+      socket.emit('error', {
+        error: 'Server Error'
+      })
+    }
+    
   }
 
   io.on('connection', (socket) => {
