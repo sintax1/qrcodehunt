@@ -2,6 +2,24 @@ var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
 const { getPhotoById } = require('../api/photo');
 
+
+function getTimestamp() {
+
+  var date = new Date();
+
+  var hour = date.getHours();
+  hour = (hour < 10 ? "0" : "") + hour;
+
+  var min  = date.getMinutes();
+  min = (min < 10 ? "0" : "") + min;
+
+  var sec  = date.getSeconds();
+  sec = (sec < 10 ? "0" : "") + sec;
+
+  return hour + ":" + min + ":" + sec;
+}
+
+
 // Get Hunt Data from the DB
 async function getHuntData(huntID) {
   let hunt = await Hunt.findById(huntID, undefined, {lean: true}, (err, doc) => {
@@ -41,7 +59,7 @@ module.exports.listen = function(server) {
   }
 
   async function sendPlayerHint(roomID, playerID, timer) {
-    console.log('sendPlayerHint: ' + playerID + ', timer: ' + timer)
+    console.log(getTimestamp() + ' sendPlayerHint: ' + playerID + ', timer: ' + timer)
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let pid = getPlayerIndex(roomID, playerID);
     let socket = RoomStates[roomID].players[pid].socket;
