@@ -277,7 +277,7 @@ module.exports.listen = function(server) {
           status: 'Waiting for all players to be ready',
           hunt: null,
           inProgress: false,
-          players = {
+          players: {
             [player.id]: {
               name: player.name,
               isReady: false,
