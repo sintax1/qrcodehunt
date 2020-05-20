@@ -235,7 +235,9 @@ module.exports.listen = function(server) {
       updatePlayerSocket(player.id, huntID, socket)
 
       // Clear the room delete timer
-      clearTimeout(RoomStates[huntID].deleteTimer);
+      if (huntID in RoomStates) {
+        clearTimeout(RoomStates[huntID].deleteTimer);
+      }
     });
 
     // Disconnect
