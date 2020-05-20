@@ -293,8 +293,8 @@ module.exports.listen = function(server) {
         await getHuntData(huntID)
         .then(hunt => {
           console.log(hunt);
-          RoomStates[hunt.id].hunt = hunt;
-          return hunt.id;
+          RoomStates[hunt._id].hunt = hunt;
+          return hunt._id;
         })
         .then((huntID) => {
           // Populate the state data structure
