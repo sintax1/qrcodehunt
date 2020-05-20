@@ -136,7 +136,7 @@ module.exports.listen = function(server) {
     // Delete the room if this was the last player in it
     if (roomIsEmpty(roomID)) {
       console.log("Room " + roomID + " is empty.");
-      delete RoomStates[roomID];
+      //delete RoomStates[roomID];
     }
   }
 
