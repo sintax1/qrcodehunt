@@ -445,7 +445,7 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
-      let pid = getPlayerIndex(roomID, playerID);
+      let pid = getPlayerIndex(roomID, player.id);
       let stepid = RoomStates[roomID].players[pid].step;
       let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
 
