@@ -197,7 +197,7 @@ module.exports.listen = function(server) {
     }
   }
 
-  function getHintSteps(huntID) {
+  function getHuntSteps(huntID) {
     let steps = [...Array(RoomStates[huntID].hunt.steps.length).keys()];
     console.log('steps: ' + steps);
     if (RoomStates[roomID].hunt.isRandom) {
@@ -287,42 +287,35 @@ module.exports.listen = function(server) {
       let player = data.player;
 
       // Room does not exist
-      if (io.sockets.adapter.rooms[huntID] == undefined) {
+      if (!(huntID in RoomStates)) {
 
-        // Populate the room with the Hunt Steps and Hints
-        await getHuntData(huntID)
-        .then(hunt => {
-          console.log(hunt);
-          RoomStates[hunt._id].hunt = hunt;
-          return hunt._id;
-        })
-        .then((huntID) => {
-          // Populate the state data structure
-          RoomStates[huntID] = {
-            status: 'Waiting for all players to be ready',
-            hunt: null,
-            inProgress: false,
-            players: {
-              [player.id]: {
-                id: player.id,
-                name: player.name,
-                isReady: false,
-                socket: socket,
-                step: 0,
-                hint: 0,
-                interval: null,
-                stepSequence: getHintSteps(huntID)
-              }
-            }
-          };
-        });
+        // Populate the room with the Hunt data
+        RoomStates[huntID] = {
+          status: 'Waiting for all players to be ready',
+          hunt: await getHuntData(huntID),
+          inProgress: false,
+          players: {}
+        };
+
+        // Add the player
+        RoomStates[huntID].players[player.id] = {
+          id: player.id,
+          name: player.name,
+          isReady: false,
+          socket: socket,
+          step: 0,
+          hint: 0,
+          interval: null,
+          stepSequence: getHuntSteps(huntID)
+        }
+
       } else { // Room already exists
         
         // Add player to existing room if they aren't already in it
         if (!playerExistsInRoom(huntID, player.id)) {
-          RoomStates[huntID].players[data.player.id] = {
+          RoomStates[huntID].players[player.id] = {
             id: player.id,
-            name: data.player.name,
+            name: player.name,
             isReady: false,
             socket: socket,
             step: 0,
