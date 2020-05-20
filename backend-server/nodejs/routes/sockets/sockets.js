@@ -87,13 +87,10 @@ module.exports.listen = function(server) {
         }
       }, 60000);
 
-      // Increment player hint
-      console.log("increment player hint")
+      // store interval timer
       for (var i in RoomStates[roomID].players) {
         if (RoomStates[roomID].players[i].id == playerID) {
-          RoomStates[roomID].players[i].hint++;
           RoomStates[roomID].players[i].interval = interval;
-          console.log("hint: " + RoomStates[roomID].players[i].hint)
         }
       }
 
@@ -101,6 +98,13 @@ module.exports.listen = function(server) {
 
       // Set time for the next hint
       setTimeout(() => {
+        // Increment player hint
+        console.log("increment player hint")
+        for (var i in RoomStates[roomID].players) {
+          if (RoomStates[roomID].players[i].id == playerID) {
+            RoomStates[roomID].players[i].hint++;
+          }
+        }
         sendPlayerHint(socket, roomID, playerID);
       }, timer * 60000);
     } else {
