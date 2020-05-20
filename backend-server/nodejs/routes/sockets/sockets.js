@@ -125,6 +125,8 @@ module.exports.listen = function(server) {
   }
 
   function roomIsEmpty(roomID) {
+    console.log('Checking if room is empty: ' + RoomStates[roomID].players.length)
+    console.log(JSON.stringify(RoomStates[roomID].players));
     return (RoomStates[roomID].players.length <= 0);
   }
 
