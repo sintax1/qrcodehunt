@@ -120,32 +120,34 @@ module.exports.listen = function(server) {
       // Reset timer
       timer = RoomStates[roomID].hunt.timer;
 
-      getPlayerHint(roomID, stepid, hintid)
+      await getPlayerHint(roomID, stepid, hintid)
       .then(hint => {
         console.log(3);
+        // Send the hint
         socket.emit('hint', {
           hint: hint
-        })
-        socket.emit('update', {
-          status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
-          message: 'Use the hints to find and scan the hidden code.'
-        })
-      }).then(() => {
-        console.log(4);
-        // Increment Hint
+        });
+        // Increment player hint
         RoomStates[roomID].players[pid].hint++;
-      })
+      });
 
-      console.log(5);
+      console.log(4);
 
       // Last hint, stop loop
       if (hintid >= 2) {
-        console.log(6);
+        console.log(5);
         socket.emit('update', {
           status: 'No more hints. Find the code!'
         })
         return null;
+      } else {
+        console.log(6);
+        socket.emit('update', {
+          status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
+          message: 'Use the hints to find and scan the hidden code.'
+        })
       }
+
     } else {
       console.log(7);
       socket.emit('update', {
