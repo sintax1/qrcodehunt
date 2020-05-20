@@ -109,12 +109,11 @@ module.exports.listen = function(server) {
     timer -= 1;
 
     // Set time for the next hint
-    return setTimeout(() => {
+    RoomStates[roomID].players[pid].hintTimeout = setTimeout(() => {
       console.log(8);
       // Send the next available hint to the player
       console.log('scheduling next timer: ' + playerID + ', ' + timer);
-      clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
-      RoomStates[roomID].players[pid].hintTimeout = sendPlayerHint(roomID, playerID, timer);
+      sendPlayerHint(roomID, playerID, timer);
     }, 60000);
   };
 
@@ -410,8 +409,7 @@ module.exports.listen = function(server) {
       clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
 
       // Send the next available hint to the player
-      let timeout = sendPlayerHint(roomID, player.id, 0);
-      RoomStates[roomID].players[pid].hintTimeout = timeout;
+      sendPlayerHint(roomID, player.id, 0);
     });
 
     // Verify code
@@ -453,7 +451,7 @@ module.exports.listen = function(server) {
 
           setTimeout(() => {
             // Send the next available hint to the player
-            RoomStates[roomID].players[pid].hintTimeout = sendPlayerHint(roomID, player.id, 0);
+            sendPlayerHint(roomID, player.id, 0);
           }, 2000);
         }
       } else {
