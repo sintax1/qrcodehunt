@@ -175,10 +175,10 @@ module.exports.listen = function(server) {
     }, 1000);
   }
 
-  function updatePlayerSocket(playerID, roomID, socketID) {
-    console.log('updating the player socket: ' + playerID + ', ' + socketID);
+  function updatePlayerSocket(playerID, roomID, socket) {
+    console.log('updating the player socket: ' + playerID + ', ' + socket.id);
     let pid = getPlayerIndex(roomID, playerID);
-    RoomStates[roomID].players[pid].socket = socketID;
+    RoomStates[roomID].players[pid].socket = socket;
   }
 
   io.on('connection', (socket) => {
@@ -195,7 +195,7 @@ module.exports.listen = function(server) {
       socket.join(huntID);
 
       // TODO: is this necessary?
-      updatePlayerSocket(player.id, huntID, socket.id)
+      updatePlayerSocket(player.id, huntID, socket)
     });
 
 
@@ -272,7 +272,7 @@ module.exports.listen = function(server) {
             id: player.id,
             name: player.name,
             isReady: false,
-            socket: socket.id,
+            socket: socket,
             step: 0,
             hint: 0,
             interval: null
@@ -292,14 +292,14 @@ module.exports.listen = function(server) {
             id: data.player.id,
             name: data.player.name,
             isReady: false,
-            socket: socket.id,
+            socket: socket,
             step: 0,
             hint: 0,
             interval: null
           })
         } else {
           // Player is already in the room
-          updatePlayerSocket(player.id, huntID, socket.id);
+          updatePlayerSocket(player.id, huntID, socket);
         }
       }
 
