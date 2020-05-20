@@ -1,23 +1,7 @@
 var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
 const { getPhotoById } = require('../api/photo');
-const { shuffle, isEmpty } = require('../../utils');
-
-function getTimestamp() {
-
-  var date = new Date();
-
-  var hour = date.getHours();
-  hour = (hour < 10 ? "0" : "") + hour;
-
-  var min  = date.getMinutes();
-  min = (min < 10 ? "0" : "") + min;
-
-  var sec  = date.getSeconds();
-  sec = (sec < 10 ? "0" : "") + sec;
-
-  return hour + ":" + min + ":" + sec;
-}
+const { shuffle, isEmpty, getTimestamp } = require('../../utils');
 
 
 // Get Hunt Data from the DB
@@ -60,6 +44,7 @@ module.exports.listen = function(server) {
   async function sendPlayerHint(roomID, playerID, timer) {
     console.log(getTimestamp() + ' sendPlayerHint: ' + playerID + ', timer: ' + timer)
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
+    console.log('stepid: ' + stepid + ', hintid: ' + hintid);
     let socket = RoomStates[roomID].players[playerID].socket;
 
     console.log(1);
@@ -110,8 +95,9 @@ module.exports.listen = function(server) {
       // Send the next available hint to the player
       console.log('scheduling next timer: ' + playerID + ', ' + timer);
       // Increment player hint
-      RoomStates[roomID].players[playerID].hint++;
+      
       sendPlayerHint(roomID, playerID, timer);
+      RoomStates[roomID].players[playerID].hint++;
     }, 60000);
   };
 
