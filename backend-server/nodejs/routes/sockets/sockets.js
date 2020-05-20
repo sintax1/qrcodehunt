@@ -139,7 +139,6 @@ module.exports.listen = function(server) {
         return null;
       }
     } else {
-      timer--;
       socket.emit('update', {
         status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
         message: 'Use the hints to find and scan the hidden code.'
@@ -150,7 +149,7 @@ module.exports.listen = function(server) {
     return setTimeout(() => {
       // Send the next available hint to the player
 
-      let timeout = sendPlayerHint(socket, roomID, playerID, timer);
+      let timeout = sendPlayerHint(socket, roomID, playerID, timer--);
       RoomStates[roomID].players[pid].hintTimeout = timeout;
     }, 60000);
   };
