@@ -49,11 +49,15 @@ module.exports.listen = function(server) {
   async function sendPlayerHint(socket, roomID, playerID) {
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let timer = RoomStates[roomID].hunt.timer;
+    let interval = null;
 
-    console.log('sendPlayerHint stepid: ' + stepid + ', hintid: ' + hintid);
+    console.log('sendPlayerHint player: ' + playerID + ', stepid: ' + stepid + ', hintid: ' + hintid);
 
     if (stepid > RoomStates[roomID].hunt.steps.length-1) {
       console.log('player completed all steps. cancelling loop');
+      if (interval) {
+        clearInterval(interval);
+      }
       return;
     }
 
@@ -82,8 +86,8 @@ module.exports.listen = function(server) {
 
       console.log('Setting timer: ' + timer);
 
-      let countdown = setInterval(() => {
-        console.log('timer: ' + timer);
+      interval = setInterval(() => {
+        console.log('Player: ' + playerID + ', timer: ' + timer);
         timer -= 1;
         if (timer <= 0) {
           clearInterval(countdown);
