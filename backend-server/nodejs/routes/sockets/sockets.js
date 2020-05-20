@@ -1,7 +1,7 @@
 var socketio = require('socket.io')
 const { Hunt } = require('../../models/QRHunt');
 const { getPhotoById } = require('../api/photo');
-const { shuffle } = require('../../utils');
+const { shuffle, isEmpty } = require('../../utils');
 
 function getTimestamp() {
 
@@ -125,9 +125,7 @@ module.exports.listen = function(server) {
   }
 
   function roomIsEmpty(roomID) {
-    console.log('Checking if room is empty: ' + RoomStates[roomID].players.length)
-    console.log(JSON.stringify(RoomStates[roomID].players));
-    return (RoomStates[roomID].players.length <= 0);
+    return isEmpty(RoomStates[roomID].players)
   }
 
   async function removePlayerFromRoom(roomID, playerID) {
