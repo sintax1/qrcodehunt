@@ -305,7 +305,14 @@ module.exports.listen = function(server) {
         };
 
         // Populate the room with the Hunt Steps and Hints
-        getHuntData(huntID).then(hunt => {
+        getHuntData(huntID)
+        .then(hunt => {
+          // Randomize the hunt steps if required
+          console.log('randomize before: ' + JSON.stringify(hunt));
+
+          return hunt;
+        })
+        .then(hunt => {
           RoomStates[huntID].hunt = hunt;
         });
 

@@ -50,8 +50,9 @@ exports.getAllHunts = async (req, res) => {
 exports.addHunt = async (req, res) => {
     let name = req.body.name;
     let timer = Number(req.body.timer);
+    let isRandom = req.body.isRandom;
 
-    const hunt = new Hunt({name: name, timer: timer});
+    const hunt = new Hunt({name: name, timer: timer, isRandom: isRandom});
 
     hunt.save((err, doc) => {
         if (err) {
