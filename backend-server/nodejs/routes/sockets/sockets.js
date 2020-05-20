@@ -140,7 +140,8 @@ module.exports.listen = function(server) {
     //console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
 
     try {
-      const player = RoomStates[roomID].players.find(player => player.socket.id == socketID);
+      let playerID = Object.keys(RoomStates[roomID].players).find(key => RoomStates[roomID].players[key].socket.id == socketID);
+      const player = RoomStates[roomID].players[playerID];
       console.log(player);
       return player;
     } catch (err) {
