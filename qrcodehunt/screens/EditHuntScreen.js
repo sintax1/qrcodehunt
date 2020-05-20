@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { EditHint } from '../components/EditHint';
+import { EditHint, handleSaveHint } from '../components/EditHint';
 import { GlobalContext } from '../context';
-import { handleSaveHint } from '../components/EditHint';
 import {
   Text,
   View,
@@ -9,7 +8,9 @@ import {
   Button
 } from 'react-native';
 import { StepList } from '../components/StepList';
-import { getPhoto, saveQRCode } from '../api';
+import { adminsignout, getPhoto, saveQRCode } from '../api';
+import { normalize } from '../utils';
+import { clearStorageValue } from '../utils/storage';
 
 export class EditHuntScreen extends Component {
     constructor(props) {
@@ -111,9 +112,23 @@ Take a picture of the first hint to get started.`,
       })
     }
 
-    handleDone = () => {
-      this.context.setToken(null);
+    clearUserData = () => {
+      this.context.setPlayer(null);
+      this.context.setAdmin(false);
+
+      clearStorageValue('player');
+
+      console.log('cleared user data');
     }
+
+    handleDone = () => {
+      adminsignout(this.context.player.id).then(resp => {
+        if (resp.success) {
+          console.log('signout success');
+          this.clearUserData();
+        }
+      })
+  }
 
     render() {
       const {
@@ -131,10 +146,10 @@ Take a picture of the first hint to get started.`,
           <View style={styles.messageContainer}>
             <Text style={styles.message}>{message}</Text>
             <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
-              <Text style={{ fontSize: 14 }}> Hunt Name: {hunt.name} </Text>
-              <Text style={{ fontSize: 14 }}> Hunt ID: {hunt.id} </Text>
-              <Text style={{ fontSize: 14 }}> Step: {step} </Text>
-              <Text style={{ fontSize: 14 }}> Hint: {hint} </Text>
+              <Text style={styles.smallText}> Hunt Name: {hunt.name} </Text>
+              <Text style={styles.smallText}> Hunt ID: {hunt.id} </Text>
+              <Text style={styles.smallText}> Step: {step} </Text>
+              <Text style={styles.smallText}> Hint: {hint} </Text>
             </View>
           </View>
           <View style={{flex: 1, flexDirection: 'row'}}>
@@ -161,7 +176,7 @@ Take a picture of the first hint to get started.`,
             </View>
             {(doneEnabled) ? (
               <View style={{flex: 0, justifyContent: 'flex-end' }}>
-                <Button color='#0068ad' title="Done" onPress={this.handleDone} />
+                <Button color='#0068ad' title="Done" onPress={() => this.handleDone()} />
               </View>
             ) : (null)}
         </View>
@@ -173,10 +188,13 @@ EditHuntScreen.contextType = GlobalContext;
 const styles = StyleSheet.create({
   messageContainer: {
     flex: 0,
-    padding: 20,
+    padding: normalize(20),
     backgroundColor: 'powderblue'
   },
   message: {
-    fontSize: 18
+    fontSize: normalize(18)
+  },
+  smallText: {
+    fontSize: normalize(14)
   }
 })

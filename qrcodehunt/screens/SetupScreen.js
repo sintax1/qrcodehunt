@@ -15,6 +15,7 @@ import { GlobalContext } from '../context';
 import CustomTextInput from '../components/TextInput';
 import { adminsignin, adminsignout } from '../api';
 import { getStorageValue, setStorageValue, clearStorageValue } from '../utils/storage';
+import { normalize } from '../utils';
 
 const Stack = createStackNavigator();
 
@@ -179,7 +180,7 @@ export class SetupScreen extends Component {
                 <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
                     {(SignInPassword) ? (
                         <TouchableOpacity onPress={() => this.signIn()} style={styles.button}>
-                        <Text style={{ fontSize: 40 }}> SIGN IN </Text>
+                        <Text style={{ fontSize: normalize(40) }}> SIGN IN </Text>
                         </TouchableOpacity>
                     ) : (null)}
                 </View>
@@ -205,17 +206,16 @@ const styles = StyleSheet.create({
     flex: 0,
     alignItems: 'center',
     alignContent: 'center',
-    marginTop: 10
+    marginTop: normalize(10)
   },
   errorText: {
     color: '#f7530c',
     fontWeight: 'bold',
-    fontSize: 30
+    fontSize: normalize(30)
   },
   message: {
-    height: 100,
     paddingLeft: 6,
-    fontSize: 60,
+    fontSize: normalize(60),
     textAlign: 'center',
     color: 'white'
   },

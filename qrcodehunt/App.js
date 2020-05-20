@@ -32,6 +32,10 @@ class App extends Component {
       this.setState({ws: ws});
     };
 
+    this.setHunt = (hunt) => {
+      this.setState({hunt: hunt});
+    };
+
     // State also contains the updater function so it will
     // be passed down into the context provider
     this.state = {
@@ -42,6 +46,7 @@ class App extends Component {
       setAdmin: this.setAdmin,
       setPlayer: this.setPlayer,
       setWebsocket: this.setWebsocket,
+      setHunt: this.setHunt
       //appState: AppState.currentState
     };
   }

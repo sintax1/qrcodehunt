@@ -12,6 +12,8 @@ import {
 import { RNCamera } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import RNFetchBlob from 'rn-fetch-blob';
+import { normalize } from '../utils';
+
 
 const createFormData = (photo, data) => {
     const formdata = [];
@@ -112,12 +114,11 @@ export class EditHint extends Component {
       } = this.props;
 
       return (
-        <>
           <View style={styles.CameraContainer}>
-            <View style={{flex: 2}}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
               {(QRScannerEnabled) ? (
                 <QRCodeScanner
-                  cameraStyle={{width: 400, height: 600, alignSelf: 'center'}}
+                  cameraStyle={{width: normalize(200), height: normalize(400), alignSelf: 'center'}}
                   onRead={(e) => this.state.QRCodeCallback(e)}
                   topContent={
                     <Text style={styles.centerText}>
@@ -143,43 +144,43 @@ export class EditHint extends Component {
                   }}
                 />
                 <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-                  <Text style={{ fontSize: 14 }}> SNAP </Text>
+                  <Text style={{ fontSize: normalize(14) }}> SNAP </Text>
                 </TouchableOpacity>
                 </>
               )}
               
             </View>
             
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1}}>
               {photo && (
-                <React.Fragment>
-                  <View style={{flex: 1, marginTop: 10}}>
+                <>
+                  <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center', marginTop: normalize(10)}}>
                     <Image
                       source={{ uri: photo.uri }}
-                      style={{ width: 168, height: 200 }}
+                      style={{ width: normalize(160), height: normalize(220) }}
                     />
                   </View>
-                  
-                  <View style={{flex: 0, flexDirection: 'row'}}>
-                    <TextInput style = {styles.input}
-                    backgroundColor="white"
-                    underlineColorAndroid = "transparent"
-                    placeholder = "Hint Text (optional)"
-                    placeholderTextColor = "#9dc0f5"
-                    autoCapitalize = "none"
-                    alignSelf = "flex-end"
-                    onChangeText = {this.handleHintText}/>
+                  <View style={{flex: 1}}>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                      <TextInput style = {styles.input}
+                        backgroundColor="white"
+                        underlineColorAndroid = "transparent"
+                        placeholder = "Hint Text (optional)"
+                        placeholderTextColor = "#9dc0f5"
+                        autoCapitalize = "none"
+                        alignSelf = "flex-end"
+                        onChangeText = {this.handleHintText}/>
+                    </View>
+                    <View style={{flex: 1, justifyContent: 'center', flexDirection: 'row'}}>
+                      <Button color="red" title="Save Hint" onPress={() => this.handleSave()} />
+                    </View>
                   </View>
-                  <View style={{flex: 0, marginBottom: 20, flexDirection: 'row'}}>
-                    <Button color="red" title="Save Hint" onPress={() => this.handleSave()} />
-                  </View>
-                </React.Fragment>
-                
+
+                </>
               )}
               {/*<Button title="Choose Photo" onPress={this.handleChoosePhoto} />*/}
             </View>
-            </View>
-          </>
+          </View>
       )
     }
 }
@@ -187,8 +188,8 @@ export class EditHint extends Component {
 const styles = StyleSheet.create({
   centerText: {
     flex: 1,
-    fontSize: 18,
-    padding: 32,
+    fontSize: normalize(18),
+    padding: normalize(32),
     color: '#777'
   },
   textBold: {
@@ -196,14 +197,11 @@ const styles = StyleSheet.create({
     color: '#000'
   },
   buttonText: {
-    fontSize: 21,
+    fontSize: normalize(21),
     color: 'rgb(0,122,255)'
   },
-  buttonTouchable: {
-    padding: 16
-  },
   CameraContainer: {
-    paddingTop: 10,
+    paddingTop: normalize(10),
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -211,22 +209,18 @@ const styles = StyleSheet.create({
   },
   preview: {
     flex: 1,
-    width: 400,
+    width: normalize(200),
     alignSelf: 'center',
   },
   capture: {
-    flex: 0,
     backgroundColor: '#fff',
     borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
+    padding: normalize(15),
     alignSelf: 'center',
-    bottom: 50
+    position: 'absolute',
+    bottom: 10
   },
   input: {
     flex: 1,
-    margin: 15,
-    height: 40,
-    borderWidth: 1
  }
 });

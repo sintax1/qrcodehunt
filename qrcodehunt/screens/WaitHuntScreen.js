@@ -21,7 +21,8 @@ export class WaitHuntScreen extends Component {
             isControl: false,
             player: {},
             isReady: false,
-            players: {}
+            players: {},
+            huntinProgress: false
         };
 
         this._isMounted = false;
@@ -44,25 +45,24 @@ export class WaitHuntScreen extends Component {
         }, () => {
             this.subscribeToMessages();
 
-            this.joinHunt({id: hunt._id, player: this.state.player});
-
-            this.getStatus();
-        })
+            ws.emit('joinHunt', {
+                id: this.state.hunt,
+                player: this.state.player
+            });
+        });
     }
+    
     componentWillUnmount() {
         const {
             hunt,
             player
         } = this.state;
 
-        this._isMounted && this.leaveHunt({id: hunt._id, player: player})
+        console.log(JSON.stringify(this.state.hunt));
+
+        this._isMounted && this.leaveHunt({id: this.state.hunt, player: player})
 
         this._isMounted = false;
-    }
-
-    getStatus = () => {
-        // Ask the server to provide the room status
-        ws.emit('getStatus');
     }
 
     subscribeToMessages = () => {
@@ -109,12 +109,6 @@ export class WaitHuntScreen extends Component {
             this.setState(data);
         })
 
-        // Start Hunt
-        ws.removeAllListeners('startHunt');
-        ws.on('startHunt', () => {
-            console.log('Start Hunt!');
-        });
-
         // Player List
         ws.removeAllListeners('players');
         ws.on('players', playersArr => {
@@ -136,6 +130,9 @@ export class WaitHuntScreen extends Component {
         // Begin the Hunt
         ws.removeAllListeners('beginHunt');
         ws.on('beginHunt', () => {
+            this.setState({
+                huntinProgress: true
+            });
             this.props.navigation.navigate('Hunt', this.state);
         });
 
@@ -161,14 +158,9 @@ export class WaitHuntScreen extends Component {
         });
     }
 
-    joinHunt = ({id, player}) => {
-        ws.emit('joinHunt', {
-            id: id,
-            player: player
-        });
-    }
-
     leaveHunt = ({id, player}) => {
+        console.log('leaveHunt: ' + id + ', ' + JSON.stringify(player));
+        
         ws.emit('leaveHunt', {
             id: id,
             player: player

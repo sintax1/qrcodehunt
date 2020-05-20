@@ -5,10 +5,12 @@ export const defaultContext = {
     isAdmin: false,
     player: null,
     ws: null,
+    hunt: null,
     setToken: () => {},
     setAdmin: () => {},
     setPlayer: () => {},
-    setWebsocket: () => {}
+    setWebsocket: () => {},
+    setHunt: () => {}
 };
   
 export const GlobalContext = React.createContext();

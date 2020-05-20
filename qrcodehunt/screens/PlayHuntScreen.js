@@ -6,9 +6,11 @@ import {
     TouchableOpacity,
     Image
 } from 'react-native';
+import { Icon } from 'react-native-elements'
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { GlobalContext } from '../context';
 import { normalize } from '../utils';
+import { BackHandler } from 'react-native';
 
 class Hint extends Component {
     constructor(props) {
@@ -43,7 +45,6 @@ export class PlayHuntScreen extends Component {
         super(props);
 
         this.state = this.props.route.params;
-        
     }
 
     handleScanButton = () => {
@@ -58,28 +59,64 @@ export class PlayHuntScreen extends Component {
             message: '',
             hint: null,
             enableScanner: false,
-            gameFinished: false
+            gameFinished: false,
+            ws: this.context.ws
+        }, () => {
+            this.subscribeToMessages();
+            this.state.ws.emit('getHint');
         })
 
-        this.ws = this.context.ws;
-
-        this.subscribeToMessages();
-
-        this.ws.emit('getHint');
+        // Remove the back button
+        this.props.navigation.setOptions({
+            title: this.state.hunt.name,
+            headerLeft: null,
+            gesturesEnabled: false
+        });
     }
 
     subscribeToMessages = () => {
+
+        console.log('1: ' + JSON.stringify(this.state.hunt))
+        console.log('2: ' + JSON.stringify(this.context.hunt))
+
+        const {
+            hunt,
+            player,
+            ws
+        } = this.state;
+
+        // Error
+        this.state.ws.removeAllListeners('error');
+        this.state.ws.on('error', data => {
+            console.log('Error: ' + JSON.stringify(data.error));
+            // Exit the App
+            BackHandler.exitApp();
+        });
+
+        // Reconnect
+        this.state.ws.removeAllListeners('reconnect');
+        this.state.ws.on('reconnect', function () {
+            console.log('reconnect');
+            console.log(hunt);
+            
+            ws.emit('player-reconnected', {
+                hunt: hunt,
+                player: player
+            });
+        });
+
         // Listen for hints
-        this.ws.removeAllListeners('hint');
-        this.ws.on('hint', data => {
+        this.state.ws.removeAllListeners('hint');
+        this.state.ws.on('hint', data => {
+            console.log('hint: ' + JSON.stringify(data.hint))
             this.setState({
                 hint: data.hint
             });
         });
 
         // Listen for finish signal
-        this.ws.removeAllListeners('fin');
-        this.ws.on('fin', () => {
+        this.state.ws.removeAllListeners('fin');
+        this.state.ws.on('fin', () => {
             this.setState({
                 hint: null,
                 gameFinished: true
@@ -87,8 +124,8 @@ export class PlayHuntScreen extends Component {
         });
 
         // Listen for updates
-        this.ws.removeAllListeners('update');
-        this.ws.on('update', data => {
+        this.state.ws.removeAllListeners('update');
+        this.state.ws.on('update', data => {
             console.log('update: ' + JSON.stringify(data));
             this.setState(data);
         })
@@ -101,7 +138,7 @@ export class PlayHuntScreen extends Component {
             enableScanner: false
         });
 
-        this.ws.emit('code', {
+        this.state.ws.emit('code', {
             code: scan.data
         });
     }
@@ -110,7 +147,6 @@ export class PlayHuntScreen extends Component {
         const {
             status,
             message,
-            hunt,
             gameFinished,
             enableScanner
         } = this.state;
@@ -122,9 +158,6 @@ export class PlayHuntScreen extends Component {
               justifyContent: 'center',
               alignItems: 'stretch',
             }}>
-              <View style={styles.header}>
-                  <Text style={styles.headerText}>{hunt.name}</Text>
-                </View>
                 <View style={styles.status}>
                   <Text style={styles.statusText}>{status}</Text>
                 </View>
@@ -146,7 +179,13 @@ export class PlayHuntScreen extends Component {
                     />
                     ) : (
                     <TouchableOpacity style={styles.button} onPress={() => this.handleScanButton()}>
-                        <Text style={{fontSize: normalize(40), color: '#fff'}}>Scan QR Code</Text>
+                        <Text style={{fontSize: normalize(40), color: '#fff'}}>Scan </Text>
+                        <Icon
+                            size={normalize(40)}
+                            name={'qrcode'}
+                            type='font-awesome'
+                            color={ '#fff' }
+                      />
                     </TouchableOpacity>
                     )}
                 </View>
@@ -165,21 +204,11 @@ PlayHuntScreen.contextType = GlobalContext;
 export default PlayHuntScreen;
 
 const styles = StyleSheet.create({
-    header: {
-        flex: 0,
-        padding: normalize(20),
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    headerText: {
-        fontSize: normalize(40),
-        fontWeight: "bold"
-    },
     status: {
         flex: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: normalize(20),
+        padding: normalize(30),
         flexDirection: 'row'
     },
     statusText: {

@@ -203,7 +203,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#f7530c',
     fontWeight: 'bold',
-    fontSize: normalize(30)
+    fontSize: normalize(30),
+    textAlign: 'center'
   },
   message: {
     paddingLeft: 6,

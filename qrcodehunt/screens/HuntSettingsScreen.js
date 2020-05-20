@@ -35,7 +35,8 @@ export class HuntSettingsScreen extends Component {
           },
           body: JSON.stringify({
               name: this.state.name,
-              timer: this.state.timer
+              timer: this.state.timer,
+              isRandom: this.state.isRandom
           }),
       })
       .then(res => res.json())
@@ -94,7 +95,7 @@ export class HuntSettingsScreen extends Component {
                onChangeText = {this.handleTimer}/>
 
             <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 4}}>
-              <Text> Randomize Hints </Text>
+              <Text> Randomize Steps </Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#d91616" }}
                 thumbColor={this.state.isRandom ? "#347deb" : "#f4f3f4"}

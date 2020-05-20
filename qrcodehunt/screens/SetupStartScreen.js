@@ -7,7 +7,9 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { GlobalContext } from '../context';
-  
+import { normalize } from '../utils';
+
+
 export class SetupStartScreen extends Component {
     constructor(props) {
         super(props);
@@ -63,8 +65,9 @@ const styles = StyleSheet.create({
       justifyContent: 'center'
   },
   headerText: {
-      fontSize:40,
-      fontWeight: "bold"
+      fontSize: normalize(40),
+      fontWeight: "bold",
+      textAlign: 'center'
   },
   button: {
     flex: 0,

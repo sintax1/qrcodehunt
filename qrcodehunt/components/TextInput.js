@@ -44,8 +44,8 @@ class MyTextInput extends React.Component {
 
 const styles = StyleSheet.create({
   textInput: {
-    height: 100,
-    paddingLeft: 6,
+    height: normalize(100),
+    paddingLeft: normalize(6),
     fontSize: normalize(60)
   }
 });

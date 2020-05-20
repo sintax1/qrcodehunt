@@ -8,6 +8,8 @@ import {
     SafeAreaView
 } from 'react-native';
 import Constants from 'expo-constants';
+import { normalize } from '../utils';
+
 
 function Step({step}) {
   // TODO: Add onpress event to allow user to edit the step. set step and hint number in state.
@@ -15,10 +17,10 @@ function Step({step}) {
   // Will need to add logic to go to the next empty step.
   return (
     <View style={styles.item}>
-      <Text>Step #{step.item.number}</Text>
+      <Text style={styles.label}>Step #{step.item.number}</Text>
       <Image
         source={{ uri: step.item.photo.uri }}
-        style={{ width: 168, height: 200 }}
+        style={{ width: normalize(168), height: normalize(200) }}
       />
     </View>
   );
@@ -52,11 +54,10 @@ const styles = StyleSheet.create({
     marginTop: Constants.statusBarHeight,
   },
   item: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16
+    padding: normalize(20),
+    marginVertical: normalize(8)
   },
-  title: {
-    fontSize: 32,
+  label: {
+    fontSize: normalize(20),
   },
 });
