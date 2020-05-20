@@ -132,6 +132,12 @@ module.exports.listen = function(server) {
     // Clear any timers
     clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
     delete RoomStates[roomID].players[playerID];
+
+    // Delete the room if this was the last player in it
+    if (roomIsEmpty(roomID)) {
+      console.log("Room " + roomID + " is empty.");
+      delete RoomStates[roomID];
+    }
   }
 
   function updatePlayerReady(roomID, playerID, isReady) {
@@ -234,15 +240,8 @@ module.exports.listen = function(server) {
         .then(() => {
           // Leave the room
           socket.leave(roomID);
-        })
-        .then(() => {
-          // Delete the room if this was the last player in it
-          if (roomIsEmpty(roomID)) {
-            console.log("Room " + roomID + " is empty.");
-            delete RoomStates[roomID];
-          }
           return true;
-        });
+        })
     });
 
     // New player joined Hunt
