@@ -137,14 +137,11 @@ module.exports.listen = function(server) {
     RoomStates[roomID].players[playerID].isReady = isReady;
   }
 
-  function getPlayerBySocket(roomID, socketID) {
-    console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
+  function getPlayerIDBySocket(roomID, socketID) {
+    console.log('getPlayerIDBySocket: ' + roomID + ', ' + socketID);
 
     try {
-      let playerID = Object.keys(RoomStates[roomID].players).find(key => RoomStates[roomID].players[key].socket.id == socketID);
-      const player = RoomStates[roomID].players[playerID];
-      console.log(player);
-      return player;
+      return Object.keys(RoomStates[roomID].players).find(key => RoomStates[roomID].players[key].socket.id == socketID);
     } catch (err) {
       console.log(err);
       return null;
@@ -281,6 +278,7 @@ module.exports.listen = function(server) {
           inProgress: false,
           players: {
             [player.id]: {
+              id: player.id,
               name: player.name,
               isReady: false,
               socket: socket,
@@ -303,6 +301,7 @@ module.exports.listen = function(server) {
         // Add player to existing room if they aren't already in it
         if (!playerExistsInRoom(huntID, player.id)) {
           RoomStates[huntID].players[data.player.id] = {
+            id: player.id,
             name: data.player.name,
             isReady: false,
             socket: socket,
@@ -358,9 +357,9 @@ module.exports.listen = function(server) {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
-      let player = getPlayerBySocket(roomID, socket.id);
+      let playerID = getPlayerIDBySocket(roomID, socket.id);
 
-      updatePlayerReady(roomID, player.id, true);
+      updatePlayerReady(roomID, playerID, true);
 
       // Acknowledge player ready
       socket.emit('update', {
@@ -371,7 +370,7 @@ module.exports.listen = function(server) {
       // TODO: update this so everyone except the new player receives the message
       //socket.to(roomID).emit('playerReady', JSON.stringify({
       io.in(roomID).emit('playerReady', JSON.stringify({
-        name: player.name,
+        name: RoomStates[roomID].players[playerID].name,
         isReady: true
       }))
 
@@ -399,13 +398,13 @@ module.exports.listen = function(server) {
       // get the rooms that this player is in
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = rooms[0];
-      let player = getPlayerBySocket(roomID, socket.id);
+      let playerID = getPlayerIDBySocket(roomID, socket.id);
 
       // Clear previous timer
       clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
 
       // Send the next available hint to the player
-      sendPlayerHint(roomID, player.id, 0);
+      sendPlayerHint(roomID, playerID, 0);
     });
 
     // Verify code
@@ -413,8 +412,8 @@ module.exports.listen = function(server) {
       console.log('code: ' + JSON.stringify(data));
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
-      let player = getPlayerBySocket(roomID, socket.id);
-      let stepid = RoomStates[roomID].players[player.id].step;
+      let playerID = getPlayerIDBySocket(roomID, socket.id);
+      let stepid = RoomStates[roomID].players[playerID].step;
       let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
 
       console.log('Comparing ' + qrcode + ' and ' + data.code);
@@ -424,7 +423,7 @@ module.exports.listen = function(server) {
 
         // Clear previous timer
         console.log('clearing timer')
-        clearTimeout(RoomStates[roomID].players[player.id].hintTimeout);
+        clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
 
         if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
           // Player just completed the last step
@@ -446,7 +445,7 @@ module.exports.listen = function(server) {
 
           setTimeout(() => {
             // Send the next available hint to the player
-            sendPlayerHint(roomID, player.id, 0);
+            sendPlayerHint(roomID, playerID, 0);
           }, 2000);
         }
       } else {
