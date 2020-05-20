@@ -29,7 +29,7 @@ exports.getHunt = async (req, res) => {
 
 // GET api/hunts
 exports.getAllHunts = async (req, res) => {
-  Hunt.find({}, '-steps -hintOrder',(err, docs) => {
+  Hunt.find({}, '-steps',(err, docs) => {
       if (err) {
         console.log(err);
         return res.send({

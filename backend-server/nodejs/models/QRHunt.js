@@ -17,7 +17,6 @@ const QRHuntSchema = new Schema(
         isRandom: { type: Boolean, default: false},
         timer: { type: Number, default: 2000 },
         steps: [StepSchema],
-        hintOrder: [{ type: String}],
         history: [{
             player: { type: String },
             place: { type: Number },

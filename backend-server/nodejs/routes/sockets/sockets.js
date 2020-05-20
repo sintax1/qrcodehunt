@@ -280,7 +280,7 @@ module.exports.listen = function(server) {
     });
 
     // New player joined Hunt
-    socket.on('joinHunt', (data) => {
+    socket.on('joinHunt', async (data) => {
       console.log('New player: ' + JSON.stringify(data));
 
       let huntID = data.id;
@@ -290,7 +290,7 @@ module.exports.listen = function(server) {
       if (io.sockets.adapter.rooms[huntID] == undefined) {
 
         // Populate the room with the Hunt Steps and Hints
-        getHuntData(huntID)
+        await getHuntData(huntID)
         .then(hunt => {
           RoomStates[huntID].hunt = hunt;
           return huntID;
@@ -314,7 +314,7 @@ module.exports.listen = function(server) {
               }
             }
           };
-        })
+        });
       } else { // Room already exists
         
         // Add player to existing room if they aren't already in it
