@@ -129,6 +129,8 @@ module.exports.listen = function(server) {
 
   async function removePlayerFromRoom(roomID, playerID) {
     console.log('removePlayerFromRoom: ' + roomID + ', ' + playerID)
+    // Clear any timers
+    clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
     delete RoomStates[roomID].players[playerID];
   }
 
