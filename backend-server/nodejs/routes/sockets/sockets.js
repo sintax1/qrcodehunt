@@ -114,6 +114,8 @@ module.exports.listen = function(server) {
     let pid = getPlayerIndex(roomID, playerID);
  
     if (timer == 0) {
+      // Reset timer
+      timer = RoomStates[roomID].hunt.timer;
 
       getPlayerHint(roomID, stepid, hintid)
       .then(hint => {
@@ -136,9 +138,6 @@ module.exports.listen = function(server) {
         })
         return null;
       }
-
-      // Reset timer
-      timer = RoomStates[roomID].hunt.timer;
     } else {
       timer--;
       socket.emit('update', {
