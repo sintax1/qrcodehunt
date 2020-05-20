@@ -175,6 +175,7 @@ module.exports.listen = function(server) {
   }
 
   function updatePlayerSocket(playerID, roomID, socketID) {
+    console.log('updating the player socket.')
     let pid = getPlayerIndex(roomID, playerID);
     RoomStates[roomID].players[pid].socket = socketID;
   }
@@ -188,6 +189,11 @@ module.exports.listen = function(server) {
       console.log('reconnect: ' + JSON.stringify(data));
       let huntID = data.hunt;
       let player = data.player;
+
+      // re-join the player to the room
+      socket.join(huntID);
+
+      // TODO: is this necessary?
       updatePlayerSocket(player.id, huntID, socket.id)
     });
 
