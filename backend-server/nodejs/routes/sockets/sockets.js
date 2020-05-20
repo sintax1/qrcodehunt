@@ -238,7 +238,7 @@ module.exports.listen = function(server) {
       let player = data.player;
 
       // Don't let the player in if the Hunt is already in progress and they weren't in it before
-      if (RoomStates[huntID].inProgress && !playerExistsInRoom(huntID, player.id)) {
+      if ((huntID in RoomStates) && RoomStates[huntID].inProgress && !playerExistsInRoom(huntID, player.id)) {
         socket.emit('update', {
           message: 'Hunt already in progress. Wait until it\'s over or join a different Hunt.'
         });
