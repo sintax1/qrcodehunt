@@ -281,7 +281,7 @@ module.exports.listen = function(server) {
 
       } else { // Room already exists
         
-        // Add player to existing room
+        // Add player to existing room if they aren't already in it
         if (!playerExistsInRoom(huntID, player.id)) {
           RoomStates[huntID].players.push({
             id: data.player.id,
@@ -321,6 +321,12 @@ module.exports.listen = function(server) {
       socket.emit('update', {
         status: RoomStates[huntID].status
       })
+
+      // Hunt is already in progress, just have player join
+      if(RoomStates[huntID].inProgress) {
+        socket.emit('beginHunt');
+      }
+
     });
 
     // Listen for messages
