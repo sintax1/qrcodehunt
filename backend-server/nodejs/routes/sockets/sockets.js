@@ -57,11 +57,11 @@ module.exports.listen = function(server) {
       await getPlayerHint(roomID, playerID, stepid, hintid)
       .then(hint => {
         console.log(3);
-        console.log(hint);
         // Send the hint
         socket.emit('hint', {
           hint: hint
         });
+        RoomStates[roomID].players[playerID].hint++;
       });
 
       console.log(4);
@@ -98,7 +98,6 @@ module.exports.listen = function(server) {
       // Increment player hint
       
       sendPlayerHint(roomID, playerID, timer);
-      RoomStates[roomID].players[playerID].hint++;
     }, 60000);
   };
 
