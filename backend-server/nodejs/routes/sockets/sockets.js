@@ -33,19 +33,14 @@ module.exports.listen = function(server) {
   }
 
   function getPlayerStepHint(roomID, playerID) {
-    let stepid = 0;
-    let hintid = 0;
-
-    for (var i in RoomStates[roomID].players) {
-      if (RoomStates[roomID].players[i].id == playerID) {
-        stepid = RoomStates[roomID].players[i].step;
-        hintid = RoomStates[roomID].players[i].hint;
-      }
+    let pid = getPlayerIndex(roomID, playerID);
+    return {
+      stepid: RoomStates[roomID].players[pid].step,
+      hintid: RoomStates[roomID].players[pid].hint
     }
-
-    return { stepid: stepid, hintid: hintid }
   }
 
+  /*
   async function sendPlayerHint(socket, roomID, playerID) {
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let timer = RoomStates[roomID].hunt.timer;
@@ -108,23 +103,71 @@ module.exports.listen = function(server) {
         sendPlayerHint(socket, roomID, playerID);
       }, timer * 60000);
     } else {
-      socket.emit('update', {
-        status: 'No more hints. Find the code!'
-      })
+      
     }
   }
+  */
+
+  async function sendPlayerHint(socket, roomID, playerID, timer) {
+    console.log('sendPlayerHint: ' + playerID + ', timer: ' + timer)
+    const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
+    let pid = getPlayerIndex(roomID, playerID);
+ 
+    if (timer == 0) {
+
+      getPlayerHint(roomID, stepid, hintid)
+      .then(hint => {
+        socket.emit('hint', {
+          hint: hint
+        })
+      }).then(() => {
+        // Increment Hint
+        RoomStates[roomID].players[pid].hint++;
+      })
+
+      // Last hint, stop loop
+      if (hintid >= 2) {
+        socket.emit('update', {
+          status: 'No more hints. Find the code!'
+        })
+        return null;
+      }
+
+      // Reset timer
+      timer = RoomStates[roomID].hunt.timer;
+    } else {
+      socket.emit('update', {
+        status: 'You have ' + timer + ' ' + ((timer > 1) ? 'minutes' : 'minute') + ' until your next hint...',
+        message: 'Use the hints to find and scan the hidden code.'
+      })
+    }
+
+    // Set time for the next hint
+    return setTimeout(() => {
+      // Send the next available hint to the player
+
+      let timeout = sendPlayerHint(socket, roomID, playerID, timer);
+      RoomStates[roomID].players[pid].hintTimeout = timeout;
+    }, 60000);
+  };
 
   async function getPlayerHint(roomID, stepid, hintid) {
     return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
   }
 
-  function playerExistsInRoom(roomID, playerID) {
+  function getPlayerIndex(roomID, playerID) {
+    let index = null;
     for (var i in RoomStates[roomID].players) {
       if (RoomStates[roomID].players[i].id == playerID) {
-          return true;
+          index = i;
       }
     }
-    return false;
+    return index;
+  }
+
+  function playerExistsInRoom(roomID, playerID) {
+    let pid = getPlayerIndex(roomID, playerID);
+    return pid != null;
   }
 
   function roomIsEmpty(roomID) {
@@ -133,24 +176,13 @@ module.exports.listen = function(server) {
 
   async function removePlayerFromRoom(roomID, playerID) {
     console.log('removePlayerFromRoom: ' + roomID + ', ' + playerID)
-    for (var i in RoomStates[roomID].players) {
-      if (RoomStates[roomID].players[i].id == playerID) {
-          // Remove the player
-          RoomStates[roomID].players.splice(i, 1);
-          return true;
-      }
-    }
-    
-    throw Error(playerID + " not found in " + roomID);
+    let pid = getPlayerIndex(roomID, playerID);
+    RoomStates[roomID].players.splice(pid, 1);
   }
 
   function updatePlayerReady(roomID, playerID, isReady) {
-    for (var i in RoomStates[roomID].players) {
-      if (RoomStates[roomID].players[i].id == playerID) {
-          RoomStates[roomID].players[i].isReady = isReady;
-          break;
-      }
-    }
+    let pid = getPlayerIndex(roomID, playerID);
+    return RoomStates[roomID].players[pid].isReady = isReady;
   }
 
   function getPlayerBySocket(roomID, socketID) {
@@ -195,12 +227,8 @@ module.exports.listen = function(server) {
   }
 
   function updatePlayerSocket(playerID, roomID, socketID) {
-    for (var i in RoomStates[roomID].players) {
-      if (RoomStates[roomID].players[i].id == playerID) {
-          RoomStates[roomID].players[i].socket = socketID;
-          break;
-      }
-    }
+    let pid = getPlayerIndex(roomID, playerID);
+    RoomStates[roomID].players[pid].socket = socketID;
   }
 
   io.on('connection', (socket) => {
@@ -396,9 +424,14 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
+      let pid = getPlayerIndex(roomID, player.id);
+
+      // Clear previous timer
+      clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
 
       // Send the next available hint to the player
-      sendPlayerHint(socket, roomID, player.id);
+      let timeout = sendPlayerHint(socket, roomID, player.id, 0);
+      RoomStates[roomID].players[pid].hintTimeout = timeout;
     });
 
     // Verify code
@@ -407,52 +440,44 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
-      let invalid = true;
+      let pid = getPlayerIndex(roomID, playerID);
+      let stepid = RoomStates[roomID].players[pid].step;
+      let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
 
-      for (var i in RoomStates[roomID].players) {
-        if (RoomStates[roomID].players[i].id == player.id) {
-          stepid = RoomStates[roomID].players[i].step;
+      console.log('Comparing ' + qrcode + ' and ' + data.code);
 
-          // Clear interval timer
-          clearInterval(RoomStates[roomID].players[i].interval);
+      if (qrcode == data.code) {
+        // Player submitted the correct QR Code
 
-          //TODO: Check if player reached last hint/step
-          let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
+        if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
+          // Player just completed the last step
+          socket.emit('update', {
+            status: 'Congratulations. You completed the Hunt!'
+          })
+          // Send the finish signal
+          socket.emit('fin');
 
-          console.log('Comparing ' + qrcode + ' and ' + data.code);
+        } else {
+          // Increment the players current step and reset hint number to 0
+          RoomStates[roomID].players[i].step++
+          RoomStates[roomID].players[i].hint=0
 
-          if (qrcode == data.code) {
-            // Player submitted the correct QR Code
-            invalid = false;
+          // Update the players message
+          socket.emit('update', {
+            status: 'Nice Job! Here comes your next Hint...'
+          })
 
-            if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
-              // Player just completed the last step
-              socket.emit('update', {
-                status: 'Congratulations. You completed the Hunt!'
-              })
-              // Send the finish signal
-              socket.emit('fin');
+          // Clear previous timer
+          clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
 
-            } else {
-              // Increment the players current step and reset hint number to 0
-              RoomStates[roomID].players[i].step++
-              RoomStates[roomID].players[i].hint=0
-
-              // Update the players message
-              socket.emit('update', {
-                status: 'Nice Job! Here comes your next Hint...'
-              })
-
-              setTimeout(() => {
-                // Send the next available hint to the player
-                sendPlayerHint(socket, roomID, player.id);
-              }, 2000);
-            }
-          }
+          setTimeout(() => {
+            // Send the next available hint to the player
+            let timeout = sendPlayerHint(socket, roomID, player.id, 0);
+            RoomStates[roomID].players[pid].hintTimeout = timeout;
+          }, 2000);
         }
-      }
-
-      if (invalid) {
+      } else {
+        // Incorrect code
         socket.emit('update', {
           status: 'Try Again!'
         })
