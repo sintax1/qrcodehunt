@@ -51,18 +51,16 @@ module.exports.listen = function(server) {
   }
 
   function getPlayerStepHint(roomID, playerID) {
-    let pid = getPlayerIndex(roomID, playerID);
     return {
-      stepid: RoomStates[roomID].players[pid].step,
-      hintid: RoomStates[roomID].players[pid].hint
+      stepid: RoomStates[roomID].players[playerID].step,
+      hintid: RoomStates[roomID].players[playerID].hint
     }
   }
 
   async function sendPlayerHint(roomID, playerID, timer) {
     console.log(getTimestamp() + ' sendPlayerHint: ' + playerID + ', timer: ' + timer)
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
-    let pid = getPlayerIndex(roomID, playerID);
-    let socket = RoomStates[roomID].players[pid].socket;
+    let socket = RoomStates[roomID].players[playerID].socket;
 
     console.log(1);
  
@@ -79,7 +77,7 @@ module.exports.listen = function(server) {
           hint: hint
         });
         // Increment player hint
-        RoomStates[roomID].players[pid].hint++;
+        RoomStates[roomID].players[playerID].hint++;
       });
 
       console.log(4);
@@ -109,7 +107,7 @@ module.exports.listen = function(server) {
     timer -= 1;
 
     // Set time for the next hint
-    RoomStates[roomID].players[pid].hintTimeout = setTimeout(() => {
+    RoomStates[roomID].players[playerID].hintTimeout = setTimeout(() => {
       console.log(8);
       // Send the next available hint to the player
       console.log('scheduling next timer: ' + playerID + ', ' + timer);
@@ -121,19 +119,8 @@ module.exports.listen = function(server) {
     return RoomStates[roomID].hunt.steps[stepid].hints[hintid];
   }
 
-  function getPlayerIndex(roomID, playerID) {
-    let index = null;
-    for (var i in RoomStates[roomID].players) {
-      if (RoomStates[roomID].players[i].id == playerID) {
-          index = i;
-      }
-    }
-    return index;
-  }
-
   function playerExistsInRoom(roomID, playerID) {
-    let pid = getPlayerIndex(roomID, playerID);
-    return pid != null;
+    return playerID in RoomStates[roomID].players;
   }
 
   function roomIsEmpty(roomID) {
@@ -142,13 +129,11 @@ module.exports.listen = function(server) {
 
   async function removePlayerFromRoom(roomID, playerID) {
     console.log('removePlayerFromRoom: ' + roomID + ', ' + playerID)
-    let pid = getPlayerIndex(roomID, playerID);
-    RoomStates[roomID].players.splice(pid, 1);
+    delete RoomStates[roomID].players[playerID];
   }
 
   function updatePlayerReady(roomID, playerID, isReady) {
-    let pid = getPlayerIndex(roomID, playerID);
-    return RoomStates[roomID].players[pid].isReady = isReady;
+    return RoomStates[roomID].players[playerID].isReady = isReady;
   }
 
   function getPlayerBySocket(roomID, socketID) {
@@ -195,8 +180,7 @@ module.exports.listen = function(server) {
   function updatePlayerSocket(playerID, roomID, socket) {
     try {
       console.log('updating the player socket: ' + playerID + ', ' + socket.id);
-      let pid = getPlayerIndex(roomID, playerID);
-      RoomStates[roomID].players[pid].socket = socket;
+      RoomStates[roomID].players[playerID].socket = socket;
     } catch (err) {
       console.log(err);
       socket.emit('error', {
@@ -293,25 +277,21 @@ module.exports.listen = function(server) {
           status: 'Waiting for all players to be ready',
           hunt: null,
           inProgress: false,
-          players: [{
-            id: player.id,
-            name: player.name,
-            isReady: false,
-            socket: socket,
-            step: 0,
-            hint: 0,
-            interval: null
-          }]
+          players = {
+            [player.id]: {
+              name: player.name,
+              isReady: false,
+              socket: socket,
+              step: 0,
+              hint: 0,
+              interval: null,
+              stepSequence = []
+            }
+          }
         };
 
         // Populate the room with the Hunt Steps and Hints
         getHuntData(huntID)
-        .then(hunt => {
-          // Randomize the hunt steps if required
-          console.log('randomize before: ' + JSON.stringify(hunt));
-
-          return hunt;
-        })
         .then(hunt => {
           RoomStates[huntID].hunt = hunt;
         });
@@ -320,15 +300,15 @@ module.exports.listen = function(server) {
         
         // Add player to existing room if they aren't already in it
         if (!playerExistsInRoom(huntID, player.id)) {
-          RoomStates[huntID].players.push({
-            id: data.player.id,
+          RoomStates[huntID].players[data.player.id] = {
             name: data.player.name,
             isReady: false,
             socket: socket,
             step: 0,
             hint: 0,
-            interval: null
-          })
+            interval: null,
+            stepSequence: []
+          }
         } else {
           // Player is already in the room
           updatePlayerSocket(player.id, huntID, socket);
@@ -348,10 +328,10 @@ module.exports.listen = function(server) {
 
       // Send the playerlist to the new player
       socket.emit('players',
-        RoomStates[huntID].players.map((player) => {
+        Object.keys(RoomStates[huntID].players).map((key, idx) => {
           return {
-            name: player.name,
-            isReady: player.isReady
+            name: RoomStates[huntID].players[key].name,
+            isReady: RoomStates[huntID].players[key].isReady
           }
         })
       );
@@ -418,10 +398,9 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
-      let pid = getPlayerIndex(roomID, player.id);
 
       // Clear previous timer
-      clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
+      clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
 
       // Send the next available hint to the player
       sendPlayerHint(roomID, player.id, 0);
@@ -433,8 +412,7 @@ module.exports.listen = function(server) {
       let rooms = Object.keys(socket.rooms).filter(item => item!=socket.id);
       let roomID = huntID = rooms[0];
       let player = getPlayerBySocket(roomID, socket.id);
-      let pid = getPlayerIndex(roomID, player.id);
-      let stepid = RoomStates[roomID].players[pid].step;
+      let stepid = RoomStates[roomID].players[player.id].step;
       let qrcode = RoomStates[roomID].hunt.steps[stepid].qrcode;
 
       console.log('Comparing ' + qrcode + ' and ' + data.code);
@@ -444,7 +422,7 @@ module.exports.listen = function(server) {
 
         // Clear previous timer
         console.log('clearing timer')
-        clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
+        clearTimeout(RoomStates[roomID].players[player.id].hintTimeout);
 
         if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
           // Player just completed the last step
@@ -456,8 +434,8 @@ module.exports.listen = function(server) {
 
         } else {
           // Increment the players current step and reset hint number to 0
-          RoomStates[roomID].players[pid].step++
-          RoomStates[roomID].players[pid].hint=0
+          RoomStates[roomID].players[playerID].step++
+          RoomStates[roomID].players[playerID].hint=0
 
           // Update the players message
           socket.emit('update', {
