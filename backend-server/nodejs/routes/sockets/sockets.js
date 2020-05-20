@@ -464,8 +464,8 @@ module.exports.listen = function(server) {
 
         } else {
           // Increment the players current step and reset hint number to 0
-          RoomStates[roomID].players[i].step++
-          RoomStates[roomID].players[i].hint=0
+          RoomStates[roomID].players[pid].step++
+          RoomStates[roomID].players[pid].hint=0
 
           // Update the players message
           socket.emit('update', {
