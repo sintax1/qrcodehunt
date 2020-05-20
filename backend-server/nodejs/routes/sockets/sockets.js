@@ -319,7 +319,7 @@ module.exports.listen = function(server) {
             step: 0,
             hint: 0,
             interval: null,
-            stepSequence: getHintSteps(huntID)
+            stepSequence: getHuntSteps(huntID)
           }
         } else {
           // Player is already in the room
