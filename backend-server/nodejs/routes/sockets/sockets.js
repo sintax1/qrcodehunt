@@ -133,11 +133,12 @@ module.exports.listen = function(server) {
   }
 
   function updatePlayerReady(roomID, playerID, isReady) {
-    return RoomStates[roomID].players[playerID].isReady = isReady;
+    console.log('updatePlayerReady: ' + roomID + ', ' + playerID + ', ' + isReady);
+    RoomStates[roomID].players[playerID].isReady = isReady;
   }
 
   function getPlayerBySocket(roomID, socketID) {
-    //console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
+    console.log('getPlayerBySocket: ' + roomID + ', ' + socketID);
 
     try {
       let playerID = Object.keys(RoomStates[roomID].players).find(key => RoomStates[roomID].players[key].socket.id == socketID);
