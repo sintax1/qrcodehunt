@@ -194,8 +194,17 @@ module.exports.listen = function(server) {
         error: 'Server Error'
       })
     }
-    
   }
+
+  /*
+  function getHuntSteps(huntID) {
+    RoomStates[roomID].hunt.steps.
+  }
+  */
+
+  io.on('error', (err) => {
+    console.log('io.error: ' + JSON.stringify(err));
+  })
 
   io.on('connection', (socket) => {
     socket.emit('connected');
