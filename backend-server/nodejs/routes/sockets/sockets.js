@@ -301,6 +301,7 @@ module.exports.listen = function(server) {
         RoomStates[huntID].players[player.id] = {
           id: player.id,
           name: player.name,
+          isDone: false,
           isReady: false,
           socket: socket,
           step: 0,
@@ -316,6 +317,7 @@ module.exports.listen = function(server) {
           RoomStates[huntID].players[player.id] = {
             id: player.id,
             name: player.name,
+            isDone: false,
             isReady: false,
             socket: socket,
             step: 0,
@@ -416,8 +418,17 @@ module.exports.listen = function(server) {
       // Clear previous timer
       clearTimeout(RoomStates[roomID].players[playerID].hintTimeout);
 
-      // Send the next available hint to the player
-      sendPlayerHint(roomID, playerID, 0);
+      // Player is already done
+      if (RoomStates[roomID].players[playerID].isDone) {
+        socket.emit('update', {
+          status: 'Congratulations. You completed the Hunt!'
+        })
+        // Send the finish signal
+        socket.emit('fin');
+      } else {
+        // Send the next available hint to the player
+        sendPlayerHint(roomID, playerID, 0);
+      }
     });
 
     // Verify code
@@ -441,6 +452,8 @@ module.exports.listen = function(server) {
 
         if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
           // Player just completed the last step
+          RoomStates[roomID].players[playerID].isDone = true;
+
           socket.emit('update', {
             status: 'Congratulations. You completed the Hunt!'
           })
