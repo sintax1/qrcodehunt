@@ -113,8 +113,8 @@ module.exports.listen = function(server) {
       console.log(8);
       // Send the next available hint to the player
       console.log('scheduling next timer: ' + playerID + ', ' + timer);
-      let timeout = sendPlayerHint(roomID, playerID, timer);
-      RoomStates[roomID].players[pid].hintTimeout = timeout;
+      clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
+      RoomStates[roomID].players[pid].hintTimeout = sendPlayerHint(roomID, playerID, timer);
     }, 60000);
   };
 
@@ -429,6 +429,10 @@ module.exports.listen = function(server) {
       if (qrcode == data.code) {
         // Player submitted the correct QR Code
 
+        // Clear previous timer
+        console.log('clearing timer')
+        clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
+
         if (stepid >= RoomStates[roomID].hunt.steps.length-1) {
           // Player just completed the last step
           socket.emit('update', {
@@ -447,13 +451,9 @@ module.exports.listen = function(server) {
             status: 'Nice Job! Here comes your next Hint...'
           })
 
-          // Clear previous timer
-          clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
-
           setTimeout(() => {
             // Send the next available hint to the player
-            let timeout = sendPlayerHint(roomID, player.id, 0);
-            RoomStates[roomID].players[pid].hintTimeout = timeout;
+            RoomStates[roomID].players[pid].hintTimeout = sendPlayerHint(roomID, player.id, 0);
           }, 2000);
         }
       } else {
