@@ -200,7 +200,7 @@ module.exports.listen = function(server) {
   function getHuntSteps(huntID) {
     let steps = [...Array(RoomStates[huntID].hunt.steps.length).keys()];
     console.log('steps: ' + steps);
-    if (RoomStates[roomID].hunt.isRandom) {
+    if (RoomStates[huntID].hunt.isRandom) {
       // Randomize the steps if the setting is enabled
       console.log('random enabled');
       return shuffle(steps);
