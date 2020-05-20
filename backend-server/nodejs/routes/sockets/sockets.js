@@ -285,7 +285,7 @@ module.exports.listen = function(server) {
               step: 0,
               hint: 0,
               interval: null,
-              stepSequence = []
+              stepSequence: []
             }
           }
         };
