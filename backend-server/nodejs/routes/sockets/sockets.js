@@ -76,8 +76,6 @@ module.exports.listen = function(server) {
         socket.emit('hint', {
           hint: hint
         });
-        // Increment player hint
-        RoomStates[roomID].players[playerID].hint++;
       });
 
       console.log(4);
@@ -111,6 +109,8 @@ module.exports.listen = function(server) {
       console.log(8);
       // Send the next available hint to the player
       console.log('scheduling next timer: ' + playerID + ', ' + timer);
+      // Increment player hint
+      RoomStates[roomID].players[playerID].hint++;
       sendPlayerHint(roomID, playerID, timer);
     }, 60000);
   };
