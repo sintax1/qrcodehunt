@@ -361,8 +361,6 @@ module.exports.listen = function(server) {
         isReady: true
       }))
 
-      console.log('RoomStates[roomID].players: ' + JSON.stringify(RoomStates[roomID].players));
-
       if (allPlayersReady(roomID)) {
         console.log('All players are ready. start the hunt.')
 
