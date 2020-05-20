@@ -40,10 +40,11 @@ module.exports.listen = function(server) {
     }
   }
 
-  async function sendPlayerHint(socket, roomID, playerID, timer) {
+  async function sendPlayerHint(roomID, playerID, timer) {
     console.log('sendPlayerHint: ' + playerID + ', timer: ' + timer)
     const { hintid, stepid } = getPlayerStepHint(roomID, playerID);
     let pid = getPlayerIndex(roomID, playerID);
+    let socket = RoomStates[roomID].players[pid].socket;
 
     console.log(1);
  
@@ -94,7 +95,7 @@ module.exports.listen = function(server) {
       console.log(8);
       // Send the next available hint to the player
       console.log('scheduling next timer: ' + playerID + ', ' + timer);
-      let timeout = sendPlayerHint(socket, roomID, playerID, timer);
+      let timeout = sendPlayerHint(roomID, playerID, timer);
       RoomStates[roomID].players[pid].hintTimeout = timeout;
     }, 60000);
   };
@@ -175,7 +176,7 @@ module.exports.listen = function(server) {
   }
 
   function updatePlayerSocket(playerID, roomID, socketID) {
-    console.log('updating the player socket.')
+    console.log('updating the player socket: ' + playerID + ', ' + socketID);
     let pid = getPlayerIndex(roomID, playerID);
     RoomStates[roomID].players[pid].socket = socketID;
   }
@@ -393,7 +394,7 @@ module.exports.listen = function(server) {
       clearTimeout(RoomStates[roomID].players[pid].hintTimeout);
 
       // Send the next available hint to the player
-      let timeout = sendPlayerHint(socket, roomID, player.id, 0);
+      let timeout = sendPlayerHint(roomID, player.id, 0);
       RoomStates[roomID].players[pid].hintTimeout = timeout;
     });
 
@@ -435,7 +436,7 @@ module.exports.listen = function(server) {
 
           setTimeout(() => {
             // Send the next available hint to the player
-            let timeout = sendPlayerHint(socket, roomID, player.id, 0);
+            let timeout = sendPlayerHint(roomID, player.id, 0);
             RoomStates[roomID].players[pid].hintTimeout = timeout;
           }, 2000);
         }
