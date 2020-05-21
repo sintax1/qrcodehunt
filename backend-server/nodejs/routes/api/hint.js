@@ -55,7 +55,7 @@ exports.addHint = async (req, res) => {
   query["steps." + (step-1) + ".hints." + (hint-1) + ".text"] = hintText;
   query["steps." + (step-1) + ".hints." + (hint-1) + ".photo"] = req.file.id;
   const update = { $set: query };
-  const options = {new: true};
+  const options = {new: true, lean: true};
 
   Hunt.findOneAndUpdate(filter, update, options, (err, doc) => {
     if (err) {
