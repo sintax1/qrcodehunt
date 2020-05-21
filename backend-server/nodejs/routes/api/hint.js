@@ -67,8 +67,6 @@ exports.addHint = async (req, res) => {
     }
 
     console.log('addHint success! ' + JSON.stringify(doc));
-    console.log(doc.steps[doc.steps.length-1].hints)
-    console.log(Object.keys(doc.steps[doc.steps.length-1].hints).length)
     return res.status(200).json({
       success: true,
       message: 'success!',
