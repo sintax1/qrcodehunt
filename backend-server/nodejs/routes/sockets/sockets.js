@@ -330,9 +330,7 @@ module.exports.listen = function(server) {
       socket.join(huntID);
       
       // Notify everyone in the room that a new player joined
-      // TODO: update this so everyone except the new player receives the message
-      // io.in(huntID).emit('playerJoin', JSON.stringify({
-      socket.to(huntID).emit('playerJoin', JSON.stringify({
+      io.in(huntID).emit('playerJoin', JSON.stringify({
         name: player.name,
         isReady: false
       }));
@@ -377,9 +375,7 @@ module.exports.listen = function(server) {
       })
 
       // Notify the room that the player is ready
-      // TODO: update this so everyone except the new player receives the message
-      // io.in(roomID).emit('playerReady', JSON.stringify({
-      socket.to(roomID).emit('playerReady', JSON.stringify({
+      io.in(roomID).emit('playerReady', JSON.stringify({
         name: RoomStates[roomID].players[playerID].name,
         isReady: true
       }))
