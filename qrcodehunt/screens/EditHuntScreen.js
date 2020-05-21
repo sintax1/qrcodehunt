@@ -59,6 +59,7 @@ Take a picture of the first hint to get started.`,
 
         if (response.success) {
           // Save successful
+          console.log(response)
 
           if (response.hintid < 3) {
             // Step is not finished yet, add more hints
