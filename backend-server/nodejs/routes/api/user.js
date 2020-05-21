@@ -48,12 +48,14 @@ exports.signin = (req, res, next) => {
         message: err
       });
     } else if (users.length > 0) {
-      console.log('err: duplicate name');
+      console.log('err: duplicate name: ' + username);
       return res.send({
         success: false,
         message: 'That name is already taken. Enter a different name.'
       });
     } else {
+      console.log('Adding user: ' + username);
+      
       const userSession = new UserSession({ username: username});
 
       userSession.save((err, doc) => {
