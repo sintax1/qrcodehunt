@@ -56,27 +56,37 @@ Take a picture of the first hint to get started.`,
         hint,
         hintText
       }).then((response) => {
-        if (this.state.hint < 3) {
-          // Step is not finished yet, add more hints
-          this.setState({
-            message: 'Success! Take another photo for step #' + this.state.step + ', hint #' + (this.state.hint + 1),
-            photo: null,
-            hint: this.state.hint + 1,
-            doneEnabled: false
-          });
-        } else {
-          // Last hint added
 
-          // Get the contents of photo
-          getPhoto(response.photo.id).then(resp => {
+        if (response.success) {
+          // Save successful
+
+          if (response.hintid < 3) {
+            // Step is not finished yet, add more hints
             this.setState({
-              message: 'Now, scan a QR Code and hide it for Step #' + this.state.step,
-              QRScannerEnabled: true,
+              message: 'Success! Take another photo for step #' + this.state.step + ', hint #' + (response.hintid + 1),
               photo: null,
-              hint: 1,
-              stepList: [...this.state.stepList, { number: this.state.step, photo: resp.photo } ]
+              hint: response.hintid + 1,
+              doneEnabled: false
             });
-          })
+          } else {
+            // Last hint added
+  
+            // Get the contents of photo
+            getPhoto(response.photo.id).then(resp => {
+              this.setState({
+                message: 'Now, scan a QR Code and hide it for Step #' + this.state.step,
+                QRScannerEnabled: true,
+                photo: null,
+                hint: 1,
+                stepList: [...this.state.stepList, { number: this.state.step, photo: resp.photo } ]
+              });
+            })
+          }
+        } else {
+          // Save unsuccessful
+          this.setState({
+            message: 'Failed to save the hint. Try again.'
+          });
         }
       })
       .catch((error) => {
