@@ -68,6 +68,7 @@ exports.addHint = async (req, res) => {
 
     console.log('addHint success! ' + JSON.stringify(doc));
     return res.status(200).json({
+      success: true,
       message: 'success!',
       photo: req.file,
       stepid: doc.steps.length,
