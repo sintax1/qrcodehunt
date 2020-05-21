@@ -16,6 +16,7 @@ exports.signout = (req, res, next) => {
         message: 'Failed to clear user session'
       });
     } else {
+      console.log("Removed user: " + userid)
       return res.send({
         success: true,
       });
