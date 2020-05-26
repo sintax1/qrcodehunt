@@ -13,12 +13,24 @@ export class HuntSettingsScreen extends Component {
     constructor(props) {
       super(props);
 
-      this.state = {
-        id: '',
-        name: '',
-        timer: '5',
-        isRandom: false,
-        steps: []
+      // Populate the hunt data if we are editing a Hunt
+      if (this.props.route.params.hunt) {
+        let hunt = this.props.route.params.hunt;
+        this.state = {
+          id: hunt._id,
+          name: hunt.name,
+          timer: hunt.timer.toString(),
+          isRandom: hunt.isRandom,
+          steps: hunt.steps
+        }
+      } else {
+        this.state = {
+          id: '',
+          name: '',
+          timer: '5',
+          isRandom: false,
+          steps: []
+        }
       }
     }
 
@@ -26,8 +38,39 @@ export class HuntSettingsScreen extends Component {
       this.setState({name: name});
     }
 
-    save = () => {
-      // Post request to backend
+    // Save changes to existing Hunt
+    save = (id) => {
+      fetch('http://192.168.7.253:3000/api/hunt/' + id, {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              name: this.state.name,
+              timer: this.state.timer,
+              isRandom: this.state.isRandom
+          }),
+      })
+      .then(res => res.json())
+      .then(json => {
+          console.log('save res:', json);
+          if (json.success) {
+              this.setState({
+                  id: json.hunt._id
+              });
+
+              console.log('save: ' + JSON.stringify(this.state));
+              this.props.navigation.navigate('Edit Hunt', {
+                hunt: this.state
+              });
+          } else {
+              console.log('failed to save hunt');
+          }
+      });
+    }
+
+    // Create a new Hunt
+    create = () => {
       fetch('http://192.168.7.253:3000/api/hunt', {
           method: 'POST',
           headers: {
@@ -41,10 +84,10 @@ export class HuntSettingsScreen extends Component {
       })
       .then(res => res.json())
       .then(json => {
-          console.log('json', json);
+          console.log('create res:', json);
           if (json.success) {
               this.setState({
-                  id: json.id
+                  id: json.hunt._id
               });
 
               console.log('save: ' + JSON.stringify(this.state));
@@ -52,7 +95,7 @@ export class HuntSettingsScreen extends Component {
                 hunt: this.state
               });
           } else {
-              console.log('failed to save hunt');
+              console.log('failed to create the Hunt');
           }
       });
     }
@@ -70,12 +113,6 @@ export class HuntSettingsScreen extends Component {
     }
 
     render() {
-      const {
-        name,
-        timer,
-        isRandom
-      } = this.state;
-
       return (
         <View style = {styles.container}>
             <Text> Name of the Hunt </Text>
@@ -84,14 +121,14 @@ export class HuntSettingsScreen extends Component {
                placeholder = "Hunt Name"
                placeholderTextColor = "#9dc0f5"
                autoCapitalize = "none"
-               value={name}
+               value={this.state.name}
                onChangeText = {this.handleName}/>
 
             <Text> Time to wait between each Hint (minutes) </Text>
             <TextInput style = {styles.input}
                keyboardType='numeric'
                numericvalue
-               value={timer}
+               value={this.state.timer}
                onChangeText = {this.handleTimer}/>
 
             <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 4}}>
@@ -101,14 +138,14 @@ export class HuntSettingsScreen extends Component {
                 thumbColor={this.state.isRandom ? "#347deb" : "#f4f3f4"}
                 ios_backgroundColor="#d91616"
                 onValueChange={this.handleRandom}
-                value={isRandom}
+                value={this.state.isRandom}
               />
               </View>
             
             <TouchableOpacity
                style = {styles.submitButton}
                onPress = {
-                  () => this.save()
+                  () => (this.state.id) ? this.save(this.state.id) : this.create()
                }>
                <Text style = {styles.submitButtonText}> Save </Text>
             </TouchableOpacity>

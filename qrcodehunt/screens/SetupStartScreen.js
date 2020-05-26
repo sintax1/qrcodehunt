@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { HuntList } from '../components/HuntList';
+import { getAllHunts } from '../api';
 import {
   StyleSheet,
   View,
@@ -15,42 +16,69 @@ export class SetupStartScreen extends Component {
         super(props);
 
         this.state = {
-          message: 'Select a Hunt to edit or create a new Hunt'
+          message: 'Select a Hunt to edit or create a new Hunt',
+          huntList: []
         }
     }
 
-    selectHunt = (id) => {
-        this.setState({ selectedHunt: id });
+    componentDidMount() {
+
+      getAllHunts()
+      .then(resp => {
+        if (resp.success) {
+          console.log("Success getting hunts:", resp)
+            let emptyCells = new Array(resp.hunts.length % 4)
+            .fill({name: ''})
+
+            resp.hunts.push(...emptyCells);
+          this.setState({
+            huntList: resp.hunts
+          })
+        } else {
+          console.log('Error getting all Hunts');
+        }
+      })
+    }
+
+    selectHunt = (hunt) => {
+      console.log("id", hunt)
+      fetch('http://192.168.7.253:3000/api/hunt/' + hunt._id, {
+          method: 'GET'
+      })
+      .then(res => res.json())
+      .then(json => {
+          console.log('selectHunt:', json);
+          if (json.success) {
+            this.props.navigation.navigate('Hunt Settings', {
+              hunt: json.hunt
+            });
+          } else {
+              console.log('failed to retrieve hunt');
+          }
+      });
     }
 
     render() {
       const {
-        message
+        message,
+        huntList
       } = this.state;
 
       let context = this.context;
 
-      console.log('SetupStartScreen context: ' + JSON.stringify(context));
-
       return (
         <>
-        <View style={styles.header}>
-            <Text style={styles.headerText}>{message}</Text>
-        </View>
+          <View style={styles.header}>
+              <Text style={styles.headerText}>{message}</Text>
+          </View>
 
-        <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
-          <HuntList
-            selectHunt={this.selectHunt}
-            hunts={context.hunts}
-            isAdmin={context.isAdmin}
-          />
-        </View>
-        
-        <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Hunt Settings')} style={styles.button}>
-            <Text style={{ fontSize: 40, color: '#fff' }}> New Hunt </Text>
-          </TouchableOpacity>
-        </View>
+          <HuntList selectHunt={this.selectHunt} huntList={huntList} />
+          
+          <View style={{flex:1, alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('Hunt Settings')} style={styles.button}>
+              <Text style={{ fontSize: 40, color: '#fff' }}> New Hunt </Text>
+            </TouchableOpacity>
+          </View>
         </>
       );
     };

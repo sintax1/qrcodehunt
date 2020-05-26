@@ -22,7 +22,6 @@ export class PlayerList extends Component {
                 <ListItem
                     key={key}
                     leftAvatar={<Icon
-                        color='#a2acbd'
                         size={normalize(40)}
                         name={ this.props.players[key].isReady ? 'smile' : 'dizzy' }
                         type='font-awesome-5'

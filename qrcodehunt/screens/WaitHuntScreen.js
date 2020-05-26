@@ -60,7 +60,8 @@ export class WaitHuntScreen extends Component {
 
         console.log(JSON.stringify(this.state.hunt));
 
-        this._isMounted && this.leaveHunt({id: this.state.hunt, player: player})
+        // Commenting this out since hitting the back button removes player from the room and won't let them back in.
+        //this._isMounted && this.leaveHunt({id: this.state.hunt, player: player})
 
         this._isMounted = false;
     }

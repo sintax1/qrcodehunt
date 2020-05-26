@@ -105,6 +105,18 @@ async function saveQRCode(data) {
   } 
 }
 
+async function deleteStep(huntid, stepid) {
+  try {
+    let response = await fetch(`http://192.168.7.253:3000/api/hunt/${huntid}/step/${stepid}`, {
+        method: 'DELETE'
+    });
+    let json = await response.json();
+    return json;
+  } catch (error) {
+    return error
+  } 
+}
+
 module.exports = {
   adminsignin: AdminSignIn,
   adminsignout: AdminSignOut,
@@ -113,5 +125,6 @@ module.exports = {
   getPhoto: getPhotoByID,
   saveQRCode: saveQRCode,
   getAllHunts: getAllHunts,
+  deleteStep: deleteStep,
   ws: ws
 }
