@@ -25,6 +25,7 @@ app.get('/api/hunt/:id', hunt.getHunt);
 app.get('/api/hunts', hunt.getAllHunts);
 app.put('/api/hunt/:id', hunt.updateHunt);
 app.delete('/api/hunt/:id', hunt.deleteHunt);
+app.delete('/api/hunt/:huntid/step/:stepid', hunt.deleteStep);
 
 // Step
 app.post('/api/step', step.addStep);

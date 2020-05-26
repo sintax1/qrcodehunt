@@ -114,7 +114,7 @@ exports.deleteHunt = async (req, res) => {
 };
 
 // DELETE api/hunt/:huntid/step/:stepid
-exports.deleteHunt = async (req, res) => {
+exports.deleteStep = async (req, res) => {
   let huntid = req.params.huntid;
   let stepid = req.params.stepid;
 
