@@ -112,3 +112,42 @@ exports.deleteHunt = async (req, res) => {
         });
     });
 };
+
+// DELETE api/hunt/:huntid/step/:stepid
+exports.deleteHunt = async (req, res) => {
+  let huntid = req.params.huntid;
+  let stepid = req.params.stepid;
+
+  Hunt.findOne({_id: huntid}, (err, doc) => {
+      if (err) {
+        console.log(err);
+        return res.send({
+          success: false,
+          message: err
+        });
+      } else if (doc) {
+        // Delete the step
+        doc.steps.splice(stepid-1, 1);
+        // Save changes
+        doc.save(err => {
+          if (err) {
+            console.log(err);
+            return res.send({
+              success: false,
+              message: err
+            });
+          } else {
+            return res.send({
+              success: true,
+              message: 'success',
+            });
+          }
+        })
+      } else {
+        return res.send({
+          success: false,
+          message: 'No hunt found with id: ' + huntid
+        });
+      }
+  });
+};
