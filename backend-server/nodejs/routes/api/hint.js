@@ -71,8 +71,8 @@ exports.addHint = async (req, res) => {
       success: true,
       message: 'success!',
       photo: req.file,
-      stepid: doc.steps.length,
-      hintid: Object.keys(doc.steps[doc.steps.length-1].hints).length
+      stepid: step,  //doc.steps.length,
+      hintid: hint, //Object.keys(doc.steps[doc.steps.length-1].hints).length
     });
   })
 };

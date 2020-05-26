@@ -55,7 +55,7 @@ exports.signin = (req, res, next) => {
       });
     } else {
       console.log('Adding user: ' + username);
-      
+
       const userSession = new UserSession({ username: username});
 
       userSession.save((err, doc) => {
