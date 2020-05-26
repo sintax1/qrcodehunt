@@ -27,7 +27,8 @@ exports.addQRCode = async (req, res) => {
   
       console.log('addQRCode success! ' + JSON.stringify(doc));
       return res.status(200).json({
-        success: true
+        success: true,
+        stepid: step
       });
     })
   };
